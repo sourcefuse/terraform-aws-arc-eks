@@ -3,13 +3,9 @@ environment = "dev"
 profile     = "sf_ref_arch"
 namespace   = "refarch"
 
-
-
 availability_zones = ["us-east-1a", "us-east-1b"]
 
-stage = "dev"
-
-name = "refarch"
+name = "primary-k8s-cluster"
 
 kubernetes_version = "1.21"
 
