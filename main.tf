@@ -73,19 +73,6 @@ module "eks_node_group" {
   context = module.this.context
 }
 
-// TODO: refactor below since usage is deprecated
-# Ensure ordering of resource creation to eliminate the race conditions when applying the Kubernetes Auth ConfigMap.
-# Do not create Node Group before the EKS cluster is created and the `aws-auth` Kubernetes ConfigMap is applied.
-# Otherwise, EKS will create the ConfigMap first and add the managed node role ARNs to it,
-# and the kubernetes provider will throw an error that the ConfigMap already exists (because it can't update the map, only create it).
-# If we create the ConfigMap first (to add additional roles/users/accounts), EKS will just update it by adding the managed node role ARNs.
-data "null_data_source" "wait_for_cluster_and_kubernetes_configmap" {
-  inputs = {
-    cluster_name             = module.eks_cluster.eks_cluster_id
-    kubernetes_config_map_id = module.eks_cluster.kubernetes_config_map_id
-  }
-}
-
 
 module "eks_fargate_profile" {
   source = "cloudposse/eks-fargate-profile/aws"
@@ -93,7 +80,7 @@ module "eks_fargate_profile" {
   version = "0.9.2"
 
   subnet_ids                              = data.aws_subnet_ids.private.ids
-  cluster_name                            = data.null_data_source.wait_for_cluster_and_kubernetes_configmap.outputs["cluster_name"]
+  cluster_name                            = local.cluster_name
   kubernetes_namespace                    = var.kubernetes_namespace
   kubernetes_labels                       = var.kubernetes_labels
   iam_role_kubernetes_namespace_delimiter = "@"

@@ -27,7 +27,6 @@ module "terraform-aws-ref-arch-eks" {
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 3.60.0 |
-| <a name="provider_null"></a> [null](#provider\_null) | 3.1.0 |
 
 ## Modules
 
@@ -46,7 +45,6 @@ module "terraform-aws-ref-arch-eks" {
 | [aws_subnet_ids.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet_ids) | data source |
 | [aws_subnet_ids.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet_ids) | data source |
 | [aws_vpc.vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
-| [null_data_source.wait_for_cluster_and_kubernetes_configmap](https://registry.terraform.io/providers/hashicorp/null/3.1.0/docs/data-sources/data_source) | data source |
 
 ## Inputs
 
