@@ -42,6 +42,7 @@ module "eks_cluster" {
   oidc_provider_enabled        = var.oidc_provider_enabled
   enabled_cluster_log_types    = var.enabled_cluster_log_types
   cluster_log_retention_period = var.cluster_log_retention_period
+  map_additional_iam_roles     = var.map_additional_iam_roles
 
   cluster_encryption_config_enabled                         = var.cluster_encryption_config_enabled
   cluster_encryption_config_kms_key_id                      = var.cluster_encryption_config_kms_key_id

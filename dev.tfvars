@@ -39,3 +39,10 @@ addons = [
 ]
 
 kubernetes_namespace = "sf-ref-arch"
+map_additional_iam_roles = [
+  {
+    username = "admin",
+    groups   = ["system:masters"],
+    rolearn  = "arn:aws:iam::757583164619:role/sourcefuse-poc-2-admin-role"
+  }
+]
