@@ -72,3 +72,8 @@ output "eks_node_group_status" {
   description = "Status of the EKS Node Group"
   value       = module.eks_node_group.eks_node_group_status
 }
+
+output "eks_oidc_issuer_arn" {
+  description = "EKS Cluster OIDC issuer"
+  value       = module.eks_cluster.eks_cluster_identity_oidc_issuer_arn
+}

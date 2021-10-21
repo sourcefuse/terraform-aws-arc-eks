@@ -31,11 +31,3 @@ data "aws_subnet_ids" "public" {
     ]
   }
 }
-
-data "aws_eks_cluster" "eks" {
-  name = module.eks_cluster.eks_cluster_id
-}
-
-data "aws_eks_cluster_auth" "eks" {
-  name = module.eks_cluster.eks_cluster_id
-}

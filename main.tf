@@ -28,9 +28,6 @@ locals {
   }
 }
 
-
-
-
 module "eks_cluster" {
   source                       = "cloudposse/eks-cluster/aws"
   version                      = "0.43.2"
@@ -54,26 +51,30 @@ module "eks_cluster" {
   addons = var.addons
 
   context = module.this.context
+  // TODO: make configurable
+  #  apply_config_map_aws_auth                 = false
+  #  kube_data_auth_enabled                    = false
+  #  kubernetes_config_map_ignore_role_changes = false
+  #  kube_exec_auth_enabled                    = false
 }
 
 module "eks_node_group" {
   source  = "cloudposse/eks-node-group/aws"
   version = "0.26.0"
 
-  subnet_ids        = data.aws_subnet_ids.private.ids
-  cluster_name      = module.eks_cluster.eks_cluster_id
-  instance_types    = var.instance_types
-  desired_size      = var.desired_size
-  min_size          = var.min_size
-  max_size          = var.max_size
-  kubernetes_labels = var.kubernetes_labels
-
+  subnet_ids                 = data.aws_subnet_ids.private.ids
+  cluster_name               = module.eks_cluster.eks_cluster_id
+  instance_types             = var.instance_types
+  desired_size               = var.desired_size
+  min_size                   = var.min_size
+  max_size                   = var.max_size
+  kubernetes_labels          = var.kubernetes_labels
+  cluster_autoscaler_enabled = true
   # Prevent the node groups from being created before the Kubernetes aws-auth ConfigMap
   module_depends_on = module.eks_cluster.kubernetes_config_map_id
 
   context = module.this.context
 }
-
 
 module "eks_fargate_profile" {
   source = "cloudposse/eks-fargate-profile/aws"
@@ -82,9 +83,27 @@ module "eks_fargate_profile" {
 
   subnet_ids                              = data.aws_subnet_ids.private.ids
   cluster_name                            = local.cluster_name
-  kubernetes_namespace                    = var.kubernetes_namespace
+  kubernetes_namespace                    = kubernetes_namespace.default_namespace[0].metadata[0].name
   kubernetes_labels                       = var.kubernetes_labels
   iam_role_kubernetes_namespace_delimiter = "@"
 
   context = module.this.context
+}
+
+
+data "aws_eks_cluster" "eks" {
+  name = module.eks_cluster.eks_cluster_id
+}
+
+data "aws_eks_cluster_auth" "eks" {
+  name = module.eks_cluster.eks_cluster_id
+}
+
+resource "kubernetes_namespace" "default_namespace" {
+  depends_on = [module.eks_cluster]
+  count      = (var.enabled && var.kubernetes_namespace != "kube-system") ? 1 : 0
+
+  metadata {
+    name = var.kubernetes_namespace
+  }
 }

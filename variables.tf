@@ -22,7 +22,7 @@ variable "kubernetes_version" {
 
 variable "enabled_cluster_log_types" {
   type        = list(string)
-  default     = []
+  default     = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   description = "A list of the desired control plane logging to enable. For more information, see https://docs.aws.amazon.com/en_us/eks/latest/userguide/control-plane-logs.html. Possible values [`api`, `audit`, `authenticator`, `controllerManager`, `scheduler`]"
 }
 
@@ -155,4 +155,31 @@ variable "addons" {
 variable "kubernetes_namespace" {
   type        = string
   description = "Kubernetes namespace for selection"
+}
+
+# TODO: move to isolated module
+# Helm
+
+variable "alb_ingress_helm_chart_name" {
+  default     = "aws-load-balancer-controller"
+  type        = string
+  description = "URL of the Helm chart for the ingress controller"
+}
+
+variable "alb_ingress_helm_chart_version" {
+  default     = "1.2.7"
+  type        = string
+  description = "URL of the Helm chart for the ingress controller"
+}
+
+variable "alb_ingress_helm_release_name" {
+  default     = "aws-load-balancer-controller"
+  type        = string
+  description = "URL of the Helm chart for the ingress controller"
+}
+
+variable "alb_ingress_helm_repo_url" {
+  default     = "https://aws.github.io/eks-charts"
+  type        = string
+  description = "URL of the Helm chart for the ingress controller"
 }
