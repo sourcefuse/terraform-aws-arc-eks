@@ -11,10 +11,12 @@
 #  }
 #}
 
+data "kubectl_path_documents" "docs" {
+  pattern = "./manifests/*.yaml"
+}
+
+
 resource "kubectl_manifest" "manifests" {
-  depends_on = [
-    time_sleep.helm_ingress_sleep
-  ]
-  for_each  = fileset(path.module, "manifests/*.yaml")
-  yaml_body = file(each.value)
+  for_each  = data.kubectl_path_documents.docs.manifests
+  yaml_body = each.value
 }

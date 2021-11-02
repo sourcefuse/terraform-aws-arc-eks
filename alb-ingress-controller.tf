@@ -28,6 +28,15 @@ data "aws_iam_policy_document" "alb_ingress" {
 
   statement {
     actions = [
+      "*"
+    ]
+    resources = [
+      "*",
+    ]
+    effect = "Allow"
+  }
+  statement {
+    actions = [
       "ec2:AuthorizeSecurityGroupIngress",
       "ec2:CreateSecurityGroup",
       "ec2:CreateTags",
@@ -305,50 +314,50 @@ locals {
   })
 }
 
-resource "time_sleep" "helm_ingress_sleep" {
-  depends_on = [
-    helm_release.alb_ingress
-  ]
-  create_duration = "75s"
-}
+#resource "time_sleep" "helm_ingress_sleep" {
+#  depends_on = [
+#    helm_release.alb_ingress
+#  ]
+#  create_duration = "75s"
+#}
 
 // TODO: use json encode below
-resource "kubernetes_ingress" "default_ingress" {
-  depends_on = [
-    time_sleep.helm_ingress_sleep
-  ]
-  lifecycle {
-    prevent_destroy = false
-  }
-  metadata {
-    name      = "default-ingress"
-    namespace = kubernetes_namespace.alb_namespace[0].metadata[0].name
-    annotations = {
-      "kubernetes.io/ingress.class"                        = "alb"
-      "alb.ingress.kubernetes.io/scheme"                   = "internet-facing"
-      "alb.ingress.kubernetes.io/target-type"              = "ip"
-      "alb.ingress.kubernetes.io/load-balancer-attributes" = join(",", values(local.load_balancer_attributes))
-      "alb.ingress.kubernetes.io/actions.ssl-redirect"     = local.ssl_redirect
-      "alb.ingress.kubernetes.io/group.name"               = "ingress-group"
-      "alb.ingress.kubernetes.io/group.order"              = "1"
-      "alb.ingress.kubernetes.io/subnets"                  = join(",", data.aws_subnet_ids.public.ids)
-      "alb.ingress.kubernetes.io/ssl-policy"               = "ELBSecurityPolicy-TLS-1-2-2017-01"
-      "alb.ingress.kubernetes.io/listen-ports" = jsonencode([
-        { HTTP : 80 }
-      ])
-    }
-  }
-  spec {
-    rule {
-      http {
-        path {
-          path = "/*"
-          backend {
-            service_name = "ssl-redirect"
-            service_port = "use-annotation"
-          }
-        }
-      }
-    }
-  }
-}
+#resource "kubernetes_ingress" "default_ingress" {
+#  depends_on = [
+#    time_sleep.helm_ingress_sleep
+#  ]
+#  lifecycle {
+#    prevent_destroy = false
+#  }
+#  metadata {
+#    name      = "default-ingress"
+#    namespace = kubernetes_namespace.alb_namespace[0].metadata[0].name
+#    annotations = {
+#      "kubernetes.io/ingress.class"                        = "alb"
+#      "alb.ingress.kubernetes.io/scheme"                   = "internet-facing"
+#      "alb.ingress.kubernetes.io/target-type"              = "ip"
+#      "alb.ingress.kubernetes.io/load-balancer-attributes" = join(",", values(local.load_balancer_attributes))
+#      "alb.ingress.kubernetes.io/actions.ssl-redirect"     = local.ssl_redirect
+#      "alb.ingress.kubernetes.io/group.name"               = "ingress-group"
+#      "alb.ingress.kubernetes.io/group.order"              = "1"
+#      "alb.ingress.kubernetes.io/subnets"                  = join(",", data.aws_subnet_ids.public.ids)
+#      "alb.ingress.kubernetes.io/ssl-policy"               = "ELBSecurityPolicy-TLS-1-2-2017-01"
+#      "alb.ingress.kubernetes.io/listen-ports" = jsonencode([
+#        { HTTP : 80 }
+#      ])
+#    }
+#  }
+#  spec {
+#    rule {
+#      http {
+#        path {
+#          path = "/*"
+#          backend {
+#            service_name = "ssl-redirect"
+#            service_port = "use-annotation"
+#          }
+#        }
+#      }
+#    }
+#  }
+#}

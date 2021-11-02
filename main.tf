@@ -52,10 +52,10 @@ module "eks_cluster" {
 
   context = module.this.context
   // TODO: make configurable
-  #  apply_config_map_aws_auth                 = false
-  #  kube_data_auth_enabled                    = false
-  #  kubernetes_config_map_ignore_role_changes = false
-  #  kube_exec_auth_enabled                    = false
+  #    apply_config_map_aws_auth                 = false
+  #    kube_data_auth_enabled                    = false
+  #    kubernetes_config_map_ignore_role_changes = false
+  #    kube_exec_auth_enabled                    = false
 }
 
 module "eks_node_group" {
@@ -74,6 +74,9 @@ module "eks_node_group" {
   module_depends_on = module.eks_cluster.kubernetes_config_map_id
 
   context = module.this.context
+  // TODO: Clean this up so it is isolated to the correct module
+  node_role_policy_arns = [aws_iam_policy.alb_ingress[0].arn]
+
 }
 
 module "eks_fargate_profile" {
