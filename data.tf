@@ -1,7 +1,7 @@
 data "aws_vpc" "vpc" {
   filter {
     name   = "tag:Name"
-    values = ["refarch-${var.environment}-vpc"]
+    values = [var.vpc_name]
   }
 }
 
@@ -12,10 +12,7 @@ data "aws_subnet_ids" "private" {
   filter {
     name = "tag:Name"
 
-    values = [
-      "refarch-${var.environment}-privatesubnet-private-${var.region}a",
-      "refarch-${var.environment}-privatesubnet-private-${var.region}b"
-    ]
+    values = var.private_subnet_names
   }
 }
 
@@ -25,9 +22,6 @@ data "aws_subnet_ids" "public" {
   filter {
     name = "tag:Name"
 
-    values = [
-      "refarch-${var.environment}-publicsubnet-public-${var.region}a",
-      "refarch-${var.environment}-publicsubnet-public-${var.region}b"
-    ]
+    values = var.public_subnet_names
   }
 }

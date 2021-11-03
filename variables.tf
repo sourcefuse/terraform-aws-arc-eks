@@ -183,3 +183,19 @@ variable "alb_ingress_helm_repo_url" {
   type        = string
   description = "URL of the Helm chart for the ingress controller"
 }
+
+# data lookup variables
+variable "vpc_name" {
+  type        = string
+  description = "Name tag of the VPC used for data lookups"
+}
+
+variable "private_subnet_names" {
+  type        = list(string)
+  description = "Name tag of the private subnets used for data lookups"
+}
+
+variable "public_subnet_names" {
+  type        = list(string)
+  description = "Name tag of the public subnets used for data lookups"
+}
