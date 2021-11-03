@@ -74,9 +74,6 @@ module "eks_node_group" {
   module_depends_on = module.eks_cluster.kubernetes_config_map_id
 
   context = module.this.context
-  // TODO: Clean this up so it is isolated to the correct module
-  node_role_policy_arns = [aws_iam_policy.alb_ingress[0].arn]
-
 }
 
 module "eks_fargate_profile" {

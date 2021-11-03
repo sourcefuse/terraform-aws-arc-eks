@@ -1,3 +1,4 @@
+// TODO: create standalone module
 resource "kubernetes_namespace" "alb_namespace" {
   depends_on = [module.eks_cluster]
   count      = var.enabled ? 1 : 0
@@ -26,15 +27,6 @@ data "aws_iam_policy_document" "alb_ingress" {
     effect = "Allow"
   }
 
-  statement {
-    actions = [
-      "*"
-    ]
-    resources = [
-      "*",
-    ]
-    effect = "Allow"
-  }
   statement {
     actions = [
       "ec2:AuthorizeSecurityGroupIngress",
@@ -241,7 +233,6 @@ resource "aws_iam_role_policy_attachment" "alb_ingress" {
   policy_arn = aws_iam_policy.alb_ingress[0].arn
 }
 
-
 resource "helm_release" "alb_ingress" {
   depends_on = [module.eks_cluster]
   count      = var.enabled ? 1 : 0
@@ -321,7 +312,7 @@ locals {
 #  create_duration = "75s"
 #}
 
-// TODO: use json encode below
+// TODO: clean up and pull from variables
 #resource "kubernetes_ingress" "default_ingress" {
 #  depends_on = [
 #    time_sleep.helm_ingress_sleep
@@ -361,3 +352,23 @@ locals {
 #    }
 #  }
 #}
+
+module "alb_ingress_eks_node_group" {
+  source  = "cloudposse/eks-node-group/aws"
+  version = "0.26.0"
+
+  subnet_ids                 = data.aws_subnet_ids.private.ids
+  cluster_name               = module.eks_cluster.eks_cluster_id
+  instance_types             = var.instance_types
+  desired_size               = var.desired_size
+  min_size                   = var.min_size
+  max_size                   = var.max_size
+  kubernetes_labels          = var.kubernetes_labels
+  cluster_autoscaler_enabled = true
+  # Prevent the node groups from being created before the Kubernetes aws-auth ConfigMap
+  module_depends_on = module.eks_cluster.kubernetes_config_map_id
+
+  context               = module.this.context
+  node_role_policy_arns = [aws_iam_policy.alb_ingress[0].arn]
+  namespace             = kubernetes_namespace.alb_namespace[0].metadata[0].name
+}
