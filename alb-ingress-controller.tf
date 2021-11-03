@@ -170,17 +170,6 @@ data "aws_iam_policy_document" "alb_ingress" {
     ]
     effect = "Allow"
   }
-
-  // TODO: remove this - here for debugging
-  statement {
-    actions = [
-      "*"
-    ]
-    resources = [
-      "*",
-    ]
-    effect = "Allow"
-  }
 }
 
 resource "aws_iam_policy" "alb_ingress" {
@@ -191,6 +180,7 @@ resource "aws_iam_policy" "alb_ingress" {
   description = "Policy for alb-ingress service"
 
   policy = data.aws_iam_policy_document.alb_ingress[0].json
+  tags   = var.tags
 }
 
 # Role
@@ -224,6 +214,8 @@ resource "aws_iam_role" "alb_ingress" {
   count              = var.enabled ? 1 : 0
   name               = "${local.cluster_name}-alb-ingress"
   assume_role_policy = data.aws_iam_policy_document.alb_ingress_assume[0].json
+
+
 }
 
 resource "aws_iam_role_policy_attachment" "alb_ingress" {
@@ -231,6 +223,7 @@ resource "aws_iam_role_policy_attachment" "alb_ingress" {
   count      = var.enabled ? 1 : 0
   role       = aws_iam_role.alb_ingress[0].name
   policy_arn = aws_iam_policy.alb_ingress[0].arn
+
 }
 
 resource "helm_release" "alb_ingress" {
@@ -305,12 +298,12 @@ locals {
   })
 }
 
-#resource "time_sleep" "helm_ingress_sleep" {
-#  depends_on = [
-#    helm_release.alb_ingress
-#  ]
-#  create_duration = "75s"
-#}
+resource "time_sleep" "helm_ingress_sleep" {
+  depends_on = [
+    helm_release.alb_ingress
+  ]
+  create_duration = "75s"
+}
 
 // TODO: clean up and pull from variables
 #resource "kubernetes_ingress" "default_ingress" {

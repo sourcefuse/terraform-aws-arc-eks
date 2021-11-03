@@ -18,8 +18,9 @@ kubernetes_labels                 = {}
 cluster_encryption_config_enabled = true
 addons = [
   {
-    addon_name               = "vpc-cni"
-    addon_version            = "v1.9.1-eksbuild.1"
+    addon_name = "vpc-cni"
+    #    addon_version            = "v1.9.1-eksbuild.1"
+    addon_version            = null
     resolve_conflicts        = "NONE"
     service_account_role_arn = null
   }
@@ -42,3 +43,9 @@ public_subnet_names = [
   "refarch-dev-publicsubnet-public-us-east-1a",
   "refarch-dev-publicsubnet-public-us-east-1b"
 ]
+tags = {
+  Environment = "dev"
+  ENV         = "dev"
+  Project     = "sf-ref-arch"
+  Creator     = "terraform"
+}

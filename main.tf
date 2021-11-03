@@ -52,10 +52,12 @@ module "eks_cluster" {
 
   context = module.this.context
   // TODO: make configurable
-  #    apply_config_map_aws_auth                 = false
-  #    kube_data_auth_enabled                    = false
-  #    kubernetes_config_map_ignore_role_changes = false
-  #    kube_exec_auth_enabled                    = false
+  #      apply_config_map_aws_auth                 = false
+  #      kube_data_auth_enabled                    = false
+  #      kubernetes_config_map_ignore_role_changes = false
+  #      kube_exec_auth_enabled                    = false
+
+  tags = var.tags
 }
 
 module "eks_node_group" {
@@ -74,6 +76,8 @@ module "eks_node_group" {
   module_depends_on = module.eks_cluster.kubernetes_config_map_id
 
   context = module.this.context
+
+  tags = var.tags
 }
 
 module "eks_fargate_profile" {
@@ -88,11 +92,14 @@ module "eks_fargate_profile" {
   iam_role_kubernetes_namespace_delimiter = "@"
 
   context = module.this.context
+
+  tags = var.tags
 }
 
 
 data "aws_eks_cluster" "eks" {
   name = module.eks_cluster.eks_cluster_id
+  tags = var.tags
 }
 
 data "aws_eks_cluster_auth" "eks" {
