@@ -1,4 +1,5 @@
 // TODO: create standalone module
+/*
 resource "kubernetes_namespace" "alb_namespace" {
   depends_on = [module.eks_cluster]
   count      = var.enabled ? 1 : 0
@@ -304,6 +305,7 @@ resource "time_sleep" "helm_ingress_sleep" {
   ]
   create_duration = "75s"
 }
+*/
 
 // TODO: clean up and pull from variables
 #resource "kubernetes_ingress" "default_ingress" {
@@ -346,6 +348,7 @@ resource "time_sleep" "helm_ingress_sleep" {
 #  }
 #}
 
+/*
 module "alb_ingress_eks_node_group" {
   source  = "cloudposse/eks-node-group/aws"
   version = "0.26.0"
@@ -364,4 +367,30 @@ module "alb_ingress_eks_node_group" {
   context               = module.this.context
   node_role_policy_arns = [aws_iam_policy.alb_ingress[0].arn]
   namespace             = kubernetes_namespace.alb_namespace[0].metadata[0].name
+}
+*/
+
+module "alb_ingress_controller" {
+  source   = "../terraform-aws-ref-arch-alb-ingress-controller"
+#  source   = "git::git@github.com:sourcefuse/terraform-aws-ref-arch-alb-ingress-controller.git?ref=feature/tf-module-alb-ingress-controller"
+  context  = module.this.context
+  vpc_name = var.vpc_name
+  name     = "refarch-${terraform.workspace}"
+
+  kubernetes_config_map_id = module.eks_cluster.kubernetes_config_map_id
+
+  eks_cluster_name            = module.eks_cluster.eks_cluster_id
+  eks_node_group_desired_size = 2
+  eks_node_group_max_size     = 25
+  eks_node_group_min_size     = 2
+
+  eks_cluster_identity_oidc_issuer      = module.eks_cluster.eks_cluster_identity_oidc_issuer
+  eks_cluster_identity_oidc_issuer_arns = [module.eks_cluster.eks_cluster_identity_oidc_issuer_arn]
+
+  eks_node_group_instance_types = ["t3.medium"]
+  eks_node_group_subnet_ids     = data.aws_subnet_ids.private.ids
+
+  tags = {
+    EKSCluster = module.eks_cluster.eks_cluster_id
+  }
 }

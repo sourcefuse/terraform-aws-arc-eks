@@ -8,7 +8,7 @@ data "kubectl_path_documents" "docs" {
 
 resource "kubectl_manifest" "manifests" {
   depends_on = [
-    time_sleep.helm_ingress_sleep
+    module.alb_ingress_controller
   ]
   for_each  = data.kubectl_path_documents.docs.manifests
   yaml_body = each.value
