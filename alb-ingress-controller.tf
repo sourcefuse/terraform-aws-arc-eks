@@ -384,11 +384,11 @@ module "alb_ingress_controller" {
   eks_node_group_max_size     = 25
   eks_node_group_min_size     = 2
 
+  eks_node_group_kubernetes_labels      = var.kubernetes_labels
+  eks_node_group_instance_types         = ["t3.medium"]
+  eks_node_group_subnet_ids             = data.aws_subnet_ids.private.ids
   eks_cluster_identity_oidc_issuer      = module.eks_cluster.eks_cluster_identity_oidc_issuer
   eks_cluster_identity_oidc_issuer_arns = [module.eks_cluster.eks_cluster_identity_oidc_issuer_arn]
-
-  eks_node_group_instance_types = ["t3.medium"]
-  eks_node_group_subnet_ids     = data.aws_subnet_ids.private.ids
 
   tags = {
     EKSCluster = module.eks_cluster.eks_cluster_id
