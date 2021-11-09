@@ -77,10 +77,13 @@ module "eks_fargate_profile" {
 
 
 resource "kubernetes_namespace" "default_namespace" {
-  depends_on = [module.eks_cluster]
-  count      = (var.enabled && var.kubernetes_namespace != "kube-system") ? 1 : 0
+  count = (var.enabled && var.kubernetes_namespace != "kube-system") ? 1 : 0
 
   metadata {
     name = var.kubernetes_namespace
   }
+
+  depends_on = [
+    module.eks_cluster
+  ]
 }
