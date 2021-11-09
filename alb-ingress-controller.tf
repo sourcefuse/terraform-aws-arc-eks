@@ -16,7 +16,7 @@ module "alb_ingress_controller" {
   eks_node_group_private_subnet_ids = data.aws_subnet_ids.private.ids
   eks_ingress_public_subnet_ids     = data.aws_subnet_ids.public.ids
 
-  eks_node_group_associated_security_group_ids = []
+  eks_node_group_associated_security_group_ids = [module.eks_cluster.security_group_id]
 
   eks_cluster_identity_oidc_issuer      = module.eks_cluster.eks_cluster_identity_oidc_issuer
   eks_cluster_identity_oidc_issuer_arns = [module.eks_cluster.eks_cluster_identity_oidc_issuer_arn]
