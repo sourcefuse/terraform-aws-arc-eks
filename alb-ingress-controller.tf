@@ -1,6 +1,6 @@
 module "alb_ingress_controller" {
-  source   = "./terraform-aws-ref-arch-alb-ingress-controller"
-#  source   = "git::git@github.com:sourcefuse/terraform-aws-ref-arch-alb-ingress-controller.git?ref=feature/tf-module-alb-ingress-controller"
+  source = "./terraform-aws-ref-arch-alb-ingress-controller"
+  #  source   = "git::git@github.com:sourcefuse/terraform-aws-ref-arch-alb-ingress-controller.git?ref=feature/tf-module-alb-ingress-controller"
   context  = module.this.context
   vpc_name = var.vpc_name
   name     = "refarch-${terraform.workspace}"

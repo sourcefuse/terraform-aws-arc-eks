@@ -31,10 +31,10 @@ module "eks_cluster" {
 
   context = module.this.context
   // TODO: make configurable
-  #      apply_config_map_aws_auth                 = false
-  #      kube_data_auth_enabled                    = false
-  #      kubernetes_config_map_ignore_role_changes = false
-  #      kube_exec_auth_enabled                    = false
+  #  apply_config_map_aws_auth                 = false
+  #  kube_data_auth_enabled                    = false
+  #  kubernetes_config_map_ignore_role_changes = false
+  #  kube_exec_auth_enabled                    = false
 
   tags = var.tags
 }
@@ -66,4 +66,26 @@ resource "kubernetes_namespace" "default_namespace" {
   depends_on = [
     module.eks_cluster
   ]
+}
+
+//TODO: nodes for the core-apps and other services
+// once those are cleaned up, they can have their own node groups or use fargate
+module "eks_node_group" {
+  source  = "cloudposse/eks-node-group/aws"
+  version = "0.26.0"
+
+  subnet_ids                 = data.aws_subnet_ids.private.ids
+  cluster_name               = module.eks_cluster.eks_cluster_id
+  instance_types             = var.instance_types
+  desired_size               = var.desired_size
+  min_size                   = var.min_size
+  max_size                   = var.max_size
+  kubernetes_labels          = var.kubernetes_labels
+  cluster_autoscaler_enabled = true
+  # Prevent the node groups from being created before the Kubernetes aws-auth ConfigMap
+  module_depends_on = module.eks_cluster.kubernetes_config_map_id
+
+  context = module.this.context
+
+  tags = var.tags
 }
