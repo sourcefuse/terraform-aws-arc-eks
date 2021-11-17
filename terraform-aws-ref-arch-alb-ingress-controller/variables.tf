@@ -80,6 +80,18 @@ variable "eks_ingress_public_subnet_ids" {
 }
 
 ## eks nodes
+variable "eks_node_group_cluster_autoscaler_enabled" {
+  description = "Set true to label the node group so that the Kubernetes Cluster Autoscaler will discover and autoscale it."
+  type        = bool
+  default     = true
+}
+
+variable "eks_node_group_create_before_destroy" {
+  description = "Set true in order to create the new node group before destroying the old one. If false, the old node group will be destroyed first, causing downtime. Changing this setting will always cause node group to be replaced."
+  type        = bool
+  default     = true
+}
+
 variable "eks_node_group_desired_size" {
   description = "Desired number of worker nodes"
   type        = number

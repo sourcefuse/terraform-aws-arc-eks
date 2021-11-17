@@ -40,8 +40,7 @@ module "eks_cluster" {
 }
 
 module "eks_fargate_profile" {
-  source = "cloudposse/eks-fargate-profile/aws"
-  # Cloud Posse recommends pinning every module to a specific version
+  source  = "cloudposse/eks-fargate-profile/aws"
   version = "0.9.2"
 
   subnet_ids                              = data.aws_subnet_ids.private.ids
@@ -82,6 +81,7 @@ module "eks_node_group" {
   max_size                   = var.max_size
   kubernetes_labels          = var.kubernetes_labels
   cluster_autoscaler_enabled = true
+
   # Prevent the node groups from being created before the Kubernetes aws-auth ConfigMap
   module_depends_on = module.eks_cluster.kubernetes_config_map_id
 
