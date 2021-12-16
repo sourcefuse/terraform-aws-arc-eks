@@ -38,7 +38,6 @@ module "acm_request_certificate" {
   version                           = "0.15.1"
   domain_name                       = "sfrefarch.com"
   process_domain_validation_options = true
-  wait_for_certificate_issued       = true
   ttl                               = "300"
   subject_alternative_names         = ["sfrefarch.com"]
   depends_on                        = [data.aws_route53_zone.ref_arch_domain]
