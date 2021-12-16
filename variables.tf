@@ -1,35 +1,45 @@
-variable "region" {
-  type        = string
-  description = "AWS region"
+#######################################################
+## defaults
+#######################################################
+variable "availability_zones" {
+  description = "List of availability zones"
+  type        = list(string)
 }
 
 variable "profile" {
-  type        = string
-  default     = "default"
   description = "Name of the AWS profile to use"
+  default     = "default"
 }
 
-variable "availability_zones" {
-  type        = list(string)
-  description = "List of availability zones"
+variable "region" {
+  description = "AWS region"
 }
 
+#######################################################
+## eks / kubernetes / helm
+#######################################################
 variable "kubernetes_version" {
-  type        = string
-  default     = "1.21"
   description = "Desired Kubernetes master version. If you do not specify a value, the latest available version is used"
+  default     = "1.21"
 }
 
 variable "enabled_cluster_log_types" {
-  type        = list(string)
-  default     = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   description = "A list of the desired control plane logging to enable. For more information, see https://docs.aws.amazon.com/en_us/eks/latest/userguide/control-plane-logs.html. Possible values [`api`, `audit`, `authenticator`, `controllerManager`, `scheduler`]"
+  type        = list(string)
+
+  default = [
+    "api",
+    "audit",
+    "authenticator",
+    "controllerManager",
+    "scheduler"
+  ]
 }
 
 variable "cluster_log_retention_period" {
+  description = "Number of days to retain cluster logs. Requires `enabled_cluster_log_types` to be set. See https://docs.aws.amazon.com/en_us/eks/latest/userguide/control-plane-logs.html."
   type        = number
   default     = 0
-  description = "Number of days to retain cluster logs. Requires `enabled_cluster_log_types` to be set. See https://docs.aws.amazon.com/en_us/eks/latest/userguide/control-plane-logs.html."
 }
 
 variable "map_additional_aws_accounts" {
@@ -38,6 +48,7 @@ variable "map_additional_aws_accounts" {
   default     = []
 }
 
+## iam
 variable "map_additional_iam_roles" {
   description = "Additional IAM roles to add to `config-map-aws-auth` ConfigMap"
 
@@ -63,139 +74,137 @@ variable "map_additional_iam_users" {
 }
 
 variable "oidc_provider_enabled" {
+  description = "Create an IAM OIDC identity provider for the cluster, then you can create IAM roles to associate with a service account in the cluster, instead of using `kiam` or `kube2iam`. For more information, see https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html"
   type        = bool
   default     = true
-  description = "Create an IAM OIDC identity provider for the cluster, then you can create IAM roles to associate with a service account in the cluster, instead of using `kiam` or `kube2iam`. For more information, see https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html"
 }
 
+## workers
 variable "local_exec_interpreter" {
+  description = "shell to use for local_exec"
   type        = list(string)
   default     = ["/bin/sh", "-c"]
-  description = "shell to use for local_exec"
 }
 
 variable "disk_size" {
-  type        = number
   description = "Disk size in GiB for worker nodes. Defaults to 20. Terraform will only perform drift detection if a configuration value is provided"
+  type        = number
 }
 
 variable "instance_types" {
-  type        = list(string)
   description = "Set of instance types associated with the EKS Node Group. Defaults to [\"t3.medium\"]. Terraform will only perform drift detection if a configuration value is provided"
+  type        = list(string)
 }
 
 variable "kubernetes_labels" {
-  type        = map(string)
   description = "Key-value mapping of Kubernetes labels. Only labels that are applied with the EKS API are managed by this argument. Other Kubernetes labels applied to the EKS Node Group will not be managed"
+  type        = map(string)
   default     = {}
 }
 
 variable "desired_size" {
-  type        = number
   description = "Desired number of worker nodes"
+  type        = number
 }
 
 variable "max_size" {
-  type        = number
   description = "The maximum size of the AutoScaling Group"
+  type        = number
 }
 
 variable "min_size" {
-  type        = number
   description = "The minimum size of the AutoScaling Group"
+  type        = number
 }
 
+## cluster configuration
 variable "cluster_encryption_config_enabled" {
+  description = "Set to `true` to enable Cluster Encryption Configuration"
   type        = bool
   default     = true
-  description = "Set to `true` to enable Cluster Encryption Configuration"
 }
 
 variable "cluster_encryption_config_kms_key_id" {
+  description = "KMS Key ID to use for cluster encryption config"
   type        = string
   default     = ""
-  description = "KMS Key ID to use for cluster encryption config"
 }
 
 variable "cluster_encryption_config_kms_key_enable_key_rotation" {
+  description = "Cluster Encryption Config KMS Key Resource argument - enable kms key rotation"
   type        = bool
   default     = true
-  description = "Cluster Encryption Config KMS Key Resource argument - enable kms key rotation"
 }
 
 variable "cluster_encryption_config_kms_key_deletion_window_in_days" {
+  description = "Cluster Encryption Config KMS Key Resource argument - key deletion windows in days post destruction"
   type        = number
   default     = 10
-  description = "Cluster Encryption Config KMS Key Resource argument - key deletion windows in days post destruction"
 }
 
 variable "cluster_encryption_config_kms_key_policy" {
+  description = "Cluster Encryption Config KMS Key Resource argument - key policy"
   type        = string
   default     = null
-  description = "Cluster Encryption Config KMS Key Resource argument - key policy"
 }
 
 variable "cluster_encryption_config_resources" {
+  description = "Cluster Encryption Config Resources to encrypt, e.g. ['secrets']"
   type        = list(any)
   default     = ["secrets"]
-  description = "Cluster Encryption Config Resources to encrypt, e.g. ['secrets']"
 }
 
 variable "addons" {
+  description = "Manages [`aws_eks_addon`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_addon) resources."
+
   type = list(object({
     addon_name               = string
     addon_version            = string
     resolve_conflicts        = string
     service_account_role_arn = string
   }))
-  default     = []
-  description = "Manages [`aws_eks_addon`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_addon) resources."
+
+  default = []
 }
 
 variable "kubernetes_namespace" {
-  type        = string
   description = "Kubernetes namespace for selection"
 }
 
-# TODO: move to isolated module
-# Helm
-
+## networking
 variable "alb_ingress_helm_chart_name" {
-  default     = "aws-load-balancer-controller"
-  type        = string
   description = "URL of the Helm chart for the ingress controller"
+  default     = "aws-load-balancer-controller"
 }
 
 variable "alb_ingress_helm_chart_version" {
-  default     = "1.2.7"
-  type        = string
   description = "URL of the Helm chart for the ingress controller"
+  default     = "1.2.7"
 }
 
 variable "alb_ingress_helm_release_name" {
-  default     = "aws-load-balancer-controller"
-  type        = string
   description = "URL of the Helm chart for the ingress controller"
+  default     = "aws-load-balancer-controller"
 }
 
 variable "alb_ingress_helm_repo_url" {
-  default     = "https://aws.github.io/eks-charts"
-  type        = string
   description = "URL of the Helm chart for the ingress controller"
+  default     = "https://aws.github.io/eks-charts"
 }
 
-# data lookup variables
+#######################################################
+## data lookups
+#######################################################
 variable "vpc_name" {
-  type        = string
   description = "Name tag of the VPC used for data lookups"
 }
 
 variable "private_subnet_names" {
-  type        = list(string)
   description = "Name tag of the private subnets used for data lookups"
+  type        = list(string)
 }
 
 variable "public_subnet_names" {
-  type        = list(string)
   description = "Name tag of the public subnets used for data lookups"
+  type        = list(string)
 }

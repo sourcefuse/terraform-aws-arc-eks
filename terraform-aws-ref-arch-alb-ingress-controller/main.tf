@@ -23,168 +23,10 @@ resource "kubernetes_namespace" "alb" {
 ## iam
 #######################################################
 ## policy
-#data "aws_iam_policy_document" "alb_ingress" {
-#  statement {
-#    actions = [
-#      "acm:DescribeCertificate",
-#      "acm:ListCertificates",
-#      "acm:GetCertificate"
-#    ]
-#    resources = [
-#      "*",
-#    ]
-#    effect = "Allow"
-#  }
-#
-#  statement {
-#    actions = [
-#      "ec2:AuthorizeSecurityGroupIngress",
-#      "ec2:CreateSecurityGroup",
-#      "ec2:CreateTags",
-#      "ec2:DeleteTags",
-#      "ec2:DeleteSecurityGroup",
-#      "ec2:DescribeAccountAttributes",
-#      "ec2:DescribeAddresses",
-#      "ec2:DescribeInstances",
-#      "ec2:DescribeInstanceStatus",
-#      "ec2:DescribeInternetGateways",
-#      "ec2:DescribeNetworkInterfaces",
-#      "ec2:DescribeSecurityGroups",
-#      "ec2:DescribeSubnets",
-#      "ec2:DescribeTags",
-#      "ec2:DescribeVpcs",
-#      "ec2:ModifyInstanceAttribute",
-#      "ec2:ModifyNetworkInterfaceAttribute",
-#      "ec2:RevokeSecurityGroupIngress"
-#    ]
-#    resources = [
-#      "*",
-#    ]
-#    effect = "Allow"
-#  }
-#
-#  statement {
-#    actions = [
-#      "elasticloadbalancing:AddListenerCertificates",
-#      "elasticloadbalancing:AddTags",
-#      "elasticloadbalancing:CreateListener",
-#      "elasticloadbalancing:CreateLoadBalancer",
-#      "elasticloadbalancing:CreateRule",
-#      "elasticloadbalancing:CreateTargetGroup",
-#      "elasticloadbalancing:DeleteListener",
-#      "elasticloadbalancing:DeleteLoadBalancer",
-#      "elasticloadbalancing:DeleteRule",
-#      "elasticloadbalancing:DeleteTargetGroup",
-#      "elasticloadbalancing:DeregisterTargets",
-#      "elasticloadbalancing:DescribeListenerCertificates",
-#      "elasticloadbalancing:DescribeListeners",
-#      "elasticloadbalancing:DescribeLoadBalancers",
-#      "elasticloadbalancing:DescribeLoadBalancerAttributes",
-#      "elasticloadbalancing:DescribeRules",
-#      "elasticloadbalancing:DescribeSSLPolicies",
-#      "elasticloadbalancing:DescribeTags",
-#      "elasticloadbalancing:DescribeTargetGroups",
-#      "elasticloadbalancing:DescribeTargetGroupAttributes",
-#      "elasticloadbalancing:DescribeTargetHealth",
-#      "elasticloadbalancing:ModifyListener",
-#      "elasticloadbalancing:ModifyLoadBalancerAttributes",
-#      "elasticloadbalancing:ModifyRule",
-#      "elasticloadbalancing:ModifyTargetGroup",
-#      "elasticloadbalancing:ModifyTargetGroupAttributes",
-#      "elasticloadbalancing:RegisterTargets",
-#      "elasticloadbalancing:RemoveListenerCertificates",
-#      "elasticloadbalancing:RemoveTags",
-#      "elasticloadbalancing:SetIpAddressType",
-#      "elasticloadbalancing:SetSecurityGroups",
-#      "elasticloadbalancing:SetSubnets",
-#      "elasticloadbalancing:SetWebACL"
-#    ]
-#    resources = [
-#      "*",
-#    ]
-#    effect = "Allow"
-#  }
-#
-#  statement {
-#    actions = [
-#      "iam:CreateServiceLinkedRole",
-#      "iam:GetServerCertificate",
-#      "iam:ListServerCertificates"
-#    ]
-#    resources = [
-#      "*",
-#    ]
-#    effect = "Allow"
-#  }
-#
-#  statement {
-#    actions = [
-#      "waf-regional:GetWebACLForResource",
-#      "waf-regional:GetWebACL",
-#      "waf-regional:AssociateWebACL",
-#      "waf-regional:DisassociateWebACL"
-#    ]
-#    resources = [
-#      "*",
-#    ]
-#    effect = "Allow"
-#  }
-#
-#  statement {
-#    actions = [
-#      "wafv2:GetWebACL",
-#      "wafv2:GetWebACLForResource",
-#      "wafv2:AssociateWebACL",
-#      "wafv2:DisassociateWebACL"
-#    ]
-#    resources = [
-#      "*",
-#    ]
-#    effect = "Allow"
-#  }
-#
-#  statement {
-#    actions = [
-#      "shield:DescribeProtection",
-#      "shield:GetSubscriptionState",
-#      "shield:DeleteProtection",
-#      "shield:CreateProtection",
-#      "shield:DescribeSubscription",
-#      "shield:ListProtections"
-#    ]
-#    resources = [
-#      "*",
-#    ]
-#    effect = "Allow"
-#  }
-#
-#  statement {
-#    actions = [
-#      "tag:GetResources",
-#      "tag:TagResources"
-#    ]
-#    resources = [
-#      "*",
-#    ]
-#    effect = "Allow"
-#  }
-#
-#  statement {
-#    actions = [
-#      "waf:GetWebACL"
-#    ]
-#    resources = [
-#      "*",
-#    ]
-#    effect = "Allow"
-#  }
-#}
-
 resource "aws_iam_policy" "alb_ingress" {
   name        = "${var.name}-alb-ingress-policy"
   path        = "/"
   description = "Policy for alb ingress service"
-  #  policy      = data.aws_iam_policy_document.alb_ingress.json
   policy = <<EOF
 {
     "Version": "2012-10-17",
@@ -404,6 +246,7 @@ resource "aws_iam_policy" "alb_ingress" {
     ]
 }
 EOF
+
   tags = merge(local.tags, tomap({
     Name = "${var.name}-alb-ingress-policy"
   }))
@@ -491,49 +334,6 @@ resource "time_sleep" "helm_ingress_sleep" {
   create_duration = "75s"
 }
 
-// TODO: clean up and pull from variables
-#resource "kubernetes_ingress" "default" {
-#  metadata {
-#    name      = "default-ingress"
-#    namespace = kubernetes_namespace.alb.metadata[0].name
-#
-#    annotations = {
-#      "kubernetes.io/ingress.class"                        = "alb"
-#      "alb.ingress.kubernetes.io/scheme"                   = "internet-facing"
-#      "alb.ingress.kubernetes.io/target-type"              = "ip"
-#      "alb.ingress.kubernetes.io/load-balancer-attributes" = join(",", values(local.load_balancer_attributes))
-#      "alb.ingress.kubernetes.io/actions.ssl-redirect"     = local.ssl_redirect
-#      "alb.ingress.kubernetes.io/group.name"               = "ingress-group"
-#      "alb.ingress.kubernetes.io/group.order"              = "1"
-#      "alb.ingress.kubernetes.io/subnets"                  = join(",", var.eks_ingress_public_subnet_ids)
-#      "alb.ingress.kubernetes.io/ssl-policy"               = "ELBSecurityPolicy-TLS-1-2-2017-01"
-#      "alb.ingress.kubernetes.io/listen-ports" = jsonencode([
-#        { HTTP : 80 }
-#      ])
-#    }
-#  }
-#
-#  spec {
-#    rule {
-#      http {
-#        path {
-#          path = "/*"
-#
-#          backend {
-#            service_name = "ssl-redirect"
-#            service_port = "use-annotation"
-#          }
-#        }
-#      }
-#    }
-#  }
-#
-#  lifecycle {
-#    prevent_destroy = false
-#  }
-#}
-
-#/*
 module "eks_node_group" {
   source  = "cloudposse/eks-node-group/aws"
   version = "0.26.0"
@@ -545,14 +345,13 @@ module "eks_node_group" {
   min_size                   = var.eks_node_group_min_size
   max_size                   = var.eks_node_group_max_size
   kubernetes_labels          = var.eks_node_group_kubernetes_labels
-  create_before_destroy      = true // TODO - make this a var since this is destructive
-  cluster_autoscaler_enabled = true
+  create_before_destroy      = var.eks_node_group_create_before_destroy
+  cluster_autoscaler_enabled = var.eks_node_group_cluster_autoscaler_enabled
 
   namespace             = kubernetes_namespace.alb.metadata[0].name
   node_role_policy_arns = [aws_iam_policy.alb_ingress.arn]
   context               = var.context
 
-  // TODO - remove hardcoded ids and make a new var
   associated_security_group_ids = var.eks_node_group_associated_security_group_ids
 
   # Prevent the node groups from being created before the Kubernetes aws-auth ConfigMap
@@ -567,4 +366,3 @@ module "eks_node_group" {
     "alb.ingress.kubernetes.io/target-type" = "ip"
   })
 }
-#*/
