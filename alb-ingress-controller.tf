@@ -27,3 +27,18 @@ module "alb_ingress_controller" {
     ProjectVersion = trimspace(file("${path.root}/.version"))
   }))
 }
+
+data "aws_route53_zone" "ref_arch_domain" {
+  name = "sfrefarch.com"
+}
+
+// TODO: make variables
+module "acm_request_certificate" {
+  source                            = "cloudposse/acm-request-certificate/aws"
+  version                           = "0.15.1"
+  domain_name                       = "sfrefarch.com"
+  process_domain_validation_options = true
+  ttl                               = "300"
+  subject_alternative_names         = ["sfrefarch.com"]
+  depends_on                        = [data.aws_route53_zone.ref_arch_domain]
+}
