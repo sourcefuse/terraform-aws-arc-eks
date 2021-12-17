@@ -12,7 +12,7 @@ module "k8s_ingress" {
   source = "./terraform-refarch-k8s-ingress"
 
   namespace            = "game-2048-2"
-  default_ingress_name = "ingress-tss-2048"  // TODO - remove tss
+  default_ingress_name = "ingress-tss-2048" // TODO - remove tss
   enable_internal_alb  = false
 
   default_ingress_annotations = {
