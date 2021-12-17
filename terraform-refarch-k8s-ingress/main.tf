@@ -1,12 +1,8 @@
 resource "kubernetes_ingress" "default_ingress" {
-  dynamic "metadata" {
-    for_each =  local.default_ingress_metadata
-
-    content {
-      name        = lookup(metadata.value, "name", null)
-      namespace   = lookup(metadata.value, "namespace", "kube-system")
-      annotations = lookup(metadata.value, "annotations", {})
-    }
+  metadata {
+    name        = var.default_ingress_name
+    namespace   = var.namespace
+    annotations = var.private_ingress_annotations
   }
 
   spec {
@@ -35,14 +31,10 @@ resource "kubernetes_ingress" "default_ingress" {
 resource "kubernetes_ingress" "private_ingress" {
   count = var.enable_internal_alb == true ? 1 : 0
 
-  dynamic "metadata" {
-    for_each =  local.private_ingress_metadata
-
-    content {
-      name        = lookup(metadata.value, "name", null)
-      namespace   = lookup(metadata.value, "namespace", "kube-system")
-      annotations = lookup(metadata.value, "annotations", {})
-    }
+  metadata {
+    name        = var.private_ingress_name
+    namespace   = var.namespace
+    annotations = var.private_ingress_annotations
   }
 
   spec {
