@@ -7,17 +7,27 @@ resource "kubectl_manifest" "manifests" {
   ]
 }
 
-// TODO - remove to different file
+// TODO - move to different file
 module "k8s_ingress" {
   source = "./terraform-refarch-k8s-ingress"
 
   namespace            = "game-2048-2"
-  default_ingress_name = "ingress-tss-2048" // TODO - remove tss
+#  default_name = "ingress-tss-2048-2" // TODO - remove tss
+  default_service_type = "NodePort"
   enable_internal_alb  = false
 
-  default_ingress_annotations = {
+  default_annotations = {
     "kubernetes.io/ingress.class"           = "alb"
     "alb.ingress.kubernetes.io/scheme"      = "internet-facing"
     "alb.ingress.kubernetes.io/target-type" = "ip"
   }
+
+  default_service_ports = [
+    {
+      name        = "ingress-tss-2048-2-port-80"
+      port        = 80
+      target_port = 80
+      protocol    = "TCP"
+    }
+  ]
 }
