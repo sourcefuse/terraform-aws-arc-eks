@@ -48,7 +48,7 @@ resource "kubernetes_service" "default" {
 ##########################################################################
 ## ingress
 ##########################################################################
-// TODO - make this more dynamic
+// TODO - SRA-176 - make this more dynamic
 ## external ingress
 resource "kubernetes_ingress" "default" {
   count = kubernetes_service.default.spec.0.type == "LoadBalancer" ? 0 : 1
@@ -77,13 +77,15 @@ resource "kubernetes_ingress" "default" {
   }
 
   lifecycle {
-    #Before you delete the alb controller make sure you set to false "deletion_protection" property on the aws load balancer (you can change the variable and then terraform apply).
-    #Also Make sure that there isn't any ingress resource using the alb controller!
-    #Otherwise terraform (k8s) won't be able to delete the alb and its resources.
+    # Before you delete the alb controller make sure you set to false "deletion_protection"
+    # property on the aws load balancer (you can change the variable and then terraform apply).
+    # Also Make sure that there isn't any ingress resource using the alb controller!
+    # Otherwise terraform (k8s) won't be able to delete the alb and its resources.
     prevent_destroy = false // TODO - set to true
   }
 }
 
+/*
 ## private ingress
 resource "kubernetes_ingress" "private" {
   count = var.enable_internal_alb == true ? 1 : 0
@@ -116,3 +118,4 @@ resource "kubernetes_ingress" "private" {
     prevent_destroy = true
   }
 }
+*/
