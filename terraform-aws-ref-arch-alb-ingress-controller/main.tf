@@ -27,7 +27,7 @@ resource "aws_iam_policy" "alb_ingress" {
   name        = "${var.name}-alb-ingress-policy"
   path        = "/"
   description = "Policy for alb ingress service"
-  policy = <<EOF
+  policy      = <<EOF
 {
     "Version": "2012-10-17",
     "Statement": [
