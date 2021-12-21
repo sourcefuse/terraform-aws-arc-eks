@@ -20,6 +20,11 @@ variable "default_annotations" {
   default     = {}
 }
 
+variable "default_ingress_path" {
+  description = "Ingress virtual path for the application."
+  default     = "/*"
+}
+
 variable "default_labels" {
   description = "Map of string keys and values that can be used to organize and categorize (scope and select) the service. May match selectors of replication controllers and services."
   type        = map(string)

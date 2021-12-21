@@ -50,6 +50,12 @@ module "k8s_ingress_health_check" {
       port        = 80
       target_port = 80
       protocol    = "TCP"
+    },
+    {
+      name        = "health-check-port-81"
+      port        = 81
+      target_port = 81
+      protocol    = "TCP"
     }
   ]
 }

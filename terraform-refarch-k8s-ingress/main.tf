@@ -62,19 +62,39 @@ resource "kubernetes_ingress" "default" {
   }
 
   spec {
-    rule {
-      http {
-        path {
-          path = "/*"
+    dynamic "rule" {
+      for_each = kubernetes_service.default.spec
 
-          backend {
-            service_name = kubernetes_service.default.metadata.0.name
-            service_port = "80"
+      content {
+        http {
+          path {
+            path = try(rule.value.0.path, "/*")
+
+            backend {
+              service_name = kubernetes_service.default.metadata.0.name
+              service_port = tostring(rule.value.port.0.port)
+            }
           }
         }
       }
     }
   }
+
+
+#  spec {
+#    rule {
+#      http {
+#        path {
+#          path = var.default_ingress_path
+#
+#          backend {
+#            service_name = kubernetes_service.default.metadata.0.name
+#            service_port = kubernetes_service.default.spec.0.port
+#          }
+#        }
+#      }
+#    }
+#  }
 
   lifecycle {
     # Before you delete the alb controller make sure you set to false "deletion_protection"
