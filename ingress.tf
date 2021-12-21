@@ -31,9 +31,7 @@ module "k8s_ingress_2048" {
 module "k8s_ingress_health_check" {
   source   = "./terraform-refarch-k8s-ingress"
 
-#  default_name         = "health-check-tss"
   namespace            = "health-check"
-#  default_service_type = "ClusterIP"
   enable_internal_alb  = false
 
   default_service_selector = {
