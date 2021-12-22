@@ -80,22 +80,6 @@ resource "kubernetes_ingress" "default" {
     }
   }
 
-
-#  spec {
-#    rule {
-#      http {
-#        path {
-#          path = var.default_ingress_path
-#
-#          backend {
-#            service_name = kubernetes_service.default.metadata.0.name
-#            service_port = kubernetes_service.default.spec.0.port
-#          }
-#        }
-#      }
-#    }
-#  }
-
   lifecycle {
     # Before you delete the alb controller make sure you set to false "deletion_protection"
     # property on the aws load balancer (you can change the variable and then terraform apply).
