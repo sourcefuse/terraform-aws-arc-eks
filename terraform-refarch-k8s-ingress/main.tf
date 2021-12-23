@@ -66,6 +66,8 @@ resource "kubernetes_ingress" "default" {
       for_each = var.default_ingress_rules  // kubernetes_service.default.spec
 
       content {
+        host = var.default_ingress_host
+
         http {
           path {
             path = try(rule.value.path, "/*")
