@@ -21,6 +21,11 @@ variable "default_service_annotations" {
   default     = {}
 }
 
+variable "default_ingress_host" {
+  description = "FQDN to assign as an alias to the ALB."
+  default     = ""
+}
+
 variable "default_ingress_name" {
   description = "Name for the default Kubernetes Ingress."
   default     = null
