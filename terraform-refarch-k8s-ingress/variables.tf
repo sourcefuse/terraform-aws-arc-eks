@@ -1,34 +1,54 @@
 ##########################################################################
 ## shared
 ##########################################################################
+variable "default_labels" {
+  description = "Map of string keys and values that can be used to organize and categorize (scope and select) the service. May match selectors of replication controllers and services."
+  type        = map(string)
+  default     = {}
+}
+
 variable "namespace" {
   description = "The namespace the resource(s) will belong to."
 }
 
 ##########################################################################
+## route 53
+##########################################################################
+variable "default_parent_route53_zone_id" {
+  description = "The ID to the parent Route 53 zone."
+  default     = null
+}
+
+variable "default_alb_additional_aliases" {
+  description = "List of additional aliases for the default ALB."
+  type        = list(string)
+  default     = []
+}
+
+##########################################################################
 ## default service / ingress
 ##########################################################################
+## ingress
+variable "default_ingress_alias" {
+  description = "FQDN to assign as an alias to the ALB."
+  default     = null
+}
+
 variable "default_ingress_annotations" {
   description = "Default annotations for Kubernetes Ingress."
   type        = map(any)
   default     = {}
 }
 
-
-variable "default_service_annotations" {
-  description = "Default annotations for Kubernetes service."
-  type        = map(any)
-  default     = {}
-}
-
-variable "default_ingress_host" {
-  description = "FQDN to assign as an alias to the ALB."
-  default     = ""
-}
-
 variable "default_ingress_name" {
   description = "Name for the default Kubernetes Ingress."
   default     = null
+}
+
+variable "default_ingress_prevent_destroy" {
+  description = "Prevent destruction of the default ALB."
+  type        = bool
+  default     = false // TODO - change to true??
 }
 
 variable "default_ingress_rules" {
@@ -37,9 +57,10 @@ variable "default_ingress_rules" {
   default     = []
 }
 
-variable "default_labels" {
-  description = "Map of string keys and values that can be used to organize and categorize (scope and select) the service. May match selectors of replication controllers and services."
-  type        = map(string)
+## service
+variable "default_service_annotations" {
+  description = "Default annotations for Kubernetes service."
+  type        = map(any)
   default     = {}
 }
 
