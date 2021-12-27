@@ -7,31 +7,6 @@ module "k8s_ingress_health_check" {
   namespace           = "health-check"
   enable_internal_alb = false
 
-  ## ingress
-  default_ingress_host  = local.healthcheck_dns_name
-  default_ingress_rules = [
-    {
-      path         = "/*"
-      service_name = module.k8s_ingress_health_check.default_service_name
-      service_port = "80"
-    }
-  ]
-
-  // TODO - make some of these default (set in the module)
-  default_ingress_annotations = {
-    "kubernetes.io/ingress.class"          = "alb"
-    "alb.ingress.kubernetes.io/scheme"     = "internet-facing"
-    "alb.ingress.kubernetes.io/group.name" = "ingress-group"
-    #    "alb.ingress.kubernetes.io/group.order"      = "1"
-    "alb.ingress.kubernetes.io/target-type"          = "ip"
-    "alb.ingress.kubernetes.io/ssl-redirect"         = "443"
-    "alb.ingress.kubernetes.io/certificate-arn"      = module.acm_request_certificate.arn
-    "alb.ingress.kubernetes.io/backend-protocol"     = "HTTP"
-    "alb.ingress.kubernetes.io/actions.ssl-redirect" = "{\"Type\": \"redirect\", \"RedirectConfig\": { \"Protocol\": \"HTTPS\", \"Port\": \"443\", \"StatusCode\": \"HTTP_301\"}}"
-    "alb.ingress.kubernetes.io/listen-ports"         = "[{\"HTTP\": 80}, {\"HTTPS\":443}]"
-    "alb.ingress.kubernetes.io/ssl-policy"           = "ELBSecurityPolicy-TLS-1-2-2017-01"
-  }
-
   ## service
   default_service_annotations = {
     "alb.ingress.kubernetes.io/group.name" = "ingress-group"
@@ -44,10 +19,37 @@ module "k8s_ingress_health_check" {
       protocol = "TCP"
     }
   ]
+
+  ## ingress
+  default_ingress_alias = "healthcheck.sfrefarch.com"
+  default_ingress_rules = [
+    {
+      path         = "/*"
+      service_port = "80"
+    }
+  ]
+
+  // TODO - make some of these default (set in the module)
+  default_ingress_annotations = {
+    "kubernetes.io/ingress.class"                    = "alb"
+    "alb.ingress.kubernetes.io/scheme"               = "internet-facing"
+    "alb.ingress.kubernetes.io/group.name"           = "ingress-group"
+    "alb.ingress.kubernetes.io/target-type"          = "ip"
+    "alb.ingress.kubernetes.io/ssl-redirect"         = "443"
+    "alb.ingress.kubernetes.io/certificate-arn"      = module.acm_request_certificate.arn
+    "alb.ingress.kubernetes.io/backend-protocol"     = "HTTP"
+    "alb.ingress.kubernetes.io/actions.ssl-redirect" = "{\"Type\": \"redirect\", \"RedirectConfig\": { \"Protocol\": \"HTTPS\", \"Port\": \"443\", \"StatusCode\": \"HTTP_301\"}}"
+    "alb.ingress.kubernetes.io/listen-ports"         = "[{\"HTTP\": 80}, {\"HTTPS\":443}]"
+    "alb.ingress.kubernetes.io/ssl-policy"           = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  }
+
+  ## route 53
+  default_parent_route53_zone_id = data.aws_route53_zone.ref_arch_domain.id
 }
 
 // move this section to the terraform-refarch-k8s-ingress module
 // --- START --- //
+/*
 locals {
   alb_hostname = substr(split(".", module.k8s_ingress_health_check.default_ingress_hostname)[0], 0, 32)
   alb_name = regex("(.*)-.*", local.alb_hostname)[0]
@@ -70,5 +72,5 @@ module "alb_alias" {
     local.healthcheck_dns_name
   ]
 }
-
+*/
 // --- END --- //
