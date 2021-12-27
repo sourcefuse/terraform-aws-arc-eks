@@ -48,7 +48,6 @@ resource "kubernetes_service" "default" {
 ##########################################################################
 ## ingress
 ##########################################################################
-// TODO - SRA-176 - make this more dynamic
 ## default ingress
 resource "kubernetes_ingress" "default" {
   count = kubernetes_service.default.spec.0.type == "LoadBalancer" ? 0 : 1
