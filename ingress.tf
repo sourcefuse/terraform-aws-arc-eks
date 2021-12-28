@@ -46,31 +46,3 @@ module "k8s_ingress_health_check" {
   ## route 53
   default_parent_route53_zone_id = data.aws_route53_zone.ref_arch_domain.id
 }
-
-// move this section to the terraform-refarch-k8s-ingress module
-// --- START --- //
-/*
-locals {
-  alb_hostname = substr(split(".", module.k8s_ingress_health_check.default_ingress_hostname)[0], 0, 32)
-  alb_name = regex("(.*)-.*", local.alb_hostname)[0]
-  route53_zone = "sfrefarch.com"  // TODO - move to variables
-  healthcheck_dns_name = "healthcheck.${local.route53_zone}"
-}
-
-data "aws_lb" "healthcheck" {
-  name = local.alb_name
-}
-
-module "alb_alias" {
-  source = "git::https://github.com/cloudposse/terraform-aws-route53-alias?ref=0.12.1"
-
-  parent_zone_id  = data.aws_route53_zone.ref_arch_domain.id
-  target_dns_name = data.aws_lb.healthcheck.dns_name
-  target_zone_id  = data.aws_lb.healthcheck.zone_id
-
-  aliases = [
-    local.healthcheck_dns_name
-  ]
-}
-*/
-// --- END --- //
