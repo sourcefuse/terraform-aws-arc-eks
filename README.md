@@ -43,7 +43,7 @@ module "terraform-aws-ref-arch-eks" {
 | <a name="module_eks_cluster"></a> [eks\_cluster](#module\_eks\_cluster) | cloudposse/eks-cluster/aws | 0.43.2 |
 | <a name="module_eks_fargate_profile"></a> [eks\_fargate\_profile](#module\_eks\_fargate\_profile) | cloudposse/eks-fargate-profile/aws | 0.9.2 |
 | <a name="module_eks_node_group"></a> [eks\_node\_group](#module\_eks\_node\_group) | cloudposse/eks-node-group/aws | 0.26.0 |
-| <a name="module_k8s_ingress"></a> [k8s\_ingress](#module\_k8s\_ingress) | ./terraform-refarch-k8s-ingress | n/a |
+| <a name="module_k8s_ingress_health_check"></a> [k8s\_ingress\_health\_check](#module\_k8s\_ingress\_health\_check) | ./terraform-refarch-k8s-ingress | n/a |
 | <a name="module_label"></a> [label](#module\_label) | cloudposse/label/null | 0.25.0 |
 | <a name="module_sandbox_applications"></a> [sandbox\_applications](#module\_sandbox\_applications) | git@github.com:sourcefuse/terraform-k8s-app.git | n/a |
 | <a name="module_this"></a> [this](#module\_this) | cloudposse/label/null | 0.25.0 |
