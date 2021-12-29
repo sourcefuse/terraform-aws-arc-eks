@@ -5,10 +5,10 @@ resource "kubernetes_service" "default" {
   wait_for_load_balancer = true
 
   metadata {
-    name          = var.default_name
-    generate_name = true ? var.default_name == null : false
+    name          = var.default_service_name
+    generate_name = true ? var.default_service_name == null : false
     namespace     = var.namespace
-    annotations   = var.default_annotations
+    annotations   = var.default_service_annotations
     labels        = var.default_labels
   }
 
@@ -48,28 +48,33 @@ resource "kubernetes_service" "default" {
 ##########################################################################
 ## ingress
 ##########################################################################
-// TODO - SRA-176 - make this more dynamic
-## external ingress
+## default ingress
 resource "kubernetes_ingress" "default" {
   count = kubernetes_service.default.spec.0.type == "LoadBalancer" ? 0 : 1
 
   metadata {
-    name          = var.default_name
-    generate_name = true ? var.default_name == null : false
-    namespace     = kubernetes_service.default.metadata.0.namespace
-    annotations   = kubernetes_service.default.metadata.0.annotations
-    labels        = kubernetes_service.default.metadata.0.labels
+    name          = var.default_ingress_name
+    generate_name = true ? var.default_ingress_name == null : false
+    namespace     = var.namespace
+    annotations   = var.default_ingress_annotations
+    labels        = var.default_labels
   }
 
   spec {
-    rule {
-      http {
-        path {
-          path = "/*"
+    dynamic "rule" {
+      for_each = var.default_ingress_rules  // kubernetes_service.default.spec
 
-          backend {
-            service_name = kubernetes_service.default.metadata.0.name
-            service_port = "80"
+      content {
+        host = var.default_ingress_host
+
+        http {
+          path {
+            path = try(rule.value.path, "/*")
+
+            backend {
+              service_name = try(rule.value.service_name, kubernetes_service.default.metadata.0.name)
+              service_port = tostring(rule.value.service_port)
+            }
           }
         }
       }

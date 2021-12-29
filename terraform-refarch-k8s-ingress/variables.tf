@@ -5,19 +5,36 @@ variable "namespace" {
   description = "The namespace the resource(s) will belong to."
 }
 
-// TODO - remove if not needed
-#variable "subnets" {
-#  description = "List of subnets to associate with ingress."
-#  type        = list(string)
-#}
-
 ##########################################################################
 ## default service / ingress
 ##########################################################################
-variable "default_annotations" {
+variable "default_ingress_annotations" {
   description = "Default annotations for Kubernetes Ingress."
   type        = map(any)
   default     = {}
+}
+
+
+variable "default_service_annotations" {
+  description = "Default annotations for Kubernetes service."
+  type        = map(any)
+  default     = {}
+}
+
+variable "default_ingress_host" {
+  description = "FQDN to assign as an alias to the ALB."
+  default     = ""
+}
+
+variable "default_ingress_name" {
+  description = "Name for the default Kubernetes Ingress."
+  default     = null
+}
+
+variable "default_ingress_rules" {
+  description = "Rules for the default Kubernetes Ingress."
+  type        = list(map(any))
+  default     = []
 }
 
 variable "default_labels" {
@@ -26,8 +43,8 @@ variable "default_labels" {
   default     = {}
 }
 
-variable "default_name" {
-  description = "Name for the default Kubernetes Ingress."
+variable "default_service_name" {
+  description = "Name for the default Kubernetes Service."
   default     = null
 }
 
