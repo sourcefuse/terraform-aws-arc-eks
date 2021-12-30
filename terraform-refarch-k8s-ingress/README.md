@@ -30,10 +30,14 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_default_annotations"></a> [default\_annotations](#input\_default\_annotations) | Default annotations for Kubernetes Ingress. | `map(any)` | `{}` | no |
+| <a name="input_default_ingress_annotations"></a> [default\_ingress\_annotations](#input\_default\_ingress\_annotations) | Default annotations for Kubernetes Ingress. | `map(any)` | `{}` | no |
+| <a name="input_default_ingress_host"></a> [default\_ingress\_host](#input\_default\_ingress\_host) | FQDN to assign as an alias to the ALB. | `string` | `""` | no |
+| <a name="input_default_ingress_name"></a> [default\_ingress\_name](#input\_default\_ingress\_name) | Name for the default Kubernetes Ingress. | `any` | `null` | no |
+| <a name="input_default_ingress_rules"></a> [default\_ingress\_rules](#input\_default\_ingress\_rules) | Rules for the default Kubernetes Ingress. | `list(map(any))` | `[]` | no |
 | <a name="input_default_labels"></a> [default\_labels](#input\_default\_labels) | Map of string keys and values that can be used to organize and categorize (scope and select) the service. May match selectors of replication controllers and services. | `map(string)` | `{}` | no |
-| <a name="input_default_name"></a> [default\_name](#input\_default\_name) | Name for the default Kubernetes Ingress. | `any` | `null` | no |
+| <a name="input_default_service_annotations"></a> [default\_service\_annotations](#input\_default\_service\_annotations) | Default annotations for Kubernetes service. | `map(any)` | `{}` | no |
 | <a name="input_default_service_load_balancer_source_ranges"></a> [default\_service\_load\_balancer\_source\_ranges](#input\_default\_service\_load\_balancer\_source\_ranges) | If specified and supported by the platform, this will restrict traffic through the cloud-provider load-balancer will be restricted to the specified client IPs. This field will be ignored if the cloud-provider does not support the feature. | `list(string)` | `[]` | no |
+| <a name="input_default_service_name"></a> [default\_service\_name](#input\_default\_service\_name) | Name for the default Kubernetes Service. | `any` | `null` | no |
 | <a name="input_default_service_ports"></a> [default\_service\_ports](#input\_default\_service\_ports) | The list of ports that are exposed by this service. | `list(map(any))` | <pre>[<br>  {<br>    "port": 80<br>  }<br>]</pre> | no |
 | <a name="input_default_service_selector"></a> [default\_service\_selector](#input\_default\_service\_selector) | Route service traffic to pods with label keys and values matching this selector. Only applies to types ClusterIP, NodePort, and LoadBalancer. | `map(any)` | `{}` | no |
 | <a name="input_default_service_type"></a> [default\_service\_type](#input\_default\_service\_type) | Determines how the service is exposed. Valid options are ExternalName, ClusterIP, NodePort, and LoadBalancer. ExternalName maps to the specified external\_name (not yet supported). | `string` | `"ClusterIP"` | no |
@@ -44,7 +48,10 @@ No modules.
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_default_ingress_hostname"></a> [default\_ingress\_hostname](#output\_default\_ingress\_hostname) | n/a |
+| <a name="output_default_service_name"></a> [default\_service\_name](#output\_default\_service\_name) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Development

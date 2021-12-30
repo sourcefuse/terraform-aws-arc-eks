@@ -8,7 +8,7 @@ module "k8s_ingress_health_check" {
   enable_internal_alb = false
 
   ## ingress
-  default_ingress_host  = local.healthcheck_dns_name
+  default_ingress_host = local.healthcheck_dns_name
   default_ingress_rules = [
     {
       path         = "/*"
@@ -49,9 +49,9 @@ module "k8s_ingress_health_check" {
 // move this section to the terraform-refarch-k8s-ingress module
 // --- START --- //
 locals {
-  alb_hostname = substr(split(".", module.k8s_ingress_health_check.default_ingress_hostname)[0], 0, 32)
-  alb_name = regex("(.*)-.*", local.alb_hostname)[0]
-  route53_zone = "sfrefarch.com"  // TODO - move to variables
+  alb_hostname         = substr(split(".", module.k8s_ingress_health_check.default_ingress_hostname)[0], 0, 32)
+  alb_name             = regex("(.*)-.*", local.alb_hostname)[0]
+  route53_zone         = "sfrefarch.com" // TODO - move to variables
   healthcheck_dns_name = "healthcheck.${local.route53_zone}"
 }
 

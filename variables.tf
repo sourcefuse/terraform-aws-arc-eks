@@ -22,7 +22,7 @@ variable "environment" {
 
 variable "project" {
   description = "The project this eks cluster being created for"
-  default = ""
+  default     = ""
 }
 
 #######################################################

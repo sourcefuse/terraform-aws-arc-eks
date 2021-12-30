@@ -62,7 +62,7 @@ resource "kubernetes_ingress" "default" {
 
   spec {
     dynamic "rule" {
-      for_each = var.default_ingress_rules  // kubernetes_service.default.spec
+      for_each = var.default_ingress_rules // kubernetes_service.default.spec
 
       content {
         host = var.default_ingress_host
