@@ -15,6 +15,16 @@ variable "region" {
   description = "AWS region"
 }
 
+variable "environment" {
+  description = "The environment this cluster is being created for"
+  default     = "dev"
+}
+
+variable "project" {
+  description = "The project this eks cluster being created for"
+  default = ""
+}
+
 #######################################################
 ## eks / kubernetes / helm
 #######################################################
