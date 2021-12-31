@@ -3,5 +3,5 @@ output "default_service_name" {
 }
 
 output "default_ingress_hostname" {
-  value = try(kubernetes_ingress.default[0].status[0]["load_balancer"][0]["ingress"][0]["hostname"], null)
+  value = local.default_alb_hostname
 }
