@@ -67,7 +67,7 @@ module "k8s_ingress" {
   }
 
   ## route 53
-  default_parent_route53_zone_id = data.aws_route53_zone.ref_arch_domain.id
+#  default_parent_route53_zone_id = data.aws_route53_zone.ref_arch_domain.id
 }
 
 ## health checks
@@ -80,7 +80,7 @@ module "k8s_ingress_health_check" {
 
   ## service
   default_service_annotations = {
-    "alb.ingress.kubernetes.io/group.name" = "ingress-group"
+    "alb.ingress.kubernetes.io/group.name" = local.shared_ingress_group_name
   }
 
   default_service_ports = [
@@ -104,7 +104,7 @@ module "k8s_ingress_health_check" {
   default_ingress_annotations = {
     "kubernetes.io/ingress.class"                    = "alb"
     "alb.ingress.kubernetes.io/scheme"               = "internet-facing"
-    "alb.ingress.kubernetes.io/group.name"           = "ingress-group"
+    "alb.ingress.kubernetes.io/group.name"           = local.shared_ingress_group_name
     "alb.ingress.kubernetes.io/target-type"          = "ip"
     "alb.ingress.kubernetes.io/ssl-redirect"         = "443"
     "alb.ingress.kubernetes.io/certificate-arn"      = module.acm_request_certificate.arn
