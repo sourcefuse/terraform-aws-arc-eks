@@ -126,8 +126,8 @@ module "default_alb_alias" {
   count  = var.default_parent_route53_zone_id != null ? 1 : 0
 
   parent_zone_id  = var.default_parent_route53_zone_id
-  target_dns_name = data.aws_lb.default.dns_name
-  target_zone_id  = data.aws_lb.default.zone_id
+  target_dns_name = data.aws_lb.default[0].dns_name
+  target_zone_id  = data.aws_lb.default[0].zone_id
 
   aliases = local.default_alb_aliases
 }

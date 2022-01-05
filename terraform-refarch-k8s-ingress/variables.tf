@@ -31,7 +31,7 @@ variable "default_alb_additional_aliases" {
 ## ingress
 variable "default_ingress_alias" {
   description = "FQDN to assign as an alias to the ALB."
-  default     = null
+  default     = ""
 }
 
 variable "default_ingress_annotations" {
