@@ -38,7 +38,7 @@ module "k8s_ingress" {
 
   default_service_ports = [
     {
-      port     = 80
+      port = 80
     }
   ]
 
@@ -51,9 +51,9 @@ module "k8s_ingress" {
   ]
 
   default_ingress_annotations = {
-    "kubernetes.io/ingress.class"                    = "alb"
-    "alb.ingress.kubernetes.io/scheme"               = "internet-facing"
-    "alb.ingress.kubernetes.io/group.name"           = local.shared_ingress_group_name
+    "kubernetes.io/ingress.class"          = "alb"
+    "alb.ingress.kubernetes.io/scheme"     = "internet-facing"
+    "alb.ingress.kubernetes.io/group.name" = local.shared_ingress_group_name
   }
 }
 

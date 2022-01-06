@@ -35,7 +35,7 @@ No requirements.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_default_alb_additional_aliases"></a> [default\_alb\_additional\_aliases](#input\_default\_alb\_additional\_aliases) | List of additional aliases for the default ALB. | `list(string)` | `[]` | no |
-| <a name="input_default_ingress_alias"></a> [default\_ingress\_alias](#input\_default\_ingress\_alias) | FQDN to assign as an alias to the ALB. | `any` | `null` | no |
+| <a name="input_default_ingress_alias"></a> [default\_ingress\_alias](#input\_default\_ingress\_alias) | FQDN to assign as an alias to the ALB. | `string` | `""` | no |
 | <a name="input_default_ingress_annotations"></a> [default\_ingress\_annotations](#input\_default\_ingress\_annotations) | Default annotations for Kubernetes Ingress. | `map(any)` | `{}` | no |
 | <a name="input_default_ingress_name"></a> [default\_ingress\_name](#input\_default\_ingress\_name) | Name for the default Kubernetes Ingress. | `any` | `null` | no |
 | <a name="input_default_ingress_prevent_destroy"></a> [default\_ingress\_prevent\_destroy](#input\_default\_ingress\_prevent\_destroy) | Prevent destruction of the default ALB. | `bool` | `false` | no |
@@ -57,7 +57,9 @@ No requirements.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_default_ingress_hostname"></a> [default\_ingress\_hostname](#output\_default\_ingress\_hostname) | n/a |
+| <a name="output_debug"></a> [debug](#output\_debug) | n/a |
+| <a name="output_default_alb_hostname"></a> [default\_alb\_hostname](#output\_default\_alb\_hostname) | n/a |
+| <a name="output_default_alb_shortname"></a> [default\_alb\_shortname](#output\_default\_alb\_shortname) | n/a |
 | <a name="output_default_service_name"></a> [default\_service\_name](#output\_default\_service\_name) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
