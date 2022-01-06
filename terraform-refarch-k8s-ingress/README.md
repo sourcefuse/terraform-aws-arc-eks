@@ -13,11 +13,14 @@ No requirements.
 
 | Name | Version |
 |------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | n/a |
 
 ## Modules
 
-No modules.
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_default_alb_alias"></a> [default\_alb\_alias](#module\_default\_alb\_alias) | git::https://github.com/cloudposse/terraform-aws-route53-alias | 0.12.1 |
 
 ## Resources
 
@@ -25,16 +28,20 @@ No modules.
 |------|------|
 | [kubernetes_ingress.default](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/ingress) | resource |
 | [kubernetes_service.default](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service) | resource |
+| [aws_lb.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/lb) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_default_alb_additional_aliases"></a> [default\_alb\_additional\_aliases](#input\_default\_alb\_additional\_aliases) | List of additional aliases for the default ALB. | `list(string)` | `[]` | no |
+| <a name="input_default_ingress_alias"></a> [default\_ingress\_alias](#input\_default\_ingress\_alias) | FQDN to assign as an alias to the ALB. | `string` | `""` | no |
 | <a name="input_default_ingress_annotations"></a> [default\_ingress\_annotations](#input\_default\_ingress\_annotations) | Default annotations for Kubernetes Ingress. | `map(any)` | `{}` | no |
-| <a name="input_default_ingress_host"></a> [default\_ingress\_host](#input\_default\_ingress\_host) | FQDN to assign as an alias to the ALB. | `string` | `""` | no |
 | <a name="input_default_ingress_name"></a> [default\_ingress\_name](#input\_default\_ingress\_name) | Name for the default Kubernetes Ingress. | `any` | `null` | no |
+| <a name="input_default_ingress_prevent_destroy"></a> [default\_ingress\_prevent\_destroy](#input\_default\_ingress\_prevent\_destroy) | Prevent destruction of the default ALB. | `bool` | `false` | no |
 | <a name="input_default_ingress_rules"></a> [default\_ingress\_rules](#input\_default\_ingress\_rules) | Rules for the default Kubernetes Ingress. | `list(map(any))` | `[]` | no |
 | <a name="input_default_labels"></a> [default\_labels](#input\_default\_labels) | Map of string keys and values that can be used to organize and categorize (scope and select) the service. May match selectors of replication controllers and services. | `map(string)` | `{}` | no |
+| <a name="input_default_parent_route53_zone_id"></a> [default\_parent\_route53\_zone\_id](#input\_default\_parent\_route53\_zone\_id) | The ID to the parent Route 53 zone. | `any` | `null` | no |
 | <a name="input_default_service_annotations"></a> [default\_service\_annotations](#input\_default\_service\_annotations) | Default annotations for Kubernetes service. | `map(any)` | `{}` | no |
 | <a name="input_default_service_load_balancer_source_ranges"></a> [default\_service\_load\_balancer\_source\_ranges](#input\_default\_service\_load\_balancer\_source\_ranges) | If specified and supported by the platform, this will restrict traffic through the cloud-provider load-balancer will be restricted to the specified client IPs. This field will be ignored if the cloud-provider does not support the feature. | `list(string)` | `[]` | no |
 | <a name="input_default_service_name"></a> [default\_service\_name](#input\_default\_service\_name) | Name for the default Kubernetes Service. | `any` | `null` | no |
@@ -50,7 +57,9 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_default_ingress_hostname"></a> [default\_ingress\_hostname](#output\_default\_ingress\_hostname) | n/a |
+| <a name="output_debug"></a> [debug](#output\_debug) | n/a |
+| <a name="output_default_alb_hostname"></a> [default\_alb\_hostname](#output\_default\_alb\_hostname) | n/a |
+| <a name="output_default_alb_shortname"></a> [default\_alb\_shortname](#output\_default\_alb\_shortname) | n/a |
 | <a name="output_default_service_name"></a> [default\_service\_name](#output\_default\_service\_name) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 

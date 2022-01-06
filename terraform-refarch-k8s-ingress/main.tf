@@ -62,10 +62,10 @@ resource "kubernetes_ingress" "default" {
 
   spec {
     dynamic "rule" {
-      for_each = var.default_ingress_rules // kubernetes_service.default.spec
+      for_each = var.default_ingress_rules
 
       content {
-        host = var.default_ingress_host
+        host = var.default_ingress_alias
 
         http {
           path {
@@ -73,20 +73,12 @@ resource "kubernetes_ingress" "default" {
 
             backend {
               service_name = try(rule.value.service_name, kubernetes_service.default.metadata.0.name)
-              service_port = tostring(rule.value.service_port)
+              service_port = tostring(try(rule.value.service_port, kubernetes_service.default.spec.0.port))
             }
           }
         }
       }
     }
-  }
-
-  lifecycle {
-    # Before you delete the alb controller make sure you set to false "deletion_protection"
-    # property on the aws load balancer (you can change the variable and then terraform apply).
-    # Also Make sure that there isn't any ingress resource using the alb controller!
-    # Otherwise terraform (k8s) won't be able to delete the alb and its resources.
-    prevent_destroy = false // TODO - set to true
   }
 }
 
@@ -124,3 +116,18 @@ resource "kubernetes_ingress" "private" {
   }
 }
 */
+
+
+##########################################################################
+## route 53
+##########################################################################
+module "default_alb_alias" {
+  source = "git::https://github.com/cloudposse/terraform-aws-route53-alias?ref=0.12.1"
+  count  = var.default_parent_route53_zone_id != null ? 1 : 0
+
+  parent_zone_id  = var.default_parent_route53_zone_id
+  target_dns_name = data.aws_lb.default[0].dns_name
+  target_zone_id  = data.aws_lb.default[0].zone_id
+
+  aliases = local.default_alb_aliases
+}
