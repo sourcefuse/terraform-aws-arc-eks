@@ -7,11 +7,12 @@ module "label" {
 }
 
 module "tags" {
-  source = "git::ssh://git@github.com/sourcefuse/terraform-aws-ref-arch-eks.git//terraform-refarch-tags?ref=50a1aaf14d3c348f866f4cd02869924b7bf3359c"
+  source = "git::https://github.com/sourcefuse/terraform-aws-refarch-tags.git?ref=1.0.1"
 
-  environment = var.environment
-  project     = var.project
-  role        = "${var.project}-${var.environment}-eks-cluster"
+  environment = "dev"
+  project     = "terraform-aws-ref-arch-eks"
+
+  extra_tags = local.tags
 }
 
 module "eks_cluster" {
@@ -44,7 +45,7 @@ module "eks_cluster" {
   #    kubernetes_config_map_ignore_role_changes = true
   #    kube_exec_auth_enabled                    = true
 
-  tags = merge(module.tags.tags, var.tags)
+  tags = module.tags.tags
 }
 
 module "eks_fargate_profile" {
@@ -59,7 +60,7 @@ module "eks_fargate_profile" {
 
   context = module.this.context
 
-  tags = merge(module.tags.tags, var.tags)
+  tags = module.tags.tags
 }
 
 
@@ -95,5 +96,5 @@ module "eks_node_group" {
 
   context = module.this.context
 
-  tags = merge(module.tags.tags, var.tags)
+  tags = module.tags.tags
 }

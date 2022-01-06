@@ -21,10 +21,8 @@ module "alb_ingress_controller" {
   eks_cluster_identity_oidc_issuer      = module.eks_cluster.eks_cluster_identity_oidc_issuer
   eks_cluster_identity_oidc_issuer_arns = [module.eks_cluster.eks_cluster_identity_oidc_issuer_arn]
 
-  tags = merge(local.tags, tomap({
-    EKSCluster     = module.eks_cluster.eks_cluster_id
-    Project        = "terraform-aws-ref-arch-eks"
-    ProjectVersion = trimspace(file("${path.root}/.version"))
+  tags = merge(module.tags.tags, tomap({
+    "kubernetes.io/cluster/${module.label.id}" = "shared"
   }))
 }
 
@@ -41,4 +39,6 @@ module "acm_request_certificate" {
   ttl                               = "300"
   subject_alternative_names         = ["*.sfrefarch.com"]
   depends_on                        = [data.aws_route53_zone.ref_arch_domain]
+
+  tags = module.tags.tags
 }

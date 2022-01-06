@@ -37,7 +37,6 @@ data "kubectl_path_documents" "docs" {
 
 data "aws_eks_cluster" "eks" {
   name = module.eks_cluster.eks_cluster_id
-  tags = var.tags
 }
 
 data "aws_eks_cluster_auth" "eks" {
