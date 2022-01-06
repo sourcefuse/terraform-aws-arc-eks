@@ -6,6 +6,18 @@ module "label" {
   context = module.this.context
 }
 
+module "tags" {
+  source = "git::https://github.com/sourcefuse/terraform-aws-refarch-tags?ref=1.0.1"
+
+  environment = "dev"
+  project     = "terraform-aws-ref-arch-eks"
+
+
+  extra_tags = merge(var.tags, tomap({
+    ProjectVersion = trimspace(file("${path.root}/.version"))
+  }))
+}
+
 module "eks_cluster" {
   source  = "cloudposse/eks-cluster/aws"
   version = "0.43.2"
@@ -51,7 +63,7 @@ module "eks_fargate_profile" {
 
   context = module.this.context
 
-  tags = var.tags
+  tags = module.tags.tags
 }
 
 
@@ -87,5 +99,5 @@ module "eks_node_group" {
 
   context = module.this.context
 
-  tags = var.tags
+  tags = module.tags.tags
 }
