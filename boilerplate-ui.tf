@@ -72,8 +72,8 @@ module "k8s_ingress_boilerplate_ui" {
   ## shared
   namespace = local.boilerplate_ui_namespace
   #  default_ingress_name = "boilerplate-ui-ing"
-  #  default_service_name = "boilerplate-ui-svc"
-  enable_internal_alb = false
+  default_service_name = "boilerplate-ui-svc"
+  enable_internal_alb  = false
 
   ## service
   default_service_annotations = {
