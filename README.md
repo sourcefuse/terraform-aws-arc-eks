@@ -40,7 +40,7 @@ module "terraform-aws-ref-arch-eks" {
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_acm_request_certificate"></a> [acm\_request\_certificate](#module\_acm\_request\_certificate) | cloudposse/acm-request-certificate/aws | 0.15.1 |
-| <a name="module_boilerplate_ui_applications"></a> [boilerplate\_ui\_applications](#module\_boilerplate\_ui\_applications) | git@github.com:sourcefuse/terraform-k8s-app.git | n/a |
+| <a name="module_boilerplate_ui"></a> [boilerplate\_ui](#module\_boilerplate\_ui) | ./boilerplate-ui | n/a |
 | <a name="module_core_apps"></a> [core\_apps](#module\_core\_apps) | git@github.com:sourcefuse/terraform-k8s-app.git | n/a |
 | <a name="module_eks_cluster"></a> [eks\_cluster](#module\_eks\_cluster) | cloudposse/eks-cluster/aws | 0.43.2 |
 | <a name="module_eks_fargate_profile"></a> [eks\_fargate\_profile](#module\_eks\_fargate\_profile) | cloudposse/eks-fargate-profile/aws | 0.9.2 |
@@ -55,7 +55,6 @@ module "terraform-aws-ref-arch-eks" {
 | [aws_route53_record.boilerplate_ui](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
 | [aws_route53_record.health_check](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
 | [kubectl_manifest.manifests](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubernetes_namespace.boilerplate_ui](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_namespace.default_namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_namespace.health_check](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_namespace.ingress](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |

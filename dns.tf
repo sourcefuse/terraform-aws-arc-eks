@@ -6,7 +6,7 @@ resource "aws_route53_record" "health_check" {
   type    = "A"
 
   alias {
-    name                   = "a3da605eaff254e5185645d350ae79b7-c01680831696b142.elb.us-east-1.amazonaws.com"
+    name                   = "ab3abd0f6c60f4fe895e2888dd277340-cb52264e230e45f1.elb.us-east-1.amazonaws.com"
     zone_id                = "Z26RNL4JYFTOTI"
     evaluate_target_health = false
   }
@@ -22,7 +22,7 @@ resource "aws_route53_record" "boilerplate_ui" {
   type    = "A"
 
   alias {
-    name                   = "a3da605eaff254e5185645d350ae79b7-c01680831696b142.elb.us-east-1.amazonaws.com"
+    name                   = "ab3abd0f6c60f4fe895e2888dd277340-cb52264e230e45f1.elb.us-east-1.amazonaws.com"
     zone_id                = "Z26RNL4JYFTOTI"
     evaluate_target_health = false
   }

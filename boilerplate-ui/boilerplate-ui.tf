@@ -1,8 +1,16 @@
-#// TODO: encapsulate into module
-#// TODO: run on fargate
+terraform {
+  required_providers {
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.7.0"
+    }
+  }
+}
+
+
 locals {
   boilerplate_ui_namespace    = "boilerplate-ui"
-  boilerplate_ui_docker_image = "sourcefuse/react-boilerplate-ui:latest"
+  boilerplate_ui_docker_image = "sourcefuse/react-boilerplate-ui:0.1.0"
 }
 
 resource "kubernetes_namespace" "boilerplate_ui" {
@@ -69,54 +77,13 @@ locals {
     }
   }
 }
-#
-#module "k8s_ingress_boilerplate_ui" {
-#  source = "./terraform-refarch-k8s-ingress"
-#
-#  ## shared
-#  namespace = local.boilerplate_ui_namespace
-#  #default_ingress_name = "boilerplate-ui-ing"
-#  #  default_service_name = "boilerplate-ui-svc"
-#  enable_internal_alb = false
-#
-#  ## service
-#  default_service_annotations = {
-#    "alb.ingress.kubernetes.io/group.name" = local.shared_ingress_group_name
-#  }
-#
-#  default_service_ports = [
-#    {
-#      name     = "boilerplate-ui-port-80"
-#      port     = 80
-#      protocol = "TCP"
-#    }
-#  ]
-#
-#  ## ingress
-#  default_ingress_alias = "boilerplate-ui.sfrefarch.com"
-#  default_ingress_rules = [
-#    {
-#      path         = "/"
-#      service_port = "80"
-#    }
-#  ]
-#
-#  // TODO - make some of these default (set in the module)
-#  default_ingress_annotations = {
-#    "alb.ingress.kubernetes.io/healthcheck-port" = "80"
-#    "alb.ingress.kubernetes.io/healthcheck-path" = "/"
-#    "alb.ingress.kubernetes.io/success-codes"    = "200-499"
-#    "kubernetes.io/ingress.class"                = "alb"
-#    "alb.ingress.kubernetes.io/scheme"           = "internet-facing"
-#    "alb.ingress.kubernetes.io/group.name"       = local.shared_ingress_group_name
-#    "alb.ingress.kubernetes.io/group.order"      = "5"
-#        "alb.ingress.kubernetes.io/target-type"      = "ip"
-#    "alb.ingress.kubernetes.io/certificate-arn"  = module.acm_request_certificate.arn
-#    "alb.ingress.kubernetes.io/backend-protocol" = "HTTP"
-#    "alb.ingress.kubernetes.io/listen-ports"     = "[{\"HTTPS\":443}]" //TODO: json encode
-#  }
-#
-#  ## route 53
-#  default_parent_route53_zone_id = data.aws_route53_zone.ref_arch_domain.id
-#  depends_on                     = [module.k8s_ingress]
-#}
+
+// TODO: refactor
+data "kubectl_path_documents" "docs" {
+  pattern = "./boilerplate-ui/manifests/*.yaml"
+}
+
+resource "kubectl_manifest" "manifests" {
+  for_each  = data.kubectl_path_documents.docs.manifests
+  yaml_body = each.value
+}
