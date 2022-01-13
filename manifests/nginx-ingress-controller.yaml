@@ -275,7 +275,9 @@ metadata:
     service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:us-east-1:757583164619:certificate/8c5d3ccf-6f02-4677-8e87-0cd4761b1221
     service.beta.kubernetes.io/aws-load-balancer-ssl-ports: https
     service.beta.kubernetes.io/aws-load-balancer-type: nlb
+    domainName: "sfrefarch.com"
   labels:
+    dns: "route53"
     helm.sh/chart: ingress-nginx-3.23.0
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/instance: ingress-nginx
