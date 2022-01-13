@@ -34,7 +34,7 @@ module "eks_cluster" {
   #    apply_config_map_aws_auth                 = true
   #    kube_data_auth_enabled                    = true
   #    kubernetes_config_map_ignore_role_changes = true
-  #    kube_exec_auth_enabled                    = true
+  kube_exec_auth_enabled = true
 
   tags = var.tags
 }

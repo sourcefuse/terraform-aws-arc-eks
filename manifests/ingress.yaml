@@ -1,27 +1,17 @@
----
 apiVersion: networking.k8s.io/v1
-kind: IngressClass
+kind: Ingress
 metadata:
-  labels:
-    app.kubernetes.io/component: controller
-  name: "ingress-nginx"
-  namespace: "ingress-nginx"
-  annotations:
-    ingressclass.kubernetes.io/is-default-class: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  name: ingress-health-check
+  namespace: ingress-nginx
 spec:
-  controller: k8s.io/ingress-nginx
-  spec:
-    rules:
-      - host: healthcheck.sfrefarch.com
-        http:
-          paths:
-            - path: /
-              pathType: Prefix
-              backend:
-                service:
-                  name: health-check-svc
-                  port:
-                    number: 80
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: health-check-svc
+            port:
+              number: 80
+  ingressClassName: nginx
