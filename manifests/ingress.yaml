@@ -1,17 +1,55 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  name: ingress-default
+  namespace: ingress-nginx
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: health-check-svc
+                port:
+                  number: 80
+  ingressClassName: nginx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
   name: ingress-health-check
   namespace: ingress-nginx
 spec:
   rules:
-  - http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: health-check-svc
-            port:
-              number: 80
+    - host: healthcheck.sfrefarch.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: health-check-svc
+                port:
+                  number: 80
+  ingressClassName: nginx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-boilerplate-ui
+  namespace: boilerplate-ui
+spec:
+  rules:
+    - host: boilerplate-ui.sfrefarch.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: boilerplate-ui-svc
+                port:
+                  number: 80
   ingressClassName: nginx
