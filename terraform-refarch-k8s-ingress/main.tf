@@ -35,13 +35,18 @@ resource "kubernetes_service" "default" {
       for_each = var.default_service_ports
 
       content {
-        name        = try(port.value.name, length(var.default_service_ports) > 1 ? "Port_${port.value.port}" : "")
-        port        = port.value.port
-        node_port   = try(port.value.node_port, null)
+        name      = try(port.value.name, length(var.default_service_ports) > 1 ? "Port_${port.value.port}" : "")
+        port      = port.value.port
+        node_port = try(port.value.node_port, null)
+
         target_port = try(port.value.target_port, port.value.port)
         protocol    = try(port.value.protocol, "TCP")
       }
     }
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -79,6 +84,10 @@ resource "kubernetes_ingress" "default" {
         }
       }
     }
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 

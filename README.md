@@ -40,29 +40,29 @@ module "terraform-aws-ref-arch-eks" {
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_acm_request_certificate"></a> [acm\_request\_certificate](#module\_acm\_request\_certificate) | cloudposse/acm-request-certificate/aws | 0.15.1 |
-| <a name="module_alb_ingress_controller"></a> [alb\_ingress\_controller](#module\_alb\_ingress\_controller) | ./terraform-aws-ref-arch-alb-ingress-controller | n/a |
-| <a name="module_boilerplate_ui_applications"></a> [boilerplate\_ui\_applications](#module\_boilerplate\_ui\_applications) | git@github.com:sourcefuse/terraform-k8s-app.git | n/a |
+| <a name="module_core_apps"></a> [core\_apps](#module\_core\_apps) | git@github.com:sourcefuse/terraform-k8s-app.git | n/a |
+| <a name="module_default_alb_alias"></a> [default\_alb\_alias](#module\_default\_alb\_alias) | git::https://github.com/cloudposse/terraform-aws-route53-alias | 0.12.1 |
 | <a name="module_eks_cluster"></a> [eks\_cluster](#module\_eks\_cluster) | cloudposse/eks-cluster/aws | 0.43.2 |
 | <a name="module_eks_fargate_profile"></a> [eks\_fargate\_profile](#module\_eks\_fargate\_profile) | cloudposse/eks-fargate-profile/aws | 0.9.2 |
 | <a name="module_eks_node_group"></a> [eks\_node\_group](#module\_eks\_node\_group) | cloudposse/eks-node-group/aws | 0.26.0 |
-| <a name="module_k8s_ingress"></a> [k8s\_ingress](#module\_k8s\_ingress) | ./terraform-refarch-k8s-ingress | n/a |
-| <a name="module_k8s_ingress_boilerplate_ui"></a> [k8s\_ingress\_boilerplate\_ui](#module\_k8s\_ingress\_boilerplate\_ui) | ./terraform-refarch-k8s-ingress | n/a |
-| <a name="module_k8s_ingress_health_check"></a> [k8s\_ingress\_health\_check](#module\_k8s\_ingress\_health\_check) | ./terraform-refarch-k8s-ingress | n/a |
 | <a name="module_label"></a> [label](#module\_label) | cloudposse/label/null | 0.25.0 |
-| <a name="module_sandbox_applications"></a> [sandbox\_applications](#module\_sandbox\_applications) | git@github.com:sourcefuse/terraform-k8s-app.git | n/a |
 | <a name="module_this"></a> [this](#module\_this) | cloudposse/label/null | 0.25.0 |
 
 ## Resources
 
 | Name | Type |
 |------|------|
+| [aws_iam_policy.alb_ingress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
+| [aws_iam_role.alb_ingress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [kubectl_manifest.manifests](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubernetes_namespace.boilerplate_ui](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
+| [kubernetes_namespace.alb](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_namespace.default_namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_namespace.health_check](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_namespace.ingress](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [aws_eks_cluster.eks](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_cluster) | data source |
 | [aws_eks_cluster_auth.eks](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_cluster_auth) | data source |
+| [aws_elb_hosted_zone_id.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/elb_hosted_zone_id) | data source |
+| [aws_iam_policy_document.alb_ingress_assume](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_route53_zone.ref_arch_domain](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route53_zone) | data source |
 | [aws_subnet_ids.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet_ids) | data source |
 | [aws_subnet_ids.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet_ids) | data source |

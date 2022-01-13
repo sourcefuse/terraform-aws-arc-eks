@@ -28,7 +28,7 @@ variable "nginx_image" {
 }
 
 
-module "sandbox_applications" {
+module "core_apps" {
   source          = "git@github.com:sourcefuse/terraform-k8s-app.git"
   for_each        = local.k8s_apps
   app_label       = each.value.app_label
@@ -58,12 +58,13 @@ locals {
   health_check_service_host = "health-check-svc.${kubernetes_namespace.health_check.metadata[0].name}.svc.cluster.local"
   k8s_apps = {
     health_check_application = {
-      app_label             = "nginx"
-      container_image       = var.nginx_image
-      container_name        = "nginx"
-      container_port        = 80
-      deployment_name       = "nginx"
-      namespace_name        = kubernetes_namespace.health_check.metadata[0].name
+      app_label       = "nginx"
+      container_image = var.nginx_image
+      container_name  = "nginx"
+      container_port  = 80
+      deployment_name = "nginx"
+      namespace_name  = "ingress-nginx"
+      #      namespace_name        = kubernetes_namespace.health_check.metadata[0].name
       port                  = 80
       port_name             = "80"
       protocol              = "TCP"
