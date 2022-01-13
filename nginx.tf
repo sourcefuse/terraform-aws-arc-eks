@@ -304,16 +304,16 @@ resource "aws_iam_role" "alb_ingress" {
 #  tags = var.tags
 #}
 
-data "aws_elb_hosted_zone_id" "main" {}
-module "default_alb_alias" {
-  source = "git::https://github.com/cloudposse/terraform-aws-route53-alias?ref=0.12.1"
-
-  parent_zone_id = data.aws_route53_zone.ref_arch_domain.id
-  target_zone_id = data.aws_route53_zone.ref_arch_domain.id
-  #  target_dns_name = "healthcheck.sfrefarch.com"
-  target_dns_name = "a4eb7e94863f843ed98def4fb1f9bad8-11dca6668ae6f01c.elb.us-east-1.amazonaws.com"
-  #  target_zone_id  = "Z019267039CEOT4DT8S38"
-  #  target_zone_id  = data.aws_elb_hosted_zone_id.main.id
-
-  aliases = ["healthcheck.sfrefarch.com"]
-}
+#data "aws_elb_hosted_zone_id" "main" {}
+#module "default_alb_alias" {
+#  source = "git::https://github.com/cloudposse/terraform-aws-route53-alias?ref=0.12.1"
+#
+#  parent_zone_id = data.aws_route53_zone.ref_arch_domain.id
+#  target_zone_id = data.aws_route53_zone.ref_arch_domain.id
+#  #  target_dns_name = "healthcheck.sfrefarch.com"
+#  target_dns_name = "a4eb7e94863f843ed98def4fb1f9bad8-11dca6668ae6f01c.elb.us-east-1.amazonaws.com"
+#  #  target_zone_id  = "Z019267039CEOT4DT8S38"
+#  #  target_zone_id  = data.aws_elb_hosted_zone_id.main.id
+#
+#  aliases = ["healthcheck.sfrefarch.com"]
+#}
