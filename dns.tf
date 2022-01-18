@@ -6,8 +6,8 @@ resource "aws_route53_record" "health_check" {
   type    = "A"
 
   alias {
-    name                   = "ab3abd0f6c60f4fe895e2888dd277340-cb52264e230e45f1.elb.us-east-1.amazonaws.com"
-    zone_id                = "Z26RNL4JYFTOTI"
+    name                   = data.aws_lb.eks_nlb.dns_name
+    zone_id                = data.aws_lb.eks_nlb.zone_id
     evaluate_target_health = false
   }
 
@@ -21,9 +21,10 @@ resource "aws_route53_record" "boilerplate_ui" {
   name    = "boilerplate-ui.sfrefarch.com"
   type    = "A"
 
+
   alias {
-    name                   = "ab3abd0f6c60f4fe895e2888dd277340-cb52264e230e45f1.elb.us-east-1.amazonaws.com"
-    zone_id                = "Z26RNL4JYFTOTI"
+    name                   = data.aws_lb.eks_nlb.dns_name
+    zone_id                = data.aws_lb.eks_nlb.zone_id
     evaluate_target_health = false
   }
 }
