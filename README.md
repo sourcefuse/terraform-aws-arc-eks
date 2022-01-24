@@ -51,6 +51,7 @@ module "terraform-aws-ref-arch-eks" {
 
 | Name | Type |
 |------|------|
+| [aws_route53_record.auth](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
 | [aws_route53_record.boilerplate_ui](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
 | [aws_route53_record.camunda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
 | [aws_route53_record.health_check](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
