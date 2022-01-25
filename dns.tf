@@ -1,9 +1,25 @@
+locals {
+  app_domains = [
+    "healthcheck.sfrefarch.com",
+    "boilerplate-ui.sfrefarch.com",
+    "camunda.sfrefarch.com",
+    "pgadmin.sfrefarch.com",
+    "auth.sfrefarch.com",
+    "audit.sfrefarch.com",
+    "in-mail.sfrefarch.com",
+    "workflow.sfrefarch.com",
+    "video-conferencing.sfrefarch.com",
+    "scheduler.sfrefarch.com",
+    "notification.sfrefarch.com",
+  ]
+}
 
-# TODO: create vars and pull from data
-resource "aws_route53_record" "health_check" {
-  zone_id = data.aws_route53_zone.ref_arch_domain.zone_id
-  name    = "healthcheck.sfrefarch.com"
-  type    = "A"
+resource "aws_route53_record" "app_domain_records" {
+  zone_id  = data.aws_route53_zone.ref_arch_domain.zone_id
+  for_each = toset(local.app_domains)
+
+  name = each.value
+  type = "A"
 
   alias {
     name                   = data.aws_lb.eks_nlb.dns_name
@@ -13,58 +29,5 @@ resource "aws_route53_record" "health_check" {
 
   lifecycle {
     create_before_destroy = false
-  }
-}
-
-resource "aws_route53_record" "boilerplate_ui" {
-  zone_id = data.aws_route53_zone.ref_arch_domain.zone_id
-  name    = "boilerplate-ui.sfrefarch.com"
-  type    = "A"
-
-
-  alias {
-    name                   = data.aws_lb.eks_nlb.dns_name
-    zone_id                = data.aws_lb.eks_nlb.zone_id
-    evaluate_target_health = false
-  }
-}
-
-
-resource "aws_route53_record" "camunda" {
-  zone_id = data.aws_route53_zone.ref_arch_domain.zone_id
-  name    = "camunda.sfrefarch.com"
-  type    = "A"
-
-
-  alias {
-    name                   = data.aws_lb.eks_nlb.dns_name
-    zone_id                = data.aws_lb.eks_nlb.zone_id
-    evaluate_target_health = false
-  }
-}
-
-resource "aws_route53_record" "pgadmin" {
-  zone_id = data.aws_route53_zone.ref_arch_domain.zone_id
-  name    = "pgadmin.sfrefarch.com"
-  type    = "A"
-
-
-  alias {
-    name                   = data.aws_lb.eks_nlb.dns_name
-    zone_id                = data.aws_lb.eks_nlb.zone_id
-    evaluate_target_health = false
-  }
-}
-
-resource "aws_route53_record" "auth" {
-  zone_id = data.aws_route53_zone.ref_arch_domain.zone_id
-  name    = "auth.sfrefarch.com"
-  type    = "A"
-
-
-  alias {
-    name                   = data.aws_lb.eks_nlb.dns_name
-    zone_id                = data.aws_lb.eks_nlb.zone_id
-    evaluate_target_health = false
   }
 }
