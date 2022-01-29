@@ -2,6 +2,7 @@ region                            = "us-east-1"
 environment                       = "dev"
 profile                           = "sf_ref_arch"
 namespace                         = "refarch"
+route_53_zone                     = "sfrefarch.com"
 enabled                           = true
 availability_zones                = ["us-east-1a", "us-east-1b"]
 name                              = "primary-k8s"
@@ -49,3 +50,4 @@ tags = {
   Project     = "sf-ref-arch"
   Creator     = "terraform"
 }
+health_check_domains = ["healthcheck.sfrefarch.com"]

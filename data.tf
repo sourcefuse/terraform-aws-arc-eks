@@ -44,9 +44,3 @@ data "aws_eks_cluster" "eks" {
 data "aws_eks_cluster_auth" "eks" {
   name = module.eks_cluster.eks_cluster_id
 }
-
-data "aws_lb" "eks_nlb" {
-  tags = {
-    Name = "sfrefarch"
-  }
-}

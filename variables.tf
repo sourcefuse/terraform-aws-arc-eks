@@ -171,25 +171,22 @@ variable "kubernetes_namespace" {
   description = "Kubernetes namespace for selection"
 }
 
-## networking
-variable "alb_ingress_helm_chart_name" {
-  description = "URL of the Helm chart for the ingress controller"
-  default     = "aws-load-balancer-controller"
+## ingress
+variable "ingress_namespace_name" {
+  type        = string
+  default     = "ingress-nginx"
+  description = "Namespace name"
 }
 
-variable "alb_ingress_helm_chart_version" {
-  description = "URL of the Helm chart for the ingress controller"
-  default     = "1.2.7"
+variable "health_check_image" {
+  default     = "nginx:alpine"
+  description = "Image version for Nginx"
+  type        = string
 }
 
-variable "alb_ingress_helm_release_name" {
-  description = "URL of the Helm chart for the ingress controller"
-  default     = "aws-load-balancer-controller"
-}
-
-variable "alb_ingress_helm_repo_url" {
-  description = "URL of the Helm chart for the ingress controller"
-  default     = "https://aws.github.io/eks-charts"
+variable "health_check_domains" {
+  type        = list(string)
+  description = "List of A record domains to create for the health check service"
 }
 
 #######################################################
@@ -207,4 +204,9 @@ variable "private_subnet_names" {
 variable "public_subnet_names" {
   description = "Name tag of the public subnets used for data lookups"
   type        = list(string)
+}
+
+variable "route_53_zone" {
+  type        = string
+  description = "Route 53 domain to generate an ACM request for and to create A records against, i.e. sfrefarch.com. A wildcard subject alternative name is generated with the certificate."
 }
