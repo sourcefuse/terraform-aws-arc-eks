@@ -46,5 +46,7 @@ data "aws_eks_cluster_auth" "eks" {
 }
 
 data "aws_lb" "eks_nlb" {
-  name = "ab3abd0f6c60f4fe895e2888dd277340"
+  tags = {
+    Name = "sfrefarch"
+  }
 }
