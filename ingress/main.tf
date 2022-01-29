@@ -55,8 +55,6 @@ resource "time_sleep" "nlb_provisioning_timeout" {
   create_duration = "60s"
 }
 
-
-// TODO: correct name of file to ingress-nginx
 // TODO: collect rest of values to interpolate
 // TODO: fix hacks below with Helm chart introduction or reimplement in native TF
 // a separate file is needed to deal with conflicting interpolation tokens
@@ -68,11 +66,14 @@ resource "kubectl_manifest" "ingress_controller_service" {
   depends_on = [kubernetes_namespace.ingress_namespace, module.health_check]
 }
 
+
+data "kubectl_path_documents" "ingress_nginx" {
+  pattern = "${path.module}/ingress-nginx.yaml"
+}
+
 resource "kubectl_manifest" "ingress_controller" {
-  yaml_body = templatefile("${path.module}/nginx-ingress-controller.yaml", {
-    load_balancer_name = var.cluster_name
-    certificate_arn    = var.certificate_arn
-  })
+  for_each   = data.kubectl_path_documents.ingress_nginx.manifests
+  yaml_body  = each.value
   depends_on = [kubernetes_namespace.ingress_namespace, module.health_check]
 }
 
