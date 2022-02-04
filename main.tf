@@ -34,7 +34,7 @@ module "eks_cluster" {
   #    apply_config_map_aws_auth                 = true
   #    kube_data_auth_enabled                    = true
   #    kubernetes_config_map_ignore_role_changes = true
-  #    kube_exec_auth_enabled                    = true
+  kube_exec_auth_enabled = true
 
   tags = var.tags
 }
@@ -67,8 +67,6 @@ resource "kubernetes_namespace" "default_namespace" {
   ]
 }
 
-//TODO: nodes for the core-apps and other services
-// once those are cleaned up, they can have their own node groups or use fargate
 module "eks_node_group" {
   source  = "cloudposse/eks-node-group/aws"
   version = "0.26.0"
@@ -88,4 +86,27 @@ module "eks_node_group" {
   context = module.this.context
 
   tags = var.tags
+}
+
+data "aws_route53_zone" "default_domain" {
+  name = var.route_53_zone
+}
+
+module "acm_request_certificate" {
+  source                            = "cloudposse/acm-request-certificate/aws"
+  version                           = "0.15.1"
+  domain_name                       = var.route_53_zone
+  process_domain_validation_options = true
+  ttl                               = "300"
+  subject_alternative_names         = ["*.${var.route_53_zone}"]
+  depends_on                        = [data.aws_route53_zone.default_domain]
+}
+
+
+module "ingress" {
+  source               = "./ingress"
+  certificate_arn      = module.acm_request_certificate.arn
+  cluster_name         = local.cluster_name
+  health_check_domains = var.health_check_domains
+  route_53_zone_id     = data.aws_route53_zone.default_domain.zone_id
 }
