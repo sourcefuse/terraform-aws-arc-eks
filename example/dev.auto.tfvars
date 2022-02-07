@@ -3,7 +3,6 @@ environment                       = "dev"
 profile                           = "sf_ref_arch"
 namespace                         = "refarch"
 route_53_zone                     = "sfrefarch.com"
-enabled                           = true
 availability_zones                = ["us-east-1a", "us-east-1b"]
 name                              = "primary-k8s"
 kubernetes_version                = "1.21"
