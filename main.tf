@@ -30,11 +30,11 @@ module "eks_cluster" {
   addons = var.addons
 
   context = module.this.context
-  // TODO: make configurable
-  #    apply_config_map_aws_auth                 = true
-  #    kube_data_auth_enabled                    = true
-  #    kubernetes_config_map_ignore_role_changes = true
-  kube_exec_auth_enabled = true
+
+  apply_config_map_aws_auth                 = var.apply_config_map_aws_auth
+  kube_data_auth_enabled                    = var.kube_data_auth_enabled
+  kubernetes_config_map_ignore_role_changes = var.kubernetes_config_map_ignore_role_changes
+  kube_exec_auth_enabled                    = var.kube_exec_auth_enabled
 
   tags = var.tags
 }

@@ -210,3 +210,34 @@ variable "route_53_zone" {
   type        = string
   description = "Route 53 domain to generate an ACM request for and to create A records against, i.e. sfrefarch.com. A wildcard subject alternative name is generated with the certificate."
 }
+
+# auth variables
+variable "apply_config_map_aws_auth" {
+  type        = bool
+  default     = true
+  description = "Whether to apply the ConfigMap to allow worker nodes to join the EKS cluster and allow additional users, accounts and roles to acces the cluster"
+}
+
+variable "kube_data_auth_enabled" {
+  type        = bool
+  default     = true
+  description = <<-EOT
+    If `true`, use an `aws_eks_cluster_auth` data source to authenticate to the EKS cluster.
+    Disabled by `kubeconfig_path_enabled` or `kube_exec_auth_enabled`.
+    EOT
+}
+
+variable "kubernetes_config_map_ignore_role_changes" {
+  type        = bool
+  default     = true
+  description = "Set to `true` to ignore IAM role changes in the Kubernetes Auth ConfigMap"
+}
+
+variable "kube_exec_auth_enabled" {
+  type        = bool
+  default     = false
+  description = <<-EOT
+    If `true`, use the Kubernetes provider `exec` feature to execute `aws eks get-token` to authenticate to the EKS cluster.
+    Disabled by `kubeconfig_path_enabled`, overrides `kube_data_auth_enabled`.
+    EOT
+}
