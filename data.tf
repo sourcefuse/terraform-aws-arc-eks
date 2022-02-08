@@ -33,7 +33,7 @@ data "aws_subnet_ids" "public" {
 // TODO: interpolate manifests where needed, convert to helm, or use native k8s app module
 // TODO: use path API
 data "kubectl_path_documents" "docs" {
-  pattern = "./manifests/*.yaml"
+  pattern = "${path.module}/manifests/*.yaml"
 }
 
 data "aws_eks_cluster" "eks" {
