@@ -57,8 +57,6 @@ variable "map_additional_iam_roles" {
     username = string
     groups   = list(string)
   }))
-
-  default = []
 }
 
 variable "map_additional_iam_users" {
@@ -229,7 +227,7 @@ variable "kube_data_auth_enabled" {
 
 variable "kubernetes_config_map_ignore_role_changes" {
   type        = bool
-  default     = true
+  default     = false
   description = "Set to `true` to ignore IAM role changes in the Kubernetes Auth ConfigMap"
 }
 
