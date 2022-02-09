@@ -27,13 +27,11 @@ data "aws_subnet_ids" "public" {
   }
 }
 
-## eks / k8s
 // TODO: turn into standard module
 // TODO: tighten security
 // TODO: interpolate manifests where needed, convert to helm, or use native k8s app module
-// TODO: use path API
 data "kubectl_path_documents" "docs" {
-  pattern = "./manifests/*.yaml"
+  pattern = "${path.module}/manifests/*.yaml"
 }
 
 data "aws_eks_cluster" "eks" {

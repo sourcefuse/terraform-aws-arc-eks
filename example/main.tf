@@ -39,6 +39,7 @@ module "eks_cluster" {
   kube_data_auth_enabled                    = true
   kubernetes_config_map_ignore_role_changes = true
   kube_exec_auth_enabled                    = true
+  map_additional_iam_roles                  = var.map_additional_iam_roles
 }
 
 data "aws_route53_zone" "default_domain" {
