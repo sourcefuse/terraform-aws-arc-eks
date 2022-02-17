@@ -239,3 +239,9 @@ variable "kube_exec_auth_enabled" {
     Disabled by `kubeconfig_path_enabled`, overrides `kube_data_auth_enabled`.
     EOT
 }
+
+variable "allowed_security_groups" {
+  type        = list(string)
+  default     = []
+  description = "List of Security Group IDs to be allowed to connect to the EKS cluster"
+}

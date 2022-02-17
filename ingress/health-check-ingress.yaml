@@ -14,15 +14,6 @@ spec:
                 name: health-check-svc
                 port:
                   number: 80
-  ingressClassName: nginx
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: ingress-health-check
-  namespace: ingress-nginx
-spec:
-  rules:
     - host: healthcheck.sfrefarch.com
       http:
         paths:
