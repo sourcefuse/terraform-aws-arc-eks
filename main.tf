@@ -7,9 +7,9 @@ module "label" {
 }
 
 module "eks_cluster" {
-  source  = "cloudposse/eks-cluster/aws"
-  version = "0.43.2"
-
+  source                       = "cloudposse/eks-cluster/aws"
+  version                      = "0.43.2"
+  allowed_security_groups      = var.allowed_security_groups
   region                       = var.region
   vpc_id                       = data.aws_vpc.vpc.id
   subnet_ids                   = concat(sort(data.aws_subnet_ids.private.ids), sort(data.aws_subnet_ids.public.ids))

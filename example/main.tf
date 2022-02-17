@@ -40,6 +40,7 @@ module "eks_cluster" {
   kubernetes_config_map_ignore_role_changes = true
   kube_exec_auth_enabled                    = true
   map_additional_iam_roles                  = var.map_additional_iam_roles
+  allowed_security_groups                   = concat(data.aws_security_groups.eks_sg.ids, data.aws_security_groups.db_sg.ids)
 }
 
 data "aws_route53_zone" "default_domain" {
@@ -63,4 +64,5 @@ module "ingress" {
   cluster_name         = module.eks_cluster.eks_cluster_id
   health_check_domains = var.health_check_domains
   route_53_zone_id     = data.aws_route53_zone.default_domain.zone_id
+  depends_on           = [module.eks_cluster]
 }
