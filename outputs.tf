@@ -82,3 +82,9 @@ output "eks_cluster_ca_certificate" {
   description = "CA certificate"
   value       = "module.eks_cluster.certificate_authority[0].data"
 }
+
+// TODO - name this something better
+output "kubectl_path_documents_docs" {
+  description = "Manifests"
+  value       = local.kubectl_path_documents_docs_condition
+}

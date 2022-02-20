@@ -39,6 +39,7 @@ module "eks_cluster" {
   kube_data_auth_enabled                    = true
   kubernetes_config_map_ignore_role_changes = true
   kube_exec_auth_enabled                    = true
+  csi_driver_enabled                        = var.csi_driver_enabled
   map_additional_iam_roles                  = var.map_additional_iam_roles
   allowed_security_groups                   = concat(data.aws_security_groups.eks_sg.ids, data.aws_security_groups.db_sg.ids)
 }

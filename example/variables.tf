@@ -32,6 +32,11 @@ variable "region" {
 #######################################################
 ## eks / kubernetes / helm
 #######################################################
+// TODO - add more detail
+variable "csi_driver_enabled" {
+  default = true
+}
+
 variable "kubernetes_version" {
   description = "Desired Kubernetes master version. If you do not specify a value, the latest available version is used"
   type        = string
