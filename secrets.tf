@@ -1,3 +1,4 @@
+// TODO - remove hardcoded values
 resource "helm_release" "csi_driver" {
   count = var.csi_driver_enabled == true ? 1 : 0
 
