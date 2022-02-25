@@ -87,3 +87,59 @@ module "eks_node_group" {
 
   tags = var.tags
 }
+
+
+## node group ecr access
+resource "aws_iam_policy" "ng_ecr_access" {
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "",
+        "Effect": "Allow",
+        "Action": [
+          "ecr:PutImageTagMutability",
+          "ecr:StartImageScan",
+          "ecr:DescribeImageReplicationStatus",
+          "ecr:ListTagsForResource",
+          "ecr:UploadLayerPart",
+          "ecr:CreatePullThroughCacheRule",
+          "ecr:ListImages",
+          "ecr:BatchGetRepositoryScanningConfiguration",
+          "ecr:GetRegistryScanningConfiguration",
+          "ecr:CompleteLayerUpload",
+          "ecr:TagResource",
+          "ecr:DescribeRepositories",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:ReplicateImage",
+          "ecr:GetLifecyclePolicy",
+          "ecr:GetRegistryPolicy",
+          "ecr:PutLifecyclePolicy",
+          "ecr:DescribeImageScanFindings",
+          "ecr:GetLifecyclePolicyPreview",
+          "ecr:CreateRepository",
+          "ecr:DescribeRegistry",
+          "ecr:PutImageScanningConfiguration",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:DescribePullThroughCacheRules",
+          "ecr:GetAuthorizationToken",
+          "ecr:PutRegistryScanningConfiguration",
+          "ecr:PutImage",
+          "ecr:UntagResource",
+          "ecr:BatchGetImage",
+          "ecr:DescribeImages",
+          "ecr:StartLifecyclePolicyPreview",
+          "ecr:InitiateLayerUpload",
+          "ecr:GetRepositoryPolicy",
+          "ecr:PutReplicationConfiguration"
+        ],
+        "Resource": "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ng_ecr_access" {
+  policy_arn = aws_iam_policy.ng_ecr_access.arn
+  role       = module.eks_cluster.eks_cluster_role_arn // data.aws_iam_policy_document.ecs_tasks_assume_role_policy.json
+}
