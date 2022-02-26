@@ -88,7 +88,7 @@ module "eks_node_group" {
   tags = var.tags
 }
 
-
+/*
 ## node group ecr access
 resource "aws_iam_policy" "ng_ecr_access" {
   policy = jsonencode({
@@ -143,3 +143,4 @@ resource "aws_iam_role_policy_attachment" "ng_ecr_access" {
   policy_arn = aws_iam_policy.ng_ecr_access.arn
   role       = module.eks_cluster.eks_cluster_role_arn // data.aws_iam_policy_document.ecs_tasks_assume_role_policy.json
 }
+*/
