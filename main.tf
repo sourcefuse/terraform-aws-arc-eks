@@ -8,7 +8,7 @@ module "label" {
 
 module "eks_cluster" {
   source                       = "cloudposse/eks-cluster/aws"
-  version                      = "0.43.2"
+  version                      = "0.45.0"
   allowed_security_groups      = var.allowed_security_groups
   region                       = var.region
   vpc_id                       = data.aws_vpc.vpc.id
@@ -69,7 +69,7 @@ resource "kubernetes_namespace" "default_namespace" {
 
 module "eks_node_group" {
   source  = "cloudposse/eks-node-group/aws"
-  version = "0.26.0"
+  version = "0.27.3"
 
   subnet_ids                 = data.aws_subnet_ids.private.ids
   cluster_name               = module.eks_cluster.eks_cluster_id

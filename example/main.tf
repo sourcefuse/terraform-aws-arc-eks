@@ -3,18 +3,6 @@ provider "aws" {
   profile = var.profile
 }
 
-module "tags" {
-  source = "git@github.com:sourcefuse/terraform-aws-refarch-tags?ref=1.0.1"
-
-  environment = terraform.workspace
-  project     = "refarch"
-
-  extra_tags = {
-    MonoRepo     = "True"
-    MonoRepoPath = "terraform/resources/eks"
-  }
-}
-
 module "eks_cluster" {
   source                                    = "../."
   environment                               = var.environment
@@ -33,7 +21,6 @@ module "eks_cluster" {
   region                                    = var.region
   route_53_zone                             = var.route_53_zone
   vpc_name                                  = var.vpc_name
-  tags                                      = module.tags.tags
   enabled                                   = true
   apply_config_map_aws_auth                 = true
   kube_data_auth_enabled                    = true

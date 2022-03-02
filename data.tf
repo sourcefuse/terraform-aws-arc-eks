@@ -31,20 +31,20 @@ data "aws_subnet_ids" "public" {
 locals {
   aws_csi_secrets_store_provider_installer_manifest_enabled = var.csi_driver_enabled == true ? 1 : 0
 
-// TODO - experimental
+  // TODO - experimental
   kubectl_path_documents_docs_condition = [
     for file in fileset(path.module, "/manifests/*.yaml") : file
   ]
-// TODO - experimental
-#  kubectl_path_documents_docs_condition = [
-#    for file in fileset(path.module, "/manifests/*.yaml") :
-#    file if (var.csi_driver_enabled == false && file != "aws-csi-secrets-store-provider-installer.yaml")
-#  ]
+  // TODO - experimental
+  #  kubectl_path_documents_docs_condition = [
+  #    for file in fileset(path.module, "/core-apps/*.yaml") :
+  #    file if (var.csi_driver_enabled == false && file != "aws-csi-secrets-store-provider-installer.yaml")
+  #  ]
 }
 
 // TODO: turn into standard module
 // TODO: tighten security
-// TODO: interpolate manifests where needed, convert to helm, or use native k8s app module
+// TODO: interpolate core-apps where needed, convert to helm, or use native k8s app module
 data "kubectl_path_documents" "docs" {
   pattern = "${path.module}/manifests/*.yaml"
 }
