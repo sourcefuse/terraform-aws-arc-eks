@@ -27,16 +27,6 @@ data "aws_subnet_ids" "public" {
   }
 }
 
-// TODO - move this to where it belongs
-locals {
-  aws_csi_secrets_store_provider_installer_manifest_enabled = var.csi_driver_enabled == true ? 1 : 0
-
-  // TODO - experimental
-  kubectl_path_documents_docs = [
-    for file in fileset(path.module, "/manifests/*.yaml") : file
-  ]
-}
-
 // TODO: turn into standard module
 // TODO: tighten security
 // TODO: interpolate core-apps where needed, convert to helm, or use native k8s app module

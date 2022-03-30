@@ -27,4 +27,9 @@ locals {
   private_subnets_additional_tags = {
     "kubernetes.io/role/internal-elb" : 1
   }
+
+  aws_csi_secrets_store_provider_installer_manifest_enabled = var.csi_driver_enabled == true ? 1 : 0
+  kubectl_path_documents_docs = [
+    for file in fileset(path.module, "/manifests/*.yaml") : file
+  ]
 }
