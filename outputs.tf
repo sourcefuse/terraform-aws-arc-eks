@@ -86,5 +86,5 @@ output "eks_cluster_ca_certificate" {
 // TODO - name this something better
 output "kubectl_path_documents_docs" {
   description = "Manifests"
-  value       = local.kubectl_path_documents_docs_condition
+  value       = local.kubectl_path_documents_docs
 }

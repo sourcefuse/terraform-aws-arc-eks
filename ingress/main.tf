@@ -50,7 +50,6 @@ data "aws_lb" "eks_nlb" {
 }
 
 resource "time_sleep" "nlb_provisioning_time" {
-  #  depends_on = [kubectl_manifest.ingress_controller, kubectl_manifest.ingress_controller_service]
   create_duration = "60s"
 }
 
@@ -135,7 +134,6 @@ resource "kubectl_manifest" "ingress_nginx_jobpatch_rolebinding" {
   yaml_body  = file("${path.module}/ingress-nginx/job-patch-rolebinding.yaml")
   depends_on = [kubernetes_namespace.ingress_namespace]
 }
-
 
 resource "kubectl_manifest" "ingress_nginx_jobpatch_job_createsecret" {
   yaml_body  = file("${path.module}/ingress-nginx/job-patch-job-createsecret.yaml")

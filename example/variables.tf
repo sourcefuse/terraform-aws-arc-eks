@@ -32,7 +32,6 @@ variable "region" {
 #######################################################
 ## eks / kubernetes / helm
 #######################################################
-// TODO - add more detail
 variable "csi_driver_enabled" {
   default = true
 }
