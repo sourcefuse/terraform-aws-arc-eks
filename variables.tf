@@ -115,6 +115,13 @@ variable "min_size" {
   type        = number
 }
 
+## csi secrets driver
+variable "csi_driver_enabled" {
+  description = "The Secrets Store CSI Driver secrets-store.csi.k8s.io allows Kubernetes to mount multiple secrets, keys, and certs stored in enterprise-grade external secrets stores into their pods as a volume."
+  type        = bool
+  default     = true
+}
+
 ## cluster configuration
 variable "cluster_encryption_config_enabled" {
   description = "Set to `true` to enable Cluster Encryption Configuration"
