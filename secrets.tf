@@ -7,4 +7,9 @@ resource "helm_release" "csi_driver" {
   chart      = "secrets-store-csi-driver"
   repository = "https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts"
   version    = "0.2.0"
+
+  set {
+    name  = "syncSecret.enabled"
+    value = "true"
+  }
 }
