@@ -24,20 +24,27 @@ resource "kubernetes_namespace" "ingress_namespace" {
 }
 
 module "health_check" {
-  source                = "git@github.com:sourcefuse/terraform-k8s-app.git"
-  app_label             = "health-check"
-  container_image       = var.health_check_image
-  container_name        = "health-check"
-  container_port        = 80
-  deployment_name       = "health-check"
-  namespace_name        = var.ingress_namespace_name
-  port                  = 80
-  port_name             = "80"
-  protocol              = "TCP"
-  service_name          = "health-check-svc"
-  target_port           = 80
-  replica_count         = 1
-  environment_variables = []
+  source                                  = "git@github.com:sourcefuse/terraform-k8s-app.git?ref=0.1.1"
+  app_label                               = "health-check"
+  container_image                         = var.health_check_image
+  container_name                          = "health-check"
+  container_port                          = 80
+  deployment_name                         = "health-check"
+  namespace_name                          = var.ingress_namespace_name
+  port                                    = 80
+  port_name                               = "80"
+  protocol                                = "TCP"
+  service_name                            = "health-check-svc"
+  target_port                             = 80
+  replica_count                           = 1
+  environment_variables                   = []
+  persistent_volume_secret_provider_class = ""
+  config_map_binary_data                  = {}
+  config_map_data                         = {}
+  config_map_name                         = ""
+  persistent_volume_claim_enable          = false
+  persistent_volume_enable                = false
+  persistent_volume_name                  = ""
 }
 
 // TODO: eliminate sleep
