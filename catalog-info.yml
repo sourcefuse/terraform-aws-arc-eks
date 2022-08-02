@@ -2,9 +2,10 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: terraform-aws-ref-arch-eks
+  namespace: arc
   description: Terraform module for setting up Sourcefuse AWS EKS Cluster
   annotations:
-    github.com/project-slug: https://github.com/sourcefuse/terraform-aws-ref-arch-eks
+    github.com/project-slug: sourcefuse/terraform-aws-ref-arch-eks
     backstage.io/techdocs-ref: dir:.
 spec:
   type: service
