@@ -7,6 +7,22 @@ metadata:
   annotations:
     github.com/project-slug: sourcefuse/terraform-aws-ref-arch-eks
     backstage.io/techdocs-ref: dir:.
+  links:
+    - url: https://github.com/cloudposse/terraform-aws-eks-node-group
+      title: Provider Link
+      icon: dashboard
+    - url: https://github.com/cloudposse/terraform-aws-eks-fargate-profile
+      title: Provider Link
+      icon: dashboard
+    - url: https://github.com/cloudposse/terraform-aws-eks-cluster
+      title: Provider Link
+      icon: dashboard
+    - url: https://github.com/cloudposse/terraform-null-label
+      title: Provider Link
+      icon: dashboard
+    - url: https://github.com/cloudposse/terraform-null-label
+      title: Provider Link
+      icon: dashboard
 spec:
   type: service
   owner: sourcefuse
