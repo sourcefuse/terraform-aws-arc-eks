@@ -12,7 +12,7 @@ module "eks_cluster" {
   allowed_security_groups      = var.allowed_security_groups
   region                       = var.region
   vpc_id                       = data.aws_vpc.vpc.id
-  subnet_ids                   = concat(sort(data.aws_subnet_ids.private.ids), sort(data.aws_subnet_ids.public.ids))
+  subnet_ids                   = concat(sort(data.aws_subnets.private.ids), sort(data.aws_subnets.public.ids))
   kubernetes_version           = var.kubernetes_version
   local_exec_interpreter       = var.local_exec_interpreter
   oidc_provider_enabled        = var.oidc_provider_enabled
@@ -43,7 +43,7 @@ module "eks_fargate_profile" {
   source  = "cloudposse/eks-fargate-profile/aws"
   version = "0.9.2"
 
-  subnet_ids                              = data.aws_subnet_ids.private.ids
+  subnet_ids                              = data.aws_subnets.private.ids
   cluster_name                            = local.cluster_name
   kubernetes_namespace                    = kubernetes_namespace.default_namespace[0].metadata[0].name
   kubernetes_labels                       = var.kubernetes_labels
@@ -71,7 +71,7 @@ module "eks_node_group" {
   source  = "cloudposse/eks-node-group/aws"
   version = "0.27.3"
 
-  subnet_ids                 = data.aws_subnet_ids.private.ids
+  subnet_ids                 = data.aws_subnets.private.ids
   cluster_name               = module.eks_cluster.eks_cluster_id
   instance_types             = var.instance_types
   desired_size               = var.desired_size
