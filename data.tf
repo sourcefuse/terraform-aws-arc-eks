@@ -7,22 +7,16 @@ data "aws_vpc" "vpc" {
 }
 
 ## network
-data "aws_subnet_ids" "private" {
-  vpc_id = data.aws_vpc.vpc.id
-
+data "aws_subnets" "private" {
   filter {
-    name = "tag:Name"
-
+    name   = "tag:Name"
     values = var.private_subnet_names
   }
 }
 
-data "aws_subnet_ids" "public" {
-  vpc_id = data.aws_vpc.vpc.id
-
+data "aws_subnets" "public" {
   filter {
-    name = "tag:Name"
-
+    name   = "tag:Name"
     values = var.public_subnet_names
   }
 }

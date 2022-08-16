@@ -11,9 +11,7 @@ data "aws_vpc" "vpc" {
 }
 
 ## network
-data "aws_subnet_ids" "private" {
-  vpc_id = data.aws_vpc.vpc.id
-
+data "aws_subnets" "private" {
   filter {
     name = "tag:Name"
 
