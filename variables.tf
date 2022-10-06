@@ -1,17 +1,20 @@
 #######################################################
 ## defaults
 #######################################################
-variable "availability_zones" {
-  description = "List of availability zones"
-  type        = list(string)
-}
 
-variable "profile" {
-  description = "Name of the AWS profile to use"
-  default     = "default"
-}
+# variable "availability_zones" {
+#   description = "List of availability zones"
+#   type        = list(string)
+# }
+
+# variable "profile" {
+#   description = "Name of the AWS profile to use"
+#   type = string
+#   default     = "default"
+# }
 
 variable "region" {
+  type        = string
   description = "AWS region"
 }
 
@@ -20,6 +23,7 @@ variable "region" {
 #######################################################
 variable "kubernetes_version" {
   description = "Desired Kubernetes master version. If you do not specify a value, the latest available version is used"
+  type        = string
   default     = "1.21"
 }
 
@@ -42,11 +46,11 @@ variable "cluster_log_retention_period" {
   default     = 0
 }
 
-variable "map_additional_aws_accounts" {
-  description = "Additional AWS account numbers to add to `config-map-aws-auth` ConfigMap"
-  type        = list(string)
-  default     = []
-}
+# variable "map_additional_aws_accounts" {
+#   description = "Additional AWS account numbers to add to `config-map-aws-auth` ConfigMap"
+#   type        = list(string)
+#   default     = []
+# }
 
 ## iam
 variable "map_additional_iam_roles" {
@@ -59,17 +63,17 @@ variable "map_additional_iam_roles" {
   }))
 }
 
-variable "map_additional_iam_users" {
-  description = "Additional IAM users to add to `config-map-aws-auth` ConfigMap"
+# variable "map_additional_iam_users" {
+#   description = "Additional IAM users to add to `config-map-aws-auth` ConfigMap"
 
-  type = list(object({
-    userarn  = string
-    username = string
-    groups   = list(string)
-  }))
+#   type = list(object({
+#     userarn  = string
+#     username = string
+#     groups   = list(string)
+#   }))
 
-  default = []
-}
+#   default = []
+# }
 
 variable "oidc_provider_enabled" {
   description = "Create an IAM OIDC identity provider for the cluster, then you can create IAM roles to associate with a service account in the cluster, instead of using `kiam` or `kube2iam`. For more information, see https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html"
@@ -84,10 +88,10 @@ variable "local_exec_interpreter" {
   default     = ["/bin/sh", "-c"]
 }
 
-variable "disk_size" {
-  description = "Disk size in GiB for worker nodes. Defaults to 20. Terraform will only perform drift detection if a configuration value is provided"
-  type        = number
-}
+# variable "disk_size" {
+#   description = "Disk size in GiB for worker nodes. Defaults to 20. Terraform will only perform drift detection if a configuration value is provided"
+#   type        = number
+# }
 
 variable "instance_types" {
   description = "Set of instance types associated with the EKS Node Group. Defaults to [\"t3.medium\"]. Terraform will only perform drift detection if a configuration value is provided"
@@ -173,31 +177,34 @@ variable "addons" {
 }
 
 variable "kubernetes_namespace" {
+  type        = string
   description = "Kubernetes namespace for selection"
 }
 
 ## ingress
-variable "ingress_namespace_name" {
-  type        = string
-  default     = "ingress-nginx"
-  description = "Namespace name"
-}
 
-variable "health_check_image" {
-  default     = "nginx:alpine"
-  description = "Image version for Nginx"
-  type        = string
-}
+# variable "ingress_namespace_name" {
+#   type        = string
+#   default     = "ingress-nginx"
+#   description = "Namespace name"
+# }
 
-variable "health_check_domains" {
-  type        = list(string)
-  description = "List of A record domains to create for the health check service"
-}
+# variable "health_check_image" {
+#   default     = "nginx:alpine"
+#   description = "Image version for Nginx"
+#   type        = string
+# }
+
+# variable "health_check_domains" {
+#   type        = list(string)
+#   description = "List of A record domains to create for the health check service"
+# }
 
 #######################################################
 ## data lookups
 #######################################################
 variable "vpc_name" {
+  type        = string
   description = "Name tag of the VPC used for data lookups"
 }
 
@@ -211,10 +218,10 @@ variable "public_subnet_names" {
   type        = list(string)
 }
 
-variable "route_53_zone" {
-  type        = string
-  description = "Route 53 domain to generate an ACM request for and to create A records against, i.e. sfrefarch.com. A wildcard subject alternative name is generated with the certificate."
-}
+# variable "route_53_zone" {
+#   type        = string
+#   description = "Route 53 domain to generate an ACM request for and to create A records against, i.e. sfrefarch.com. A wildcard subject alternative name is generated with the certificate."
+# }
 
 # auth variables
 variable "apply_config_map_aws_auth" {
