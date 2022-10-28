@@ -89,7 +89,7 @@ module "eks_node_group" {
 }
 
 module "cluster_autoscaler_helm" {
-  source = "git@github.com:lablabs/terraform-aws-eks-cluster-autoscaler"
+  source = "git@github.com:lablabs/terraform-aws-eks-cluster-autoscaler?ref=2.0.0"
 
   enabled           = true
   argo_enabled      = false
