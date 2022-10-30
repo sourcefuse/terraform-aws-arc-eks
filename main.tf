@@ -8,7 +8,7 @@ module "label" {
 
 module "eks_cluster" {
   source                       = "cloudposse/eks-cluster/aws"
-  version                      = "0.45.0"
+  version                      = "2.5.0"
   allowed_security_groups      = var.allowed_security_groups
   region                       = var.region
   vpc_id                       = data.aws_vpc.vpc.id
@@ -41,7 +41,7 @@ module "eks_cluster" {
 
 module "eks_fargate_profile" {
   source  = "cloudposse/eks-fargate-profile/aws"
-  version = "0.9.2"
+  version = "1.1.0"
 
   subnet_ids                              = data.aws_subnets.private.ids
   cluster_name                            = local.cluster_name
@@ -69,7 +69,7 @@ resource "kubernetes_namespace" "default_namespace" {
 
 module "eks_node_group" {
   source  = "cloudposse/eks-node-group/aws"
-  version = "0.27.3"
+  version = "2.6.0"
 
   subnet_ids                 = data.aws_subnets.private.ids
   cluster_name               = module.eks_cluster.eks_cluster_id
@@ -88,59 +88,25 @@ module "eks_node_group" {
   tags = var.tags
 }
 
-/*
-## node group ecr access
-resource "aws_iam_policy" "ng_ecr_access" {
-  policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Sid": "",
-        "Effect": "Allow",
-        "Action": [
-          "ecr:PutImageTagMutability",
-          "ecr:StartImageScan",
-          "ecr:DescribeImageReplicationStatus",
-          "ecr:ListTagsForResource",
-          "ecr:UploadLayerPart",
-          "ecr:CreatePullThroughCacheRule",
-          "ecr:ListImages",
-          "ecr:BatchGetRepositoryScanningConfiguration",
-          "ecr:GetRegistryScanningConfiguration",
-          "ecr:CompleteLayerUpload",
-          "ecr:TagResource",
-          "ecr:DescribeRepositories",
-          "ecr:BatchCheckLayerAvailability",
-          "ecr:ReplicateImage",
-          "ecr:GetLifecyclePolicy",
-          "ecr:GetRegistryPolicy",
-          "ecr:PutLifecyclePolicy",
-          "ecr:DescribeImageScanFindings",
-          "ecr:GetLifecyclePolicyPreview",
-          "ecr:CreateRepository",
-          "ecr:DescribeRegistry",
-          "ecr:PutImageScanningConfiguration",
-          "ecr:GetDownloadUrlForLayer",
-          "ecr:DescribePullThroughCacheRules",
-          "ecr:GetAuthorizationToken",
-          "ecr:PutRegistryScanningConfiguration",
-          "ecr:PutImage",
-          "ecr:UntagResource",
-          "ecr:BatchGetImage",
-          "ecr:DescribeImages",
-          "ecr:StartLifecyclePolicyPreview",
-          "ecr:InitiateLayerUpload",
-          "ecr:GetRepositoryPolicy",
-          "ecr:PutReplicationConfiguration"
-        ],
-        "Resource": "*"
-      }
-    ]
-  })
-}
+module "cluster_autoscaler_helm" {
+  source = "git@github.com:lablabs/terraform-aws-eks-cluster-autoscaler?ref=2.0.0"
 
-resource "aws_iam_role_policy_attachment" "ng_ecr_access" {
-  policy_arn = aws_iam_policy.ng_ecr_access.arn
-  role       = module.eks_cluster.eks_cluster_role_arn // data.aws_iam_policy_document.ecs_tasks_assume_role_policy.json
+  enabled           = true
+  argo_enabled      = false
+  argo_helm_enabled = false
+
+  cluster_name                     = module.eks_cluster.eks_cluster_id
+  cluster_identity_oidc_issuer     = module.eks_cluster.eks_cluster_identity_oidc_issuer
+  cluster_identity_oidc_issuer_arn = module.eks_cluster.eks_cluster_identity_oidc_issuer_arn
+
+  values = yamlencode({
+    "image" : {
+      "tag" : "v1.21.2"
+    }
+  })
+
+  argo_sync_policy = {
+    "automated" : {}
+    "syncOptions" = ["CreateNamespace=true"]
+  }
 }
-*/
