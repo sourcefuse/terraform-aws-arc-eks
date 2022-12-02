@@ -49,4 +49,4 @@ tags = {
   Project     = "sf-ref-arch"
   Creator     = "terraform"
 }
-health_check_domains = ["healthcheck.sfrefarch.com"]
+health_check_domains = ["healthcheck-example.sfrefarch.com"]
