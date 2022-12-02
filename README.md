@@ -34,15 +34,15 @@ module "terraform-aws-ref-arch-eks" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.60.0 |
-| <a name="provider_helm"></a> [helm](#provider\_helm) | 2.3.0 |
-| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | 2.5.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.38.0 |
+| <a name="provider_helm"></a> [helm](#provider\_helm) | 2.7.1 |
+| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | 2.15.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_cluster_autoscaler_helm"></a> [cluster\_autoscaler\_helm](#module\_cluster\_autoscaler\_helm) | git@github.com:lablabs/terraform-aws-eks-cluster-autoscaler | 2.0.0 |
+| <a name="module_cluster_autoscaler_helm"></a> [cluster\_autoscaler\_helm](#module\_cluster\_autoscaler\_helm) | git@github.com:lablabs/terraform-aws-eks-cluster-autoscaler | v2.0.0 |
 | <a name="module_core_apps"></a> [core\_apps](#module\_core\_apps) | ./core-apps | n/a |
 | <a name="module_eks_cluster"></a> [eks\_cluster](#module\_eks\_cluster) | cloudposse/eks-cluster/aws | 2.5.0 |
 | <a name="module_eks_fargate_profile"></a> [eks\_fargate\_profile](#module\_eks\_fargate\_profile) | cloudposse/eks-fargate-profile/aws | 1.1.0 |
