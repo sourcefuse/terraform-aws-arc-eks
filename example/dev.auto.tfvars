@@ -1,7 +1,7 @@
 region                            = "us-east-1"
 environment                       = "dev"
-profile                           = "sf_ref_arch"
-namespace                         = "refarch"
+profile                           = "default"
+namespace                         = "refarchdevops"
 route_53_zone                     = "sfrefarch.com"
 availability_zones                = ["us-east-1a", "us-east-1b"]
 name                              = "sl-k8s"
@@ -34,14 +34,14 @@ map_additional_iam_roles = [
     rolearn  = "arn:aws:iam::757583164619:role/sourcefuse-poc-2-admin-role"
   }
 ]
-vpc_name = "refarch-dev-vpc"
+vpc_name = "refarchdevops-dev-vpc"
 private_subnet_names = [
-  "refarch-dev-privatesubnet-private-us-east-1a",
-  "refarch-dev-privatesubnet-private-us-east-1b"
+  "refarchdevops-dev-privatesubnet-private-us-east-1a",
+  "refarchdevops-dev-privatesubnet-private-us-east-1b"
 ]
 public_subnet_names = [
-  "refarch-dev-publicsubnet-public-us-east-1a",
-  "refarch-dev-publicsubnet-public-us-east-1b"
+  "refarchdevops-dev-publicsubnet-public-us-east-1a",
+  "refarchdevops-dev-publicsubnet-public-us-east-1b"
 ]
 tags = {
   Environment = "dev"

@@ -10,6 +10,7 @@
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
+| <a name="provider_helm"></a> [helm](#provider\_helm) | n/a |
 | <a name="provider_kubectl"></a> [kubectl](#provider\_kubectl) | >= 1.7.0 |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | n/a |
 | <a name="provider_time"></a> [time](#provider\_time) | n/a |
@@ -25,24 +26,8 @@
 | Name | Type |
 |------|------|
 | [aws_route53_record.app_domain_records](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
+| [helm_release.ingress_nginx](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [kubectl_manifest.health_check_ingress](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubectl_manifest.ingress_controller_service](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubectl_manifest.ingress_nginx_clusterrole](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubectl_manifest.ingress_nginx_clusterrolebinding](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubectl_manifest.ingress_nginx_controller_configmap](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubectl_manifest.ingress_nginx_controller_deployment](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubectl_manifest.ingress_nginx_controller_role](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubectl_manifest.ingress_nginx_controller_rolebinding](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubectl_manifest.ingress_nginx_controller_serviceaccount](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubectl_manifest.ingress_nginx_controller_servicewebhook](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubectl_manifest.ingress_nginx_jobpatch_clusterrole](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubectl_manifest.ingress_nginx_jobpatch_clusterrolebinding](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubectl_manifest.ingress_nginx_jobpatch_job_createsecret](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubectl_manifest.ingress_nginx_jobpatch_job_patchwebhook](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubectl_manifest.ingress_nginx_jobpatch_role](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubectl_manifest.ingress_nginx_jobpatch_rolebinding](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubectl_manifest.ingress_nginx_jobpatch_service_account](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubectl_manifest.ingress_nginx_validating_webhook](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
 | [kubernetes_namespace.ingress_namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [time_sleep.nlb_provisioning_time](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
 | [aws_lb.eks_nlb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/lb) | data source |

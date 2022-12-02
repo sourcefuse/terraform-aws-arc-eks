@@ -71,46 +71,46 @@ resource "helm_release" "ingress_nginx" {
   chart      = "ingress-nginx"
   repository = "https://github.com/kubernetes/ingress-nginx/tree/main/charts"
   version    = "3.23.0"
-  
-  set {
-  name = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-cert"
-  value     = var.certificate_arn
-  type      = "string"
-}
 
   set {
-  name = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-ports"
-  value     = "https"
-  type      = "string"
-} 
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-cert"
+    value = var.certificate_arn
+    type  = "string"
+  }
 
   set {
-  name = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-type"
-  value     = "nlb"
-  type      = "string"
-} 
- 
-  set {
-  name = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-connection-idle-timeout"
-  value     = "60"
-  type      = "string"
-} 
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-ports"
+    value = "https"
+    type  = "string"
+  }
 
   set {
-  name = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-cross-zone-load-balancing-enabled"
-  value     = "true"
-  type      = "string"
-} 
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-type"
+    value = "nlb"
+    type  = "string"
+  }
 
   set {
-  name = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-backend-protocol"
-  value     = "http"
-  type      = "string"
-} 
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-connection-idle-timeout"
+    value = "60"
+    type  = "string"
+  }
+
+  set {
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-cross-zone-load-balancing-enabled"
+    value = "true"
+    type  = "string"
+  }
+
+  set {
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-backend-protocol"
+    value = "http"
+    type  = "string"
+  }
   set {
     name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-additional-resource-tags"
     value = "Name=${var.cluster_name}"
-    type =  "string"
+    type  = "string"
   }
 }
 # resource "kubectl_manifest" "ingress_controller_service" {

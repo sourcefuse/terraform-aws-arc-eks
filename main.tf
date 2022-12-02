@@ -89,12 +89,13 @@ module "eks_node_group" {
 }
 
 module "cluster_autoscaler_helm" {
-  source = "git@github.com:lablabs/terraform-aws-eks-cluster-autoscaler?ref=2.0.0"
+  source = "git@github.com:lablabs/terraform-aws-eks-cluster-autoscaler?ref=v2.0.0"
 
   enabled           = true
   argo_enabled      = false
   argo_helm_enabled = false
 
+  irsa_role_name_prefix            = module.eks_cluster.eks_cluster_id
   cluster_name                     = module.eks_cluster.eks_cluster_id
   cluster_identity_oidc_issuer     = module.eks_cluster.eks_cluster_identity_oidc_issuer
   cluster_identity_oidc_issuer_arn = module.eks_cluster.eks_cluster_identity_oidc_issuer_arn
