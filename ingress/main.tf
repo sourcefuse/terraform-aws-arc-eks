@@ -56,8 +56,9 @@ data "aws_lb" "eks_nlb" {
   depends_on = [time_sleep.nlb_provisioning_time]
 }
 
+// TODO: make variable or find better way to do this
 resource "time_sleep" "nlb_provisioning_time" {
-  create_duration = "60s"
+  create_duration = "120s"
 }
 
 resource "helm_release" "ingress_nginx" {
@@ -65,7 +66,7 @@ resource "helm_release" "ingress_nginx" {
   name       = "ingress-nginx"
   namespace  = "ingress-nginx"
   chart      = "ingress-nginx"
-  repository = "https://github.com/kubernetes/ingress-nginx/tree/main/charts"
+  repository = "https://kubernetes.github.io/ingress-nginx"
   version    = "3.23.0"
 
   set {
