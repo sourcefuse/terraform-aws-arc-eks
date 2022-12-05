@@ -10,7 +10,7 @@ module "eks_cluster" {
   namespace   = var.namespace
   #  availability_zones                        = var.availability_zones
   desired_size = var.desired_size
-  #  disk_size                                 = var.disk_size
+  disk_size    = var.disk_size
   #  health_check_domains                      = var.health_check_domains
   instance_types       = var.instance_types
   kubernetes_namespace = var.kubernetes_namespace

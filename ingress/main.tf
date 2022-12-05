@@ -109,6 +109,12 @@ resource "helm_release" "ingress_nginx" {
     value = "Name=${var.cluster_name}"
     type  = "string"
   }
+
+  set {
+    name  = "controller.service.targetPorts.https"
+    value = "http"
+    type  = "string"
+  }
 }
 
 resource "kubectl_manifest" "health_check_ingress" {
