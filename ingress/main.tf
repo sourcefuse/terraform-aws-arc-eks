@@ -56,100 +56,65 @@ data "aws_lb" "eks_nlb" {
   depends_on = [time_sleep.nlb_provisioning_time]
 }
 
+// TODO: make variable or find better way to do this
 resource "time_sleep" "nlb_provisioning_time" {
-  create_duration = "60s"
+  create_duration = "120s"
 }
 
-// TODO: collect rest of values to interpolate
-// TODO: fix hacks below with Helm chart introduction or reimplement in native TF
-// a separate file is needed to deal with conflicting interpolation tokens
-resource "kubectl_manifest" "ingress_controller_service" {
-  yaml_body = templatefile("${path.module}/ingress-nginx/controller-service.yaml", {
-    load_balancer_name = var.cluster_name
-    certificate_arn    = var.certificate_arn
-  })
-  depends_on = [kubernetes_namespace.ingress_namespace]
-}
+resource "helm_release" "ingress_nginx" {
 
-resource "kubectl_manifest" "ingress_nginx_controller_serviceaccount" {
-  yaml_body  = file("${path.module}/ingress-nginx/controller-serviceaccount.yaml")
-  depends_on = [kubernetes_namespace.ingress_namespace]
-}
+  name       = "ingress-nginx"
+  namespace  = "ingress-nginx"
+  chart      = "ingress-nginx"
+  repository = "https://kubernetes.github.io/ingress-nginx"
+  version    = "3.23.0"
 
-resource "kubectl_manifest" "ingress_nginx_controller_configmap" {
-  yaml_body  = file("${path.module}/ingress-nginx/controller-configmap.yaml")
-  depends_on = [kubernetes_namespace.ingress_namespace]
-}
+  set {
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-cert"
+    value = var.certificate_arn
+    type  = "string"
+  }
 
-resource "kubectl_manifest" "ingress_nginx_clusterrole" {
-  yaml_body  = file("${path.module}/ingress-nginx/clusterrole.yaml")
-  depends_on = [kubernetes_namespace.ingress_namespace]
-}
+  set {
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-ports"
+    value = "https"
+    type  = "string"
+  }
 
-resource "kubectl_manifest" "ingress_nginx_clusterrolebinding" {
-  yaml_body  = file("${path.module}/ingress-nginx/clusterrolebinding.yaml")
-  depends_on = [kubernetes_namespace.ingress_namespace]
-}
+  set {
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-type"
+    value = "nlb"
+    type  = "string"
+  }
 
-resource "kubectl_manifest" "ingress_nginx_controller_role" {
-  yaml_body  = file("${path.module}/ingress-nginx/controller-role.yaml")
-  depends_on = [kubernetes_namespace.ingress_namespace]
-}
+  set {
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-connection-idle-timeout"
+    value = "60"
+    type  = "string"
+  }
 
-resource "kubectl_manifest" "ingress_nginx_controller_rolebinding" {
-  yaml_body  = file("${path.module}/ingress-nginx/controller-rolebinding.yaml")
-  depends_on = [kubernetes_namespace.ingress_namespace]
-}
+  set {
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-cross-zone-load-balancing-enabled"
+    value = "true"
+    type  = "string"
+  }
 
-resource "kubectl_manifest" "ingress_nginx_controller_servicewebhook" {
-  yaml_body  = file("${path.module}/ingress-nginx/controller-service-webhook.yaml")
-  depends_on = [kubernetes_namespace.ingress_namespace]
-}
+  set {
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-backend-protocol"
+    value = "http"
+    type  = "string"
+  }
+  set {
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-additional-resource-tags"
+    value = "Name=${var.cluster_name}"
+    type  = "string"
+  }
 
-resource "kubectl_manifest" "ingress_nginx_controller_deployment" {
-  yaml_body  = file("${path.module}/ingress-nginx/controller-deployment.yaml")
-  depends_on = [kubernetes_namespace.ingress_namespace]
-}
-
-resource "kubectl_manifest" "ingress_nginx_validating_webhook" {
-  yaml_body  = file("${path.module}/ingress-nginx/validating-webhook.yaml")
-  depends_on = [kubernetes_namespace.ingress_namespace]
-}
-
-resource "kubectl_manifest" "ingress_nginx_jobpatch_service_account" {
-  yaml_body  = file("${path.module}/ingress-nginx/job-patch-serviceaccount.yaml")
-  depends_on = [kubernetes_namespace.ingress_namespace]
-
-}
-resource "kubectl_manifest" "ingress_nginx_jobpatch_clusterrolebinding" {
-  yaml_body  = file("${path.module}/ingress-nginx/job-patch-clusterrolebinding.yaml")
-  depends_on = [kubernetes_namespace.ingress_namespace]
-}
-
-resource "kubectl_manifest" "ingress_nginx_jobpatch_clusterrole" {
-  yaml_body  = file("${path.module}/ingress-nginx/job-patch-clusterrole.yaml")
-  depends_on = [kubernetes_namespace.ingress_namespace]
-}
-
-resource "kubectl_manifest" "ingress_nginx_jobpatch_role" {
-  yaml_body  = file("${path.module}/ingress-nginx/job-patch-role.yaml")
-  depends_on = [kubernetes_namespace.ingress_namespace]
-}
-
-
-resource "kubectl_manifest" "ingress_nginx_jobpatch_rolebinding" {
-  yaml_body  = file("${path.module}/ingress-nginx/job-patch-rolebinding.yaml")
-  depends_on = [kubernetes_namespace.ingress_namespace]
-}
-
-resource "kubectl_manifest" "ingress_nginx_jobpatch_job_createsecret" {
-  yaml_body  = file("${path.module}/ingress-nginx/job-patch-job-createsecret.yaml")
-  depends_on = [kubernetes_namespace.ingress_namespace]
-}
-
-resource "kubectl_manifest" "ingress_nginx_jobpatch_job_patchwebhook" {
-  yaml_body  = file("${path.module}/ingress-nginx/job-patch-job-patchwebhook.yaml")
-  depends_on = [kubernetes_namespace.ingress_namespace]
+  set {
+    name  = "controller.service.targetPorts.https"
+    value = "http"
+    type  = "string"
+  }
 }
 
 resource "kubectl_manifest" "health_check_ingress" {
