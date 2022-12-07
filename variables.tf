@@ -81,6 +81,12 @@ variable "oidc_provider_enabled" {
   default     = true
 }
 
+variable "public_access_cidrs" {
+  description = "Specify the cidr blocks which will be able to access the eks public api endpoint"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+}
+
 ## workers
 variable "local_exec_interpreter" {
   description = "shell to use for local_exec"
