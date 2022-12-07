@@ -1,0 +1,18 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  SNYK-CC-TF-94:
+    - '*':
+        reason: >-
+          The user of this module may specify an appropriate address range. The
+          default is 0.0.0.0/0 (same as EKS default)
+  SNYK-CC-K8S-48:
+    - 'core-apps/metrics-server.yaml':
+         reason: >-
+           metric-server is a core component and is safe to install in kube system-namespace
+version: v1.25.0
+patch: {}
+exclude:
+  global:
+    - '**/.external_modules'
+    - '**/.terraform'
