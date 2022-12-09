@@ -104,6 +104,7 @@ resource "helm_release" "ingress_nginx" {
     value = "http"
     type  = "string"
   }
+
   set {
     name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-additional-resource-tags"
     value = "Name=${var.cluster_name}"
