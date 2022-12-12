@@ -4,22 +4,19 @@ provider "aws" {
 }
 
 module "eks_cluster" {
-  source      = "../."
-  environment = var.environment
-  name        = var.name
-  namespace   = var.namespace
-  #  availability_zones                        = var.availability_zones
-  desired_size = var.desired_size
-  #disk_size    = var.disk_size
-  #  health_check_domains                      = var.health_check_domains
-  instance_types       = var.instance_types
-  kubernetes_namespace = var.kubernetes_namespace
-  max_size             = var.max_size
-  min_size             = var.min_size
-  private_subnet_names = var.private_subnet_names
-  public_subnet_names  = var.public_subnet_names
-  region               = var.region
-  #  route_53_zone                             = var.route_53_zone
+  source                                    = "../."
+  environment                               = var.environment
+  name                                      = var.name
+  namespace                                 = var.namespace
+  desired_size                              = var.desired_size
+  instance_types                            = var.instance_types
+  kubernetes_namespace                      = var.kubernetes_namespace
+  max_size                                  = var.max_size
+  min_size                                  = var.min_size
+  private_subnet_names                      = var.private_subnet_names
+  public_subnet_names                       = var.public_subnet_names
+  region                                    = var.region
+  route_53_zone                             = var.route_53_zone
   vpc_name                                  = var.vpc_name
   enabled                                   = true
   apply_config_map_aws_auth                 = true

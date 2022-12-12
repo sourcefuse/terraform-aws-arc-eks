@@ -234,11 +234,6 @@ variable "name" {
     EOT
 }
 
-# variable "disk_size" {
-#   description = "Disk size in GiB for worker nodes. Defaults to 20. Terraform will only perform drift detection if a configuration value is provided"
-#   type        = number
-# }
-
 variable "kubernetes_namespace" {
   description = "Default k8s namespace to create"
   type        = string
