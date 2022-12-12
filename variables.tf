@@ -88,12 +88,6 @@ variable "local_exec_interpreter" {
   default     = ["/bin/sh", "-c"]
 }
 
-variable "disk_size" {
-  description = "Disk size in GiB for worker nodes. Defaults to 20. Terraform will only perform drift detection if a configuration value is provided"
-  type        = number
-  default     = 50
-}
-
 variable "instance_types" {
   description = "Set of instance types associated with the EKS Node Group. Defaults to [\"t3.medium\"]. Terraform will only perform drift detection if a configuration value is provided"
   type        = list(string)
