@@ -182,25 +182,6 @@ variable "kubernetes_namespace" {
   description = "Kubernetes namespace for selection"
 }
 
-## ingress
-
-# variable "ingress_namespace_name" {
-#   type        = string
-#   default     = "ingress-nginx"
-#   description = "Namespace name"
-# }
-#
-# variable "health_check_image" {
-#   default     = "nginx:alpine"
-#   description = "Image version for Nginx"
-#   type        = string
-# }
-
-variable "health_check_domains" {
-  type        = list(string)
-  description = "List of A record domains to create for the health check service"
-}
-
 #######################################################
 ## data lookups
 #######################################################
@@ -217,11 +198,6 @@ variable "private_subnet_names" {
 variable "public_subnet_names" {
   description = "Name tag of the public subnets used for data lookups"
   type        = list(string)
-}
-
-variable "route_53_zone" {
-  type        = string
-  description = "Route 53 domain to generate an ACM request for and to create A records against, i.e. sfrefarch.com. A wildcard subject alternative name is generated with the certificate."
 }
 
 # auth variables
