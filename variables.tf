@@ -88,10 +88,11 @@ variable "local_exec_interpreter" {
   default     = ["/bin/sh", "-c"]
 }
 
-# variable "disk_size" {
-#   description = "Disk size in GiB for worker nodes. Defaults to 20. Terraform will only perform drift detection if a configuration value is provided"
-#   type        = number
-# }
+variable "disk_size" {
+  description = "Disk size in GiB for worker nodes. Defaults to 20. Terraform will only perform drift detection if a configuration value is provided"
+  type        = number
+  default     = 50
+}
 
 variable "instance_types" {
   description = "Set of instance types associated with the EKS Node Group. Defaults to [\"t3.medium\"]. Terraform will only perform drift detection if a configuration value is provided"
@@ -188,17 +189,17 @@ variable "kubernetes_namespace" {
 #   default     = "ingress-nginx"
 #   description = "Namespace name"
 # }
-
+#
 # variable "health_check_image" {
 #   default     = "nginx:alpine"
 #   description = "Image version for Nginx"
 #   type        = string
 # }
 
-# variable "health_check_domains" {
-#   type        = list(string)
-#   description = "List of A record domains to create for the health check service"
-# }
+variable "health_check_domains" {
+  type        = list(string)
+  description = "List of A record domains to create for the health check service"
+}
 
 #######################################################
 ## data lookups
@@ -218,10 +219,10 @@ variable "public_subnet_names" {
   type        = list(string)
 }
 
-# variable "route_53_zone" {
-#   type        = string
-#   description = "Route 53 domain to generate an ACM request for and to create A records against, i.e. sfrefarch.com. A wildcard subject alternative name is generated with the certificate."
-# }
+variable "route_53_zone" {
+  type        = string
+  description = "Route 53 domain to generate an ACM request for and to create A records against, i.e. sfrefarch.com. A wildcard subject alternative name is generated with the certificate."
+}
 
 # auth variables
 variable "apply_config_map_aws_auth" {
