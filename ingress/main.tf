@@ -118,7 +118,9 @@ resource "helm_release" "ingress_nginx" {
 }
 
 resource "kubectl_manifest" "health_check_ingress" {
-  yaml_body  = file("${path.module}/health-check-ingress.yaml")
+  yaml_body = templatefile("${path.module}/health-check-ingress.yaml", {
+    health_check_domain = var.health_check_domains[0]
+  })
   depends_on = [kubernetes_namespace.ingress_namespace, module.health_check]
 }
 

@@ -14,8 +14,7 @@ spec:
                 name: health-check-svc
                 port:
                   number: 80
-# TODO: host should be configurable
-    - host: healthcheck-example.sfrefarch.com
+    - host: ${health_check_domain}
       http:
         paths:
           - path: /
