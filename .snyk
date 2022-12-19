@@ -10,6 +10,10 @@ ignore:
     - 'core-apps/metrics-server.yaml':
          reason: >-
            metric-server is a core component and is safe to install in kube system-namespace
+  SNYK-CC-K8S-46:
+    - 'core-apps/eks-admin-service-account.yaml':
+         reason: >-
+           eks admin is a core service account used for administering the cluster.
 version: v1.25.0
 patch: {}
 exclude:
