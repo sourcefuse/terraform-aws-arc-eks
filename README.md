@@ -1,11 +1,4 @@
 # terraform-aws-ref-arch-eks
-
-```shell
-aws eks update-kubeconfig --name refarch-dev-primary-k8s-cluster --region us-east-1
-kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep eks-admin | awk '{print $1}')
-kubectl proxy
-```
-
 ## Overview
 
 AWS Terraform module for the EKS implementation of the SourceFuse reference architecture.
@@ -136,6 +129,22 @@ module "terraform-aws-ref-arch-eks" {
 | <a name="output_eks_oidc_issuer_arn"></a> [eks\_oidc\_issuer\_arn](#output\_eks\_oidc\_issuer\_arn) | EKS Cluster OIDC issuer |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
+## Kubernetes dashboard
+To view the dashboard, run the following commands:
+
+```shell
+aws eks update-kubeconfig --name refarch-dev-primary-k8s-cluster --region us-east-1
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep eks-dashboard-viewer | awk '{print $1}') #Copy the token from the output
+kubectl proxy
+```
+
+Then navigate to:
+
+```text
+http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login
+```
+
+and use the copied token to login
 ## Development
 
 ### Prerequisites
