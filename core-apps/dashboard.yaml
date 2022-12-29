@@ -308,6 +308,13 @@ spec:
               port: 8000
             initialDelaySeconds: 30
             timeoutSeconds: 30
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "10m"
+            limits:
+              memory: "250Mi"
+              cpu: "50m"
           volumeMounts:
           - mountPath: /tmp
             name: tmp-volume
