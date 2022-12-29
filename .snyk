@@ -15,6 +15,9 @@ ignore:
         reason: >-
           The custom role only allows "get", "watch", "list" verbs on most resources that are
           displayed on kubernetes-dashboard. It only allows "list" on secrets.
+    - 'core-apps/dashboard.yaml > *':
+        reason: >-
+          The the role is required as is by kubernetes dashboard to fetch the necessary metrics and details.
 version: v1.25.0
 patch: {}
 exclude:
