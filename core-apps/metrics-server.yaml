@@ -136,6 +136,13 @@ spec:
         - --metric-resolution=15s
         image: k8s.gcr.io/metrics-server/metrics-server:v0.5.1
         imagePullPolicy: IfNotPresent
+        resources:
+            requests:
+              memory: "200Mi"
+              cpu: "100m"
+            limits:
+              memory: "400Mi"
+              cpu: "250m"
         livenessProbe:
           failureThreshold: 3
           httpGet:
@@ -160,10 +167,33 @@ spec:
           requests:
             cpu: 100m
             memory: 200Mi
+          limits:
+              memory: "400Mi"
+              cpu: "250m"
         securityContext:
           readOnlyRootFilesystem: true
           runAsNonRoot: true
           runAsUser: 1000
+          allowPrivilegeEscalation: false
+          # https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+          capabilities:
+            add:
+              - Undefined/nil
+              - AUDIT_WRITE
+              - CHOWN
+              - DAC_OVERRIDE
+              - FOWNER
+              - FSETID
+              - KILL
+              - MKNOD
+              - NET_BIND_SERVICE
+              - SETFCAP
+              - SETGID
+              - SETPCAP
+              - SETUID
+              - SYS_CHROOT
+            drop:
+              - ALL
         volumeMounts:
         - mountPath: /tmp
           name: tmp-dir

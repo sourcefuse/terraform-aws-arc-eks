@@ -192,6 +192,13 @@ spec:
           ports:
             - containerPort: 8443
               protocol: TCP
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "10m"
+            limits:
+              memory: "250Mi"
+              cpu: "50m"
           args:
             - --auto-generate-certificates
             - --namespace=kubernetes-dashboard
@@ -217,6 +224,25 @@ spec:
             readOnlyRootFilesystem: true
             runAsUser: 1001
             runAsGroup: 2001
+            # https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+            capabilities:
+              add:
+                - Undefined/nil
+                - AUDIT_WRITE
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - FSETID
+                - KILL
+                - MKNOD
+                - NET_BIND_SERVICE
+                - SETFCAP
+                - SETGID
+                - SETPCAP
+                - SETUID
+                - SYS_CHROOT
+              drop:
+                - ALL
       volumes:
         - name: kubernetes-dashboard-certs
           secret:
@@ -282,6 +308,13 @@ spec:
               port: 8000
             initialDelaySeconds: 30
             timeoutSeconds: 30
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "10m"
+            limits:
+              memory: "250Mi"
+              cpu: "50m"
           volumeMounts:
           - mountPath: /tmp
             name: tmp-volume
@@ -290,6 +323,25 @@ spec:
             readOnlyRootFilesystem: true
             runAsUser: 1001
             runAsGroup: 2001
+            # https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+            capabilities:
+              add:
+                - Undefined/nil
+                - AUDIT_WRITE
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - FSETID
+                - KILL
+                - MKNOD
+                - NET_BIND_SERVICE
+                - SETFCAP
+                - SETGID
+                - SETPCAP
+                - SETUID
+                - SYS_CHROOT
+              drop:
+                - ALL
       serviceAccountName: kubernetes-dashboard
       nodeSelector:
         "kubernetes.io/os": linux

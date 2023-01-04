@@ -16,6 +16,7 @@ module "eks_cluster" {
   kubernetes_version           = var.kubernetes_version
   local_exec_interpreter       = var.local_exec_interpreter
   oidc_provider_enabled        = var.oidc_provider_enabled
+  public_access_cidrs          = var.public_access_cidrs
   enabled_cluster_log_types    = var.enabled_cluster_log_types
   cluster_log_retention_period = var.cluster_log_retention_period
   map_additional_iam_roles     = var.map_additional_iam_roles
