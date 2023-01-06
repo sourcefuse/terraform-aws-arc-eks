@@ -24,7 +24,7 @@ resource "kubernetes_namespace" "ingress_namespace" {
 }
 
 module "health_check" {
-  source                                  = "git@github.com:sourcefuse/terraform-k8s-app.git?ref=0.1.1"
+  source                                  = "git::https://github.com/sourcefuse/terraform-k8s-app.git?ref=0.1.1"
   app_label                               = "health-check"
   container_image                         = var.health_check_image
   container_name                          = "health-check"
