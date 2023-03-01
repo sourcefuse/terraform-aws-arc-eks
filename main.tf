@@ -6,6 +6,7 @@ module "label" {
   context = module.this.context
 }
 
+
 module "eks_cluster" {
   source                       = "cloudposse/eks-cluster/aws"
   version                      = "2.5.0"
@@ -19,7 +20,7 @@ module "eks_cluster" {
   public_access_cidrs          = var.public_access_cidrs
   enabled_cluster_log_types    = var.enabled_cluster_log_types
   cluster_log_retention_period = var.cluster_log_retention_period
-  map_additional_iam_roles     = var.map_additional_iam_roles
+  map_additional_iam_roles     = local.map_additional_iam_roles
 
   cluster_encryption_config_enabled                         = var.cluster_encryption_config_enabled
   cluster_encryption_config_kms_key_id                      = var.cluster_encryption_config_kms_key_id
@@ -34,10 +35,16 @@ module "eks_cluster" {
 
   apply_config_map_aws_auth                 = var.apply_config_map_aws_auth
   kube_data_auth_enabled                    = var.kube_data_auth_enabled
-  kubernetes_config_map_ignore_role_changes = var.kubernetes_config_map_ignore_role_changes
+  kubernetes_config_map_ignore_role_changes = true
   kube_exec_auth_enabled                    = var.kube_exec_auth_enabled
 
   tags = var.tags
+}
+
+resource "aws_iam_role" "eks_admin" {
+  name               = "${local.cluster_name}-eks-admin"
+  path               = "/system/eks/admin"
+  assume_role_policy = data.aws_iam_policy_document.eks_admin.json
 }
 
 module "eks_fargate_profile" {

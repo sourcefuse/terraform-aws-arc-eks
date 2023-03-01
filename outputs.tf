@@ -78,6 +78,10 @@ output "eks_oidc_issuer_arn" {
   value       = module.eks_cluster.eks_cluster_identity_oidc_issuer_arn
 }
 
+output "iam_role_eks_admin_arn" {
+  description = "ARN for eks-admin iam role"
+}
+
 output "eks_cluster_ca_certificate" {
   description = "CA certificate"
   value       = "module.eks_cluster.certificate_authority[0].data"

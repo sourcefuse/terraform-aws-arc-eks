@@ -19,7 +19,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_health_check"></a> [health\_check](#module\_health\_check) | git@github.com:sourcefuse/terraform-k8s-app.git | 0.1.1 |
+| <a name="module_health_check"></a> [health\_check](#module\_health\_check) | git::https://github.com/sourcefuse/terraform-k8s-app.git | 0.1.1 |
 
 ## Resources
 
