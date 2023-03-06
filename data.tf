@@ -38,7 +38,7 @@ data "aws_iam_policy_document" "eks_admin" {
     condition {
       test     = "StringEquals"
       variable = "aws:ResourceTag/Name"
-      values   = ["${var.name}"]
+      values   = [var.name]
     }
   }
 
@@ -54,7 +54,7 @@ data "aws_iam_policy_document" "eks_admin" {
     condition {
       test     = "StringEquals"
       variable = "aws:ResourceTag/aws:eks:cluster-name"
-      values   = ["${var.name}"]
+      values   = [var.name]
     }
   }
 
@@ -70,7 +70,7 @@ data "aws_iam_policy_document" "eks_admin" {
     condition {
       test     = "StringEquals"
       variable = "aws:ResourceTag/eks:cluster-name"
-      values   = ["${var.name}"]
+      values   = [var.name]
     }
   }
 
@@ -86,7 +86,7 @@ data "aws_iam_policy_document" "eks_admin" {
     condition {
       test     = "StringEquals"
       variable = "aws:ResourceTag/Name"
-      values   = ["${var.name}"]
+      values   = [var.name]
     }
   }
 

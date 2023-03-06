@@ -216,11 +216,6 @@ variable "kube_data_auth_enabled" {
     EOT
 }
 
-#variable "kubernetes_config_map_ignore_role_changes" {
-#  type        = bool
-#  default     = true
-#  description = "Set to `false` to ignore IAM role changes in the Kubernetes Auth ConfigMap"
-#}
 
 variable "kube_exec_auth_enabled" {
   type        = bool

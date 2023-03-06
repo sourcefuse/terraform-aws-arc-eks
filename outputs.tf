@@ -80,6 +80,7 @@ output "eks_oidc_issuer_arn" {
 
 output "iam_role_eks_admin_arn" {
   description = "ARN for eks-admin iam role"
+  value       = aws_iam_role.eks_admin.arn
 }
 
 output "eks_cluster_ca_certificate" {
