@@ -1,4 +1,6 @@
 # terraform-aws-ref-arch-eks
+
+[![Known Vulnerabilities](https://github.com/sourcefuse/terraform-aws-ref-arch-eks/actions/workflows/snyk.yaml/badge.svg)](https://github.com/sourcefuse/terraform-aws-ref-arch-eks/actions/workflows/snyk.yaml)
 ## Overview
 
 AWS Terraform module for the EKS implementation of the SourceFuse reference architecture.
