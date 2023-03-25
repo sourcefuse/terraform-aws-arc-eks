@@ -1,13 +1,31 @@
 # terraform-aws-ref-arch-eks
+
+[![Known Vulnerabilities](https://github.com/sourcefuse/terraform-aws-ref-arch-eks/actions/workflows/snyk.yaml/badge.svg)](https://github.com/sourcefuse/terraform-aws-ref-arch-eks/actions/workflows/snyk.yaml)
+
 ## Overview
 
 AWS Terraform module for the EKS implementation of the SourceFuse reference architecture.
 
-## Usage
+![arc_eks_hla](./static/arc_eks_hla.png)
 
+Create the following AWS resources in a single region
+
+* eks cluster with essential network, security and logging configuration
+* eks fargate profile
+* eks node group
+
+Bootstrap the eks cluster with the following components
+
+* cluster autoscaler
+* metrics server
+* kubernetes dashboard
+* AWS secrets store CSI driver
+  
+## Usage
+See `example` for complete example
 ```hcl
 module "terraform-aws-ref-arch-eks" {
-  source = "git::ssh://"
+  source = "source = "git::https://github.com/sourcefuse/terraform-aws-ref-arch-eks"
 }
 ```
 
