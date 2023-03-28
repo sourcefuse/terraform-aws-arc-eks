@@ -4,28 +4,28 @@ provider "aws" {
 }
 
 module "eks_cluster" {
-  source                                    = "../."
-  environment                               = var.environment
-  name                                      = var.name
-  namespace                                 = var.namespace
-  desired_size                              = var.desired_size
-  instance_types                            = var.instance_types
-  kubernetes_namespace                      = var.kubernetes_namespace
-  max_size                                  = var.max_size
-  min_size                                  = var.min_size
-  private_subnet_names                      = var.private_subnet_names
-  public_subnet_names                       = var.public_subnet_names
-  region                                    = var.region
-  route_53_zone                             = var.route_53_zone
-  vpc_name                                  = var.vpc_name
-  enabled                                   = true
-  apply_config_map_aws_auth                 = true
-  kube_data_auth_enabled                    = true
-  kubernetes_config_map_ignore_role_changes = true
-  kube_exec_auth_enabled                    = true
-  csi_driver_enabled                        = var.csi_driver_enabled
-  map_additional_iam_roles                  = var.map_additional_iam_roles
-  allowed_security_groups                   = concat(data.aws_security_groups.eks_sg.ids, data.aws_security_groups.db_sg.ids)
+  source               = "../."
+  environment          = var.environment
+  name                 = var.name
+  namespace            = var.namespace
+  desired_size         = var.desired_size
+  instance_types       = var.instance_types
+  kubernetes_namespace = var.kubernetes_namespace
+  max_size             = var.max_size
+  min_size             = var.min_size
+  private_subnet_names = var.private_subnet_names
+  public_subnet_names  = var.public_subnet_names
+  region               = var.region
+  //  route_53_zone                             = var.route_53_zone
+  vpc_name                  = var.vpc_name
+  enabled                   = true
+  kubernetes_version        = var.kubernetes_version
+  apply_config_map_aws_auth = true
+  kube_data_auth_enabled    = true
+  kube_exec_auth_enabled    = true
+  csi_driver_enabled        = var.csi_driver_enabled
+  map_additional_iam_roles  = var.map_additional_iam_roles
+  allowed_security_groups   = concat(data.aws_security_groups.eks_sg.ids, data.aws_security_groups.db_sg.ids)
 }
 
 data "aws_route53_zone" "default_domain" {
