@@ -2,7 +2,7 @@ locals {
   cluster_name = module.eks_cluster.eks_cluster_id
   map_additional_iam_roles = concat(var.map_additional_iam_roles, [
     {
-      rolearn  = "${aws_iam_role.eks_admin.arn}",
+      rolearn  = aws_iam_role.eks_admin.arn,
       username = "eks-admin",
       groups   = ["system:masters"]
     }
