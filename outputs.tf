@@ -79,7 +79,7 @@ output "eks_oidc_issuer_arn" {
 }
 
 output "iam_role_eks_admin_arn" {
-  description = "ARN for eks-admin iam role"
+  description = "ARN for eks-admin iam role. Assume this to get admin access to the cluster"
   value       = aws_iam_role.eks_admin.arn
 }
 

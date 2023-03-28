@@ -16,12 +16,12 @@ module "eks_cluster" {
   private_subnet_names                      = var.private_subnet_names
   public_subnet_names                       = var.public_subnet_names
   region                                    = var.region
-  route_53_zone                             = var.route_53_zone
+//  route_53_zone                             = var.route_53_zone
   vpc_name                                  = var.vpc_name
   enabled                                   = true
+  kubernetes_version                        = var.kubernetes_version
   apply_config_map_aws_auth                 = true
   kube_data_auth_enabled                    = true
-  kubernetes_config_map_ignore_role_changes = true
   kube_exec_auth_enabled                    = true
   csi_driver_enabled                        = var.csi_driver_enabled
   map_additional_iam_roles                  = var.map_additional_iam_roles

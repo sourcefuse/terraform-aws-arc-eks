@@ -29,6 +29,11 @@ module "terraform-aws-ref-arch-eks" {
 }
 ```
 
+Note: This module creates aws-auth configmap and initialize it with the roles passed via
+the variable `map_additional_iam_roles` as well the caller iam identity. Beyond that, it 
+does not updates that config or track any changes made to it. 
+Hence the state of that configuration has to be independently managed.
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 

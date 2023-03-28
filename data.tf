@@ -6,6 +6,8 @@ data "aws_vpc" "vpc" {
   }
 }
 
+data "aws_caller_identity" "source" {}
+
 ## network
 data "aws_subnets" "private" {
   filter {
@@ -23,13 +25,49 @@ data "aws_subnets" "public" {
 
 #iam
 
+data "aws_iam_policy_document" "eks_admin_assume_role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "AWS"
+      identifiers = local.admin_principal
+    }
+  }
+}
+
 data "aws_iam_policy_document" "eks_admin" {
   statement {
-    sid = "AllowEKSActions"
+    sid = "AllowEKSReadActions"
 
     actions = [
-      "eks:*",
-      "ec2:*"
+      "eks:ListNodegroups",
+      "eks:ListTagsForResource",
+      "eks:CreateNodegroup",
+      "eks:CreateFargateProfile",
+      "eks:ListClusters"
+    ]
+
+    effect    = "Allow"
+    resources = ["*"]
+  }
+  statement {
+    sid = "AllowEKSUpdateActions"
+
+    actions = [
+      "eks:TagResource",
+      "eks:AccessKubernetesApi",
+      "eks:DeleteNodegroup",
+      "eks:UpdateNodegroupVersion",
+      "eks:UpdateNodegroupConfig",
+      "eks:DescribeNodegroup",
+      "eks:ListFargateProfiles",
+      "eks:DescribeFargateProfile",
+      "eks:ListUpdates",
+      "eks:DescribeUpdate",
+      "eks:DescribeCluster",
+      "eks:UpdateClusterConfig",
+      "eks:UntagResource",
+      "eks:DescribeIdentityProviderConfig",
     ]
 
     effect    = "Allow"
@@ -38,7 +76,7 @@ data "aws_iam_policy_document" "eks_admin" {
     condition {
       test     = "StringEquals"
       variable = "aws:ResourceTag/Name"
-      values   = [var.name]
+      values   = [local.cluster_name]
     }
   }
 
@@ -54,7 +92,7 @@ data "aws_iam_policy_document" "eks_admin" {
     condition {
       test     = "StringEquals"
       variable = "aws:ResourceTag/aws:eks:cluster-name"
-      values   = [var.name]
+      values   = [local.cluster_name]
     }
   }
 
@@ -70,7 +108,7 @@ data "aws_iam_policy_document" "eks_admin" {
     condition {
       test     = "StringEquals"
       variable = "aws:ResourceTag/eks:cluster-name"
-      values   = [var.name]
+      values   = [local.cluster_name]
     }
   }
 
@@ -86,7 +124,7 @@ data "aws_iam_policy_document" "eks_admin" {
     condition {
       test     = "StringEquals"
       variable = "aws:ResourceTag/Name"
-      values   = [var.name]
+      values   = [local.cluster_name]
     }
   }
 

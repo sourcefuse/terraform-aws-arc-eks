@@ -81,6 +81,12 @@ variable "oidc_provider_enabled" {
   default     = true
 }
 
+variable "admin_principal" {
+  description = "list of arns of IAM users/roles to be allowed to assume the eks-admin role. Default behaviour it to allow all users in the same AWS account as the caller"
+  type        = list(string)
+  default     = null
+}
+
 variable "public_access_cidrs" {
   description = "Specify the cidr blocks which will be able to access the eks public api endpoint"
   type        = list(string)

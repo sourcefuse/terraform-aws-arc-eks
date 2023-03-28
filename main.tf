@@ -42,9 +42,12 @@ module "eks_cluster" {
 }
 
 resource "aws_iam_role" "eks_admin" {
-  name               = "${local.cluster_name}-eks-admin"
-  path               = "/system/eks/admin"
-  assume_role_policy = data.aws_iam_policy_document.eks_admin.json
+  name                 = "${local.cluster_name}-eks-admin"
+  assume_role_policy   = data.aws_iam_policy_document.eks_admin_assume_role.json
+  inline_policy {
+    name   = "${local.cluster_name}-eks-admin-policy"
+    policy = data.aws_iam_policy_document.eks_admin.json
+  }
 }
 
 module "eks_fargate_profile" {
