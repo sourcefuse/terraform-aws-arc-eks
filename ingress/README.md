@@ -40,6 +40,7 @@
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the EKS cluster that the ingress controller will be deployed into. This value will also be used for the 'Name' tag of the NLB. | `string` | n/a | yes |
 | <a name="input_health_check_domains"></a> [health\_check\_domains](#input\_health\_check\_domains) | List of A record domains to create for the health check service | `list(string)` | n/a | yes |
 | <a name="input_health_check_image"></a> [health\_check\_image](#input\_health\_check\_image) | Image version for Nginx | `string` | `"nginx:alpine"` | no |
+| <a name="input_helm_chart_version"></a> [helm\_chart\_version](#input\_helm\_chart\_version) | Version of nginx ingress helm chart to use. Set a value matching your kubernetes version | `string` | `"4.6.0"` | no |
 | <a name="input_ingress_namespace_name"></a> [ingress\_namespace\_name](#input\_ingress\_namespace\_name) | Namespace name | `string` | `"ingress-nginx"` | no |
 | <a name="input_route_53_zone_id"></a> [route\_53\_zone\_id](#input\_route\_53\_zone\_id) | Route 53 zone ID to use when making an A record for the health check. | `string` | n/a | yes |
 

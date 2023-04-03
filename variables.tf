@@ -24,7 +24,7 @@ variable "region" {
 variable "kubernetes_version" {
   description = "Desired Kubernetes master version. If you do not specify a value, the latest available version is used"
   type        = string
-  default     = "1.21"
+  default     = "1.25"
 }
 
 variable "enabled_cluster_log_types" {

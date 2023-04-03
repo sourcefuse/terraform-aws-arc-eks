@@ -5,6 +5,12 @@ variable "ingress_namespace_name" {
   description = "Namespace name"
 }
 
+variable "helm_chart_version" {
+  type        = string
+  default     = "4.6.0"
+  description = "Version of nginx ingress helm chart to use. Set a value matching your kubernetes version"
+}
+
 variable "health_check_image" {
   default     = "nginx:alpine"
   description = "Image version for Nginx"

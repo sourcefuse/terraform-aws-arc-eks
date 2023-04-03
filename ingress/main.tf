@@ -67,7 +67,7 @@ resource "helm_release" "ingress_nginx" {
   namespace  = "ingress-nginx"
   chart      = "ingress-nginx"
   repository = "https://kubernetes.github.io/ingress-nginx"
-  version    = "3.23.0"
+  version    = var.helm_chart_version
 
   set {
     name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-cert"
