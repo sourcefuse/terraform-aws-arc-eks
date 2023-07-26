@@ -88,12 +88,3 @@ output "eks_cluster_ca_certificate" {
   value       = "module.eks_cluster.certificate_authority[0].data"
 }
 
-output "cluster_endpoint" {
-  description = "The endpoint of the EKS cluster"
-  value       = module.eks_cluster.eks_cluster_endpoint
-}
-
-output "cluster_version" {
-  description = "The version of the EKS cluster"
-  value       = module.eks_cluster.eks_cluster_version
-}
