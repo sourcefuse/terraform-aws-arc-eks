@@ -140,11 +140,11 @@ data "aws_iam_policy_document" "eks_admin" {
 #   pattern = "${path.module}/manifests/*.yaml"
 # }
 
-# data "aws_eks_cluster" "eks" {
-#   name = module.eks_cluster.eks_cluster_id
-#   tags = var.tags
-# }
+data "aws_eks_cluster" "eks" {
+  name = module.eks_cluster.eks_cluster_id
+  tags = var.tags
+}
 
-# data "aws_eks_cluster_auth" "eks" {
-#   name = module.eks_cluster.eks_cluster_id
-# }
+data "aws_eks_cluster_auth" "eks" {
+  name = module.eks_cluster.eks_cluster_id
+}

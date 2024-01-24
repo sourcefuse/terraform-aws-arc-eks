@@ -4,7 +4,6 @@ environment = "dev"
 namespace                         = "arc"
 route_53_zone                     = "sfarcpoc.com"
 name                              = "sl-k8s"
-vpc_id                            = "vpc-0e6c09980580ecbf6"
 kubernetes_version                = "1.21"
 oidc_provider_enabled             = true
 enabled_cluster_log_types         = ["audit"]

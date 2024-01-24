@@ -225,7 +225,7 @@ variable "kube_data_auth_enabled" {
 
 variable "kube_exec_auth_enabled" {
   type        = bool
-  default     = false
+  default     = true
   description = <<-EOT
     If `true`, use the Kubernetes provider `exec` feature to execute `aws eks get-token` to authenticate to the EKS cluster.
     Disabled by `kubeconfig_path_enabled`, overrides `kube_data_auth_enabled`.

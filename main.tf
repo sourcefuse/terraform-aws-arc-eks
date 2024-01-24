@@ -9,7 +9,7 @@ module "label" {
 
 module "eks_cluster" {
   source                       = "cloudposse/eks-cluster/aws"
-  version                      = "2.5.0"
+  version                      = "3.0.0"
   allowed_security_groups      = var.allowed_security_groups
   region                       = var.region
   vpc_id                       = data.aws_vpc.vpc.id
