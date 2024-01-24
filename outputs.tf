@@ -28,6 +28,11 @@ output "eks_cluster_endpoint" {
   value       = module.eks_cluster.eks_cluster_endpoint
 }
 
+output "eks_cluster_certificate_authority_data" {
+  description = "The Kubernetes cluster certificate authority data"
+  value       = module.eks_cluster.eks_cluster_certificate_authority_data
+}
+
 output "eks_cluster_version" {
   description = "The Kubernetes server version of the cluster"
   value       = module.eks_cluster.eks_cluster_version

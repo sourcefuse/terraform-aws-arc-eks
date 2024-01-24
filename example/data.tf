@@ -4,22 +4,38 @@
 ################################################
 ## network
 data "aws_vpc" "vpc" {
+
   filter {
     name   = "tag:Name"
-    values = ["${var.namespace}-${var.environment}-vpc"]
+    values = [var.vpc_name]
   }
 }
 
 ## network
 data "aws_subnets" "private" {
   filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.vpc.id]
+  }
+
+  filter {
     name = "tag:Name"
 
-    values = [
-      "${var.namespace}-${var.environment}-privatesubnet-private-${var.region}a",
-      "${var.namespace}-${var.environment}-privatesubnet-private-${var.region}b"
-    ]
+    values = ["*private*"]
   }
+}
+
+data "aws_caller_identity" "source" {}
+
+# eks cluster
+data "aws_eks_cluster" "eks" {
+  name = module.eks_cluster.eks_cluster_id
+
+}
+
+data "aws_eks_cluster_auth" "eks" {
+  name = module.eks_cluster.eks_cluster_id
+
 }
 
 

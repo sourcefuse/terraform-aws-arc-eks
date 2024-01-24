@@ -1,5 +1,10 @@
 terraform {
   required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.0"
+    }
+
     null = {
       version = "3.1.0"
       source  = "hashicorp/null"
@@ -12,32 +17,24 @@ terraform {
   }
 }
 
-data "aws_eks_cluster" "eks" {
-  name = module.eks_cluster.eks_cluster_id
-}
+# provider "kubernetes" {
+#   host                   = module.eks_cluster.eks_cluster_endpoint
+#   cluster_ca_certificate = base64decode(module.eks_cluster.eks_cluster_certificate_authority_data)
+#   token                  = data.aws_eks_cluster_auth.eks.token
 
-data "aws_eks_cluster_auth" "eks" {
-  name = module.eks_cluster.eks_cluster_id
-}
+# }
 
+# provider "helm" {
+#   kubernetes {
+#     host                   = module.eks_cluster.eks_cluster_endpoint
+#     cluster_ca_certificate = base64decode(module.eks_cluster.eks_cluster_certificate_authority_data)
+#     token                  = data.aws_eks_cluster_auth.eks.token
+#   }
+# }
 
-provider "kubernetes" {
-  host                   = data.aws_eks_cluster.eks.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
-  token                  = data.aws_eks_cluster_auth.eks.token
-}
-
-provider "helm" {
-  kubernetes {
-    host                   = data.aws_eks_cluster.eks.endpoint
-    cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
-    token                  = data.aws_eks_cluster_auth.eks.token
-  }
-}
-
-provider "kubectl" {
-  host                   = data.aws_eks_cluster.eks.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
-  token                  = data.aws_eks_cluster_auth.eks.token
-  load_config_file       = false
-}
+# provider "kubectl" {
+#   host                   = module.eks_cluster.eks_cluster_endpoint
+#   cluster_ca_certificate = base64decode(module.eks_cluster.eks_cluster_certificate_authority_data)
+#   token                  = data.aws_eks_cluster_auth.eks.token
+#   load_config_file       = false
+# }

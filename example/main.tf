@@ -1,8 +1,12 @@
+
 provider "aws" {
-  region  = var.region
-  profile = var.profile
+  region = var.region
+  # profile = var.profile
 }
 
+################################################################################
+## eks
+################################################################################
 module "eks_cluster" {
   source               = "../."
   environment          = var.environment
@@ -18,6 +22,7 @@ module "eks_cluster" {
   region               = var.region
   //  route_53_zone                             = var.route_53_zone
   vpc_name                  = var.vpc_name
+  availability_zones = var.availability_zones
   enabled                   = true
   kubernetes_version        = var.kubernetes_version
   apply_config_map_aws_auth = true
@@ -32,6 +37,9 @@ data "aws_route53_zone" "default_domain" {
   name = var.route_53_zone
 }
 
+################################################################################
+## acm
+################################################################################
 module "acm_request_certificate" {
   source                            = "cloudposse/acm-request-certificate/aws"
   version                           = "0.15.1"
@@ -42,7 +50,9 @@ module "acm_request_certificate" {
   depends_on                        = [data.aws_route53_zone.default_domain]
 }
 
-
+################################################################################
+## eks ingress
+################################################################################
 module "ingress" {
   source               = "../ingress"
   certificate_arn      = module.acm_request_certificate.arn

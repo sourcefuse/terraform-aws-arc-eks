@@ -1,3 +1,45 @@
+
+# [terraform-aws-arc-eks](https://github.com/sourcefuse/terraform-aws-arc-eks)
+
+## Overview
+
+AWS EKS example for the SourceFuse DevOps Reference Architecture Infrastructure.
+
+## First Time Usage
+```shell
+terraform init
+```
+
+Create a `dev` workspace
+```shell
+terraform workspace new dev
+```
+Plan Terraform
+```shell
+terraform plan -var-file dev.tfvars
+```
+
+Apply Terraform
+```shell
+terraform apply -var-file dev.tfvars
+```
+
+## Production Setup
+```shell
+terraform init -backend-config=config.prod.hcl
+```
+
+Create a `prod` workspace
+```shell
+terraform workspace new prod
+```
+
+Apply Terraform
+```shell
+terraform apply -var-file=prod.tfvars
+```
+
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 

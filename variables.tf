@@ -2,16 +2,16 @@
 ## defaults
 #######################################################
 
-# variable "availability_zones" {
-#   description = "List of availability zones"
-#   type        = list(string)
-# }
+variable "availability_zones" {
+  description = "List of availability zones"
+  type        = list(string)
+}
 
-# variable "profile" {
-#   description = "Name of the AWS profile to use"
-#   type = string
-#   default     = "default"
-# }
+variable "profile" {
+  description = "Name of the AWS profile to use"
+  type = string
+  default     = "default"
+}
 
 variable "region" {
   type        = string

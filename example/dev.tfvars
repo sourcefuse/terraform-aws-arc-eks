@@ -1,9 +1,10 @@
-region                            = "us-east-1"
-environment                       = "dev"
-profile                           = "default"
-namespace                         = "refarchdevops"
-route_53_zone                     = "sfrefarch.com"
+region      = "us-east-1"
+environment = "dev"
+# profile                           = "default"
+namespace                         = "arc"
+route_53_zone                     = "sfarcpoc.com"
 name                              = "sl-k8s"
+vpc_id                            = "vpc-0e6c09980580ecbf6"
 kubernetes_version                = "1.21"
 oidc_provider_enabled             = true
 enabled_cluster_log_types         = ["audit"]
@@ -32,15 +33,9 @@ map_additional_iam_roles = [
     rolearn  = "arn:aws:iam::757583164619:role/sourcefuse-poc-2-admin-role"
   }
 ]
-vpc_name = "refarchdevops-dev-vpc"
-private_subnet_names = [
-  "refarchdevops-dev-privatesubnet-private-us-east-1a",
-  "refarchdevops-dev-privatesubnet-private-us-east-1b"
-]
-public_subnet_names = [
-  "refarchdevops-dev-publicsubnet-public-us-east-1a",
-  "refarchdevops-dev-publicsubnet-public-us-east-1b"
-]
+vpc_name = "arc-poc-vpc"
+private_subnet_names = ["*private*"]
+public_subnet_names = ["*public*"]
 tags = {
   Environment = "dev"
   ENV         = "dev"
