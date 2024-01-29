@@ -1,6 +1,16 @@
 provider "aws" {
-  region  = var.region
-  profile = var.profile
+  region = var.region
+}
+
+module "tags" {
+  source      = "sourcefuse/arc-tags/aws"
+  version     = "1.2.2"
+  environment = var.environment
+  project     = "arc"
+
+  extra_tags = {
+    Repo = "github.com/sourcefuse/terraform-aws-arc-bootstrap"
+  }
 }
 
 module "eks_cluster" {
@@ -11,13 +21,13 @@ module "eks_cluster" {
   desired_size         = var.desired_size
   instance_types       = var.instance_types
   kubernetes_namespace = var.kubernetes_namespace
+  create_node_group    = true
   max_size             = var.max_size
   min_size             = var.min_size
-  private_subnet_names = var.private_subnet_names
-  public_subnet_names  = var.public_subnet_names
+  subnet_ids           = data.aws_subnets.private.ids
   region               = var.region
   //  route_53_zone                             = var.route_53_zone
-  vpc_name                  = var.vpc_name
+  vpc_id                    = data.aws_vpc.vpc.id
   enabled                   = true
   kubernetes_version        = var.kubernetes_version
   apply_config_map_aws_auth = true

@@ -1,18 +1,3 @@
-#######################################################
-## defaults
-#######################################################
-
-# variable "availability_zones" {
-#   description = "List of availability zones"
-#   type        = list(string)
-# }
-
-# variable "profile" {
-#   description = "Name of the AWS profile to use"
-#   type = string
-#   default     = "default"
-# }
-
 variable "region" {
   type        = string
   description = "AWS region"
@@ -191,18 +176,13 @@ variable "kubernetes_namespace" {
 #######################################################
 ## data lookups
 #######################################################
-variable "vpc_name" {
+variable "vpc_id" {
   type        = string
-  description = "Name tag of the VPC used for data lookups"
+  description = "VPC ID"
 }
 
-variable "private_subnet_names" {
-  description = "Name tag of the private subnets used for data lookups"
-  type        = list(string)
-}
-
-variable "public_subnet_names" {
-  description = "Name tag of the public subnets used for data lookups"
+variable "subnet_ids" {
+  description = "Subnet IDs"
   type        = list(string)
 }
 
@@ -236,4 +216,16 @@ variable "allowed_security_groups" {
   type        = list(string)
   default     = []
   description = "List of Security Group IDs to be allowed to connect to the EKS cluster"
+}
+
+variable "create_fargate_profile" {
+  type        = bool
+  default     = false
+  description = "Whether to create EKS Fargate profile"
+}
+
+variable "create_node_group" {
+  type        = bool
+  default     = false
+  description = "Whether to create EKS Node Group"
 }

@@ -1,19 +1,20 @@
-module "label" {
-  source     = "cloudposse/label/null"
-  version    = "0.25.0"
-  attributes = ["cluster"]
+# module "label" {
+#   source     = "cloudposse/label/null"
+#   version    = "0.25.0"
+#   attributes = ["cluster"]
 
-  context = module.this.context
-}
+#   context = module.this.context
+# }
 
 
 module "eks_cluster" {
-  source                       = "cloudposse/eks-cluster/aws"
-  version                      = "2.5.0"
+  source  = "cloudposse/eks-cluster/aws"
+  version = "3.0.0"
+
   allowed_security_groups      = var.allowed_security_groups
   region                       = var.region
-  vpc_id                       = data.aws_vpc.vpc.id
-  subnet_ids                   = concat(sort(data.aws_subnets.private.ids), sort(data.aws_subnets.public.ids))
+  vpc_id                       = var.vpc_id
+  subnet_ids                   = var.subnet_ids
   kubernetes_version           = var.kubernetes_version
   local_exec_interpreter       = var.local_exec_interpreter
   oidc_provider_enabled        = var.oidc_provider_enabled
@@ -31,31 +32,33 @@ module "eks_cluster" {
 
   addons = var.addons
 
-  context = module.this.context
-
   apply_config_map_aws_auth                 = var.apply_config_map_aws_auth
   kube_data_auth_enabled                    = var.kube_data_auth_enabled
   kubernetes_config_map_ignore_role_changes = true
   kube_exec_auth_enabled                    = var.kube_exec_auth_enabled
 
-  tags = var.tags
+  context = module.this.context
+  tags    = var.tags
 }
 
 resource "aws_iam_role" "eks_admin" {
-  name               = "${local.cluster_name}-eks-admin"
+  name               = "${module.eks_cluster.eks_cluster_id}-eks-admin"
   assume_role_policy = data.aws_iam_policy_document.eks_admin_assume_role.json
   inline_policy {
-    name   = "${local.cluster_name}-eks-admin-policy"
+    name   = "${module.eks_cluster.eks_cluster_id}-eks-admin-policy"
     policy = data.aws_iam_policy_document.eks_admin.json
   }
+  tags = var.tags
 }
 
 module "eks_fargate_profile" {
   source  = "cloudposse/eks-fargate-profile/aws"
-  version = "1.1.0"
+  version = "1.3.0"
 
-  subnet_ids                              = data.aws_subnets.private.ids
-  cluster_name                            = local.cluster_name
+  enabled = var.create_fargate_profile
+
+  subnet_ids                              = var.subnet_ids
+  cluster_name                            = module.eks_cluster.eks_cluster_id
   kubernetes_namespace                    = kubernetes_namespace.default_namespace[0].metadata[0].name
   kubernetes_labels                       = var.kubernetes_labels
   iam_role_kubernetes_namespace_delimiter = "@"
@@ -82,7 +85,9 @@ module "eks_node_group" {
   source  = "cloudposse/eks-node-group/aws"
   version = "2.6.0"
 
-  subnet_ids                 = data.aws_subnets.private.ids
+  enabled = var.create_node_group
+
+  subnet_ids                 = var.subnet_ids
   cluster_name               = module.eks_cluster.eks_cluster_id
   instance_types             = var.instance_types
   desired_size               = var.desired_size
@@ -90,7 +95,6 @@ module "eks_node_group" {
   max_size                   = var.max_size
   kubernetes_labels          = var.kubernetes_labels
   cluster_autoscaler_enabled = true
-
 
   # Prevent the node groups from being created before the Kubernetes aws-auth ConfigMap
   module_depends_on = module.eks_cluster.kubernetes_config_map_id
@@ -100,26 +104,26 @@ module "eks_node_group" {
   tags = var.tags
 }
 
-module "cluster_autoscaler_helm" {
-  source = "git::https://github.com/lablabs/terraform-aws-eks-cluster-autoscaler?ref=v2.0.0"
+# module "cluster_autoscaler_helm" {
+#   source = "git::https://github.com/lablabs/terraform-aws-eks-cluster-autoscaler?ref=v2.0.0"
 
-  enabled           = true
-  argo_enabled      = false
-  argo_helm_enabled = false
+#   enabled           = true
+#   argo_enabled      = false
+#   argo_helm_enabled = false
 
-  irsa_role_name_prefix            = module.eks_cluster.eks_cluster_id
-  cluster_name                     = module.eks_cluster.eks_cluster_id
-  cluster_identity_oidc_issuer     = module.eks_cluster.eks_cluster_identity_oidc_issuer
-  cluster_identity_oidc_issuer_arn = module.eks_cluster.eks_cluster_identity_oidc_issuer_arn
+#   irsa_role_name_prefix            = module.eks_cluster.eks_cluster_id
+#   cluster_name                     = module.eks_cluster.eks_cluster_id
+#   cluster_identity_oidc_issuer     = module.eks_cluster.eks_cluster_identity_oidc_issuer
+#   cluster_identity_oidc_issuer_arn = module.eks_cluster.eks_cluster_identity_oidc_issuer_arn
 
-  values = yamlencode({
-    "image" : {
-      "tag" : "v1.21.2"
-    }
-  })
+#   values = yamlencode({
+#     "image" : {
+#       "tag" : "v1.21.2"
+#     }
+#   })
 
-  argo_sync_policy = {
-    "automated" : {}
-    "syncOptions" = ["CreateNamespace=true"]
-  }
-}
+#   argo_sync_policy = {
+#     "automated" : {}
+#     "syncOptions" = ["CreateNamespace=true"]
+#   }
+# }

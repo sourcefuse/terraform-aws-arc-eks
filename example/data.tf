@@ -16,8 +16,8 @@ data "aws_subnets" "private" {
     name = "tag:Name"
 
     values = [
-      "${var.namespace}-${var.environment}-privatesubnet-private-${var.region}a",
-      "${var.namespace}-${var.environment}-privatesubnet-private-${var.region}b"
+      "${var.namespace}-${var.environment}-private-subnet-private-${var.region}a",
+      "${var.namespace}-${var.environment}-private-subnet-private-${var.region}b"
     ]
   }
 }
@@ -46,4 +46,12 @@ data "aws_security_groups" "eks_sg" {
     name   = "vpc-id"
     values = [data.aws_vpc.vpc.id]
   }
+}
+
+data "aws_eks_cluster" "eks" {
+  name = module.eks_cluster.eks_cluster_id
+}
+
+data "aws_eks_cluster_auth" "eks" {
+  name = module.eks_cluster.eks_cluster_id
 }

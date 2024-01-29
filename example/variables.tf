@@ -6,12 +6,6 @@ variable "namespace" {
   default     = "refarch-devops"
 }
 
-variable "profile" {
-  type        = string
-  default     = "default"
-  description = "Name of the AWS profile to use"
-}
-
 variable "availability_zones" {
   description = "List of availability zones"
   type        = list(string)
@@ -40,7 +34,7 @@ variable "kubernetes_version" {
   description = "Desired Kubernetes master version. If you do not specify a value, the latest available version is used"
   type        = string
 
-  default = "1.21"
+  default = "1.28"
 }
 
 variable "local_exec_interpreter" {
@@ -182,16 +176,6 @@ variable "kubernetes_labels" {
 #######################################################
 variable "vpc_name" {
   description = "Name tag of the VPC used for data lookups"
-}
-
-variable "private_subnet_names" {
-  description = "Name tag of the private subnets used for data lookups"
-  type        = list(string)
-}
-
-variable "public_subnet_names" {
-  description = "Name tag of the public subnets used for data lookups"
-  type        = list(string)
 }
 
 variable "route_53_zone" {

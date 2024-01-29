@@ -1,16 +1,15 @@
 region                            = "us-east-1"
-environment                       = "dev"
-profile                           = "default"
-namespace                         = "refarchdevops"
-route_53_zone                     = "sfrefarch.com"
+environment                       = "poc"
+namespace                         = "arc"
+route_53_zone                     = "sfarcpoc.com"
 name                              = "sl-k8s"
-kubernetes_version                = "1.21"
+kubernetes_version                = "1.25"
 oidc_provider_enabled             = true
 enabled_cluster_log_types         = ["audit"]
 cluster_log_retention_period      = 7
 instance_types                    = ["t3.medium"]
 desired_size                      = 3
-max_size                          = 25
+max_size                          = 8
 min_size                          = 3
 kubernetes_labels                 = {}
 cluster_encryption_config_enabled = true
@@ -32,19 +31,5 @@ map_additional_iam_roles = [
     rolearn  = "arn:aws:iam::757583164619:role/sourcefuse-poc-2-admin-role"
   }
 ]
-vpc_name = "refarchdevops-dev-vpc"
-private_subnet_names = [
-  "refarchdevops-dev-privatesubnet-private-us-east-1a",
-  "refarchdevops-dev-privatesubnet-private-us-east-1b"
-]
-public_subnet_names = [
-  "refarchdevops-dev-publicsubnet-public-us-east-1a",
-  "refarchdevops-dev-publicsubnet-public-us-east-1b"
-]
-tags = {
-  Environment = "dev"
-  ENV         = "dev"
-  Project     = "sf-ref-arch"
-  Creator     = "terraform"
-}
-health_check_domains = ["healthcheck-example.sfrefarch.com"]
+vpc_name             = "arc-poc-vpc"
+health_check_domains = ["healthcheck-example.sfarcpoc.com"]
