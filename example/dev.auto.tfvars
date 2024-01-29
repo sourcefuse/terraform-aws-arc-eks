@@ -31,5 +31,4 @@ map_additional_iam_roles = [
     rolearn  = "arn:aws:iam::757583164619:role/sourcefuse-poc-2-admin-role"
   }
 ]
-vpc_name             = "arc-poc-vpc"
 health_check_domains = ["healthcheck-example.sfarcpoc.com"]
