@@ -9,7 +9,7 @@ module "tags" {
   project     = "arc"
 
   extra_tags = {
-    Repo = "github.com/sourcefuse/terraform-aws-arc-bootstrap"
+    Repo = "github.com/sourcefuse/terraform-aws-arc-eks"
   }
 }
 
