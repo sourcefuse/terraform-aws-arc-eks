@@ -39,26 +39,24 @@ variable "cluster_log_retention_period" {
 
 ## iam
 variable "map_additional_iam_roles" {
-  description = "Additional IAM roles to add to `config-map-aws-auth` ConfigMap"
-
   type = list(object({
     rolearn  = string
     username = string
     groups   = list(string)
   }))
+  description = "Additional IAM roles to add to `config-map-aws-auth` ConfigMap"
+  default     = []
 }
 
-# variable "map_additional_iam_users" {
-#   description = "Additional IAM users to add to `config-map-aws-auth` ConfigMap"
-
-#   type = list(object({
-#     userarn  = string
-#     username = string
-#     groups   = list(string)
-#   }))
-
-#   default = []
-# }
+variable "map_additional_iam_users" {
+  type = list(object({
+    userarn  = string
+    username = string
+    groups   = list(string)
+  }))
+  description = "Additional IAM users to add to `config-map-aws-auth` ConfigMap"
+  default     = []
+}
 
 variable "oidc_provider_enabled" {
   description = "Create an IAM OIDC identity provider for the cluster, then you can create IAM roles to associate with a service account in the cluster, instead of using `kiam` or `kube2iam`. For more information, see https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html"
@@ -233,28 +231,29 @@ variable "create_node_group" {
   description = "Whether to create EKS Node Group"
 }
 
-variable "create_worker_nodes" {
-  type        = bool
-  default     = false
-  description = "Whether to create unmanaged Worker nodes"
-}
+# TODO:  enable after testing
+# variable "create_worker_nodes" {
+#   type        = bool
+#   default     = false
+#   description = "Whether to create unmanaged Worker nodes"
+# }
 
-variable "worker_node_data" {
-  type = object({
-    instance_type                          = string
-    health_check_type                      = optional(string, "EC2")
-    min_size                               = number
-    max_size                               = number
-    wait_for_capacity_timeout              = optional(string, "10m")
-    autoscaling_policies_enabled           = optional(bool, false)
-    cpu_utilization_high_threshold_percent = optional(number, 90)
-    cpu_utilization_low_threshold_percent  = optional(number, 10)
-  })
-  default = {
-    instance_type     = "t3.small"
-    health_check_type = "EC2"
-    min_size          = 2
-    max_size          = 2
-  }
-  description = "EKS Worker node data"
-}
+# variable "worker_node_data" {
+#   type = object({
+#     instance_type                          = string
+#     health_check_type                      = optional(string, "EC2")
+#     min_size                               = number
+#     max_size                               = number
+#     wait_for_capacity_timeout              = optional(string, "10m")
+#     autoscaling_policies_enabled           = optional(bool, false)
+#     cpu_utilization_high_threshold_percent = optional(number, 90)
+#     cpu_utilization_low_threshold_percent  = optional(number, 10)
+#   })
+#   default = {
+#     instance_type     = "t3.small"
+#     health_check_type = "EC2"
+#     min_size          = 2
+#     max_size          = 2
+#   }
+#   description = "EKS Worker node data"
+# }

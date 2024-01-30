@@ -21,7 +21,6 @@ module "eks_cluster" {
   public_access_cidrs          = var.public_access_cidrs
   enabled_cluster_log_types    = var.enabled_cluster_log_types
   cluster_log_retention_period = var.cluster_log_retention_period
-  map_additional_iam_roles     = local.map_additional_iam_roles
 
   cluster_encryption_config_enabled                         = var.cluster_encryption_config_enabled
   cluster_encryption_config_kms_key_id                      = var.cluster_encryption_config_kms_key_id
@@ -29,6 +28,9 @@ module "eks_cluster" {
   cluster_encryption_config_kms_key_deletion_window_in_days = var.cluster_encryption_config_kms_key_deletion_window_in_days
   cluster_encryption_config_kms_key_policy                  = var.cluster_encryption_config_kms_key_policy
   cluster_encryption_config_resources                       = var.cluster_encryption_config_resources
+
+  map_additional_iam_roles = var.map_additional_iam_roles
+  map_additional_iam_users = var.map_additional_iam_users
 
   addons = var.addons
 
