@@ -14,7 +14,8 @@ module "tags" {
 }
 
 module "eks_cluster" {
-  source               = "../."
+  source               = "sourcefuse/arc-eks/aws"
+  version              = "4.0.3"
   environment          = var.environment
   name                 = var.name
   namespace            = var.namespace
