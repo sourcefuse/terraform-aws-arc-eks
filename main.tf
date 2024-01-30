@@ -29,7 +29,7 @@ module "eks_cluster" {
   cluster_encryption_config_kms_key_policy                  = var.cluster_encryption_config_kms_key_policy
   cluster_encryption_config_resources                       = var.cluster_encryption_config_resources
 
-  map_additional_iam_roles = var.map_additional_iam_roles
+  map_additional_iam_roles = local.map_additional_iam_roles
   map_additional_iam_users = var.map_additional_iam_users
 
   addons = var.addons
