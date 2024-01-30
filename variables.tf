@@ -1,18 +1,3 @@
-#######################################################
-## defaults
-#######################################################
-
-# variable "availability_zones" {
-#   description = "List of availability zones"
-#   type        = list(string)
-# }
-
-# variable "profile" {
-#   description = "Name of the AWS profile to use"
-#   type = string
-#   default     = "default"
-# }
-
 variable "region" {
   type        = string
   description = "AWS region"
@@ -54,26 +39,24 @@ variable "cluster_log_retention_period" {
 
 ## iam
 variable "map_additional_iam_roles" {
-  description = "Additional IAM roles to add to `config-map-aws-auth` ConfigMap"
-
   type = list(object({
     rolearn  = string
     username = string
     groups   = list(string)
   }))
+  description = "Additional IAM roles to add to `config-map-aws-auth` ConfigMap"
+  default     = []
 }
 
-# variable "map_additional_iam_users" {
-#   description = "Additional IAM users to add to `config-map-aws-auth` ConfigMap"
-
-#   type = list(object({
-#     userarn  = string
-#     username = string
-#     groups   = list(string)
-#   }))
-
-#   default = []
-# }
+variable "map_additional_iam_users" {
+  type = list(object({
+    userarn  = string
+    username = string
+    groups   = list(string)
+  }))
+  description = "Additional IAM users to add to `config-map-aws-auth` ConfigMap"
+  default     = []
+}
 
 variable "oidc_provider_enabled" {
   description = "Create an IAM OIDC identity provider for the cluster, then you can create IAM roles to associate with a service account in the cluster, instead of using `kiam` or `kube2iam`. For more information, see https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html"
@@ -171,16 +154,19 @@ variable "cluster_encryption_config_resources" {
 }
 
 variable "addons" {
-  description = "Manages [`aws_eks_addon`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_addon) resources."
-
   type = list(object({
-    addon_name               = string
-    addon_version            = string
-    resolve_conflicts        = string
-    service_account_role_arn = string
+    addon_name                  = string
+    addon_version               = optional(string, null)
+    configuration_values        = optional(string, null)
+    resolve_conflicts_on_create = optional(string, null)
+    resolve_conflicts_on_update = optional(string, null)
+    service_account_role_arn    = optional(string, null)
+    create_timeout              = optional(string, null)
+    update_timeout              = optional(string, null)
+    delete_timeout              = optional(string, null)
   }))
-
-  default = []
+  description = "Manages [`aws_eks_addon`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_addon) resources"
+  default     = []
 }
 
 variable "kubernetes_namespace" {
@@ -191,18 +177,13 @@ variable "kubernetes_namespace" {
 #######################################################
 ## data lookups
 #######################################################
-variable "vpc_name" {
+variable "vpc_id" {
   type        = string
-  description = "Name tag of the VPC used for data lookups"
+  description = "VPC ID"
 }
 
-variable "private_subnet_names" {
-  description = "Name tag of the private subnets used for data lookups"
-  type        = list(string)
-}
-
-variable "public_subnet_names" {
-  description = "Name tag of the public subnets used for data lookups"
+variable "subnet_ids" {
+  description = "Subnet IDs"
   type        = list(string)
 }
 
@@ -237,3 +218,42 @@ variable "allowed_security_groups" {
   default     = []
   description = "List of Security Group IDs to be allowed to connect to the EKS cluster"
 }
+
+variable "create_fargate_profile" {
+  type        = bool
+  default     = false
+  description = "Whether to create EKS Fargate profile"
+}
+
+variable "create_node_group" {
+  type        = bool
+  default     = false
+  description = "Whether to create EKS Node Group"
+}
+
+# TODO:  enable after testing
+# variable "create_worker_nodes" {
+#   type        = bool
+#   default     = false
+#   description = "Whether to create unmanaged Worker nodes"
+# }
+
+# variable "worker_node_data" {
+#   type = object({
+#     instance_type                          = string
+#     health_check_type                      = optional(string, "EC2")
+#     min_size                               = number
+#     max_size                               = number
+#     wait_for_capacity_timeout              = optional(string, "10m")
+#     autoscaling_policies_enabled           = optional(bool, false)
+#     cpu_utilization_high_threshold_percent = optional(number, 90)
+#     cpu_utilization_low_threshold_percent  = optional(number, 10)
+#   })
+#   default = {
+#     instance_type     = "t3.small"
+#     health_check_type = "EC2"
+#     min_size          = 2
+#     max_size          = 2
+#   }
+#   description = "EKS Worker node data"
+# }

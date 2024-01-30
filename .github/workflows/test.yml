@@ -1,11 +1,11 @@
 ---
 name: Test
 
-on:
+on:                      # yamllint disable-line rule:truthy
   push:
     branches:
-      - '**'     # matches every branch
-      - '!main'  # excludes main
+      - "**"              # matches every branch
+      - "!main"           # excludes main
   pull_request:
     branches:
       - main
