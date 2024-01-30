@@ -156,16 +156,19 @@ variable "cluster_encryption_config_resources" {
 }
 
 variable "addons" {
-  description = "Manages [`aws_eks_addon`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_addon) resources."
-
   type = list(object({
-    addon_name               = string
-    addon_version            = string
-    resolve_conflicts        = string
-    service_account_role_arn = string
+    addon_name                  = string
+    addon_version               = optional(string, null)
+    configuration_values        = optional(string, null)
+    resolve_conflicts_on_create = optional(string, null)
+    resolve_conflicts_on_update = optional(string, null)
+    service_account_role_arn    = optional(string, null)
+    create_timeout              = optional(string, null)
+    update_timeout              = optional(string, null)
+    delete_timeout              = optional(string, null)
   }))
-
-  default = []
+  description = "Manages [`aws_eks_addon`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_addon) resources"
+  default     = []
 }
 
 variable "kubernetes_namespace" {
@@ -228,4 +231,30 @@ variable "create_node_group" {
   type        = bool
   default     = false
   description = "Whether to create EKS Node Group"
+}
+
+variable "create_worker_nodes" {
+  type        = bool
+  default     = false
+  description = "Whether to create unmanaged Worker nodes"
+}
+
+variable "worker_node_data" {
+  type = object({
+    instance_type                          = string
+    health_check_type                      = optional(string, "EC2")
+    min_size                               = number
+    max_size                               = number
+    wait_for_capacity_timeout              = optional(string, "10m")
+    autoscaling_policies_enabled           = optional(bool, false)
+    cpu_utilization_high_threshold_percent = optional(number, 90)
+    cpu_utilization_low_threshold_percent  = optional(number, 10)
+  })
+  default = {
+    instance_type     = "t3.small"
+    health_check_type = "EC2"
+    min_size          = 2
+    max_size          = 2
+  }
+  description = "EKS Worker node data"
 }

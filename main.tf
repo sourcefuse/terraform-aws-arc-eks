@@ -104,6 +104,33 @@ module "eks_node_group" {
   tags = var.tags
 }
 
+# TODO: Enable after fixing CP issue
+# module "eks_workers" {
+#   source  = "cloudposse/eks-workers/aws"
+#   version = "1.0.0"
+#   enabled = var.create_worker_nodes
+
+#   instance_type                      = var.worker_node_data.instance_type
+#   vpc_id                             = var.vpc_id
+#   subnet_ids                         = var.subnet_ids
+#   health_check_type                  = var.worker_node_data.health_check_type
+#   min_size                           = var.worker_node_data.min_size
+#   max_size                           = var.worker_node_data.max_size
+#   wait_for_capacity_timeout          = var.worker_node_data.wait_for_capacity_timeout
+#   cluster_name                       = module.eks_cluster.eks_cluster_id
+#   cluster_endpoint                   = module.eks_cluster.eks_cluster_endpoint
+#   cluster_certificate_authority_data = module.eks_cluster.eks_cluster_certificate_authority_data
+#   cluster_security_group_id          = module.eks_cluster.eks_cluster_managed_security_group_id
+#   bootstrap_extra_args               = "--use-max-pods false"
+#   kubelet_extra_args                 = "--node-labels=purpose=ci-worker"
+
+#   # Auto-scaling policies and CloudWatch metric alarms
+#   autoscaling_policies_enabled           = var.worker_node_data.autoscaling_policies_enabled
+#   cpu_utilization_high_threshold_percent = var.worker_node_data.cpu_utilization_high_threshold_percent
+#   cpu_utilization_low_threshold_percent  = var.worker_node_data.cpu_utilization_low_threshold_percent
+# }
+
+
 # module "cluster_autoscaler_helm" {
 #   source = "git::https://github.com/lablabs/terraform-aws-eks-cluster-autoscaler?ref=v2.0.0"
 

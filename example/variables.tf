@@ -117,24 +117,19 @@ variable "cluster_encryption_config_resources" {
 }
 
 variable "addons" {
-  description = "Manages [`aws_eks_addon`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_addon) resources."
-
   type = list(object({
-    addon_name               = string
-    addon_version            = string
-    resolve_conflicts        = string
-    service_account_role_arn = string
+    addon_name                  = string
+    addon_version               = optional(string, null)
+    configuration_values        = optional(string, null)
+    resolve_conflicts_on_create = optional(string, null)
+    resolve_conflicts_on_update = optional(string, null)
+    service_account_role_arn    = optional(string, null)
+    create_timeout              = optional(string, null)
+    update_timeout              = optional(string, null)
+    delete_timeout              = optional(string, null)
   }))
-
-  default = [
-    {
-      addon_name = "vpc-cni"
-      # addon_version            = "v1.9.1-eksbuild.1"
-      addon_version            = null
-      resolve_conflicts        = "NONE"
-      service_account_role_arn = null
-    }
-  ]
+  description = "Manages [`aws_eks_addon`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_addon) resources"
+  default     = []
 }
 
 variable "instance_types" {
@@ -174,10 +169,6 @@ variable "kubernetes_labels" {
 #######################################################
 ## data lookups
 #######################################################
-variable "vpc_name" {
-  description = "Name tag of the VPC used for data lookups"
-}
-
 variable "route_53_zone" {
   type        = string
   description = "Route 53 domain to generate an ACM request for and to create A records against, i.e. sfrefarch.com. A wildcard subject alternative name is generated with the certificate."

@@ -118,10 +118,52 @@ resource "helm_release" "ingress_nginx" {
   }
 }
 
-resource "kubectl_manifest" "health_check_ingress" {
-  yaml_body = templatefile("${path.module}/health-check-ingress.yaml", {
-    health_check_domain = var.health_check_domains[0]
-  })
+# resource "kubectl_manifest" "health_check_ingress" {
+#   yaml_body = templatefile("${path.module}/health-check-ingress.yaml", {
+#     health_check_domain = var.health_check_domains[0]
+#   })
+#   depends_on = [kubernetes_namespace.ingress_namespace, module.health_check]
+# }
+
+resource "kubernetes_ingress" "this" {
+  metadata {
+    name      = "ingress-default"
+    namespace = "ingress-nginx"
+  }
+
+  spec {
+    ingress_class_name = "nginx"
+
+    rule {
+      http {
+        path {
+          path = "/"
+          //pathType = "Prefix"
+          backend {
+            service_name = "health-check-svc"
+            service_port = 80
+          }
+        }
+      }
+    }
+
+    rule {
+      host = var.health_check_domains[0]
+
+      http {
+        path {
+          path = "/"
+          //pathType = "Prefix"
+          backend {
+            service_name = "health-check-svc"
+            service_port = 80
+          }
+        }
+
+      }
+    }
+  }
+
   depends_on = [kubernetes_namespace.ingress_namespace, module.health_check]
 }
 
