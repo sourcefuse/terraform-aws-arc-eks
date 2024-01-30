@@ -36,4 +36,4 @@ jobs:
           user-email: 'github-actions@github.com'
           user-name: ${{ github.actor }}
           target-branch: main
-          commit-message: ${{ github.event.head_commit.message }}    
+          commit-message: ${{ github.event.head_commit.message }}
