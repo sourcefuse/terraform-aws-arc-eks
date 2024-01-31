@@ -8,7 +8,7 @@ This document provides guidelines and instructions for users looking to implemen
 
 ### Module Overview
 
-The [Terraform AWS ARC EKS](https://github.com/sourcefuse/terraform-aws-arc-eks) module provides a secure and modular foundation for building robust and secure VPC and network resources on AWS.
+The [Terraform AWS ARC EKS](https://github.com/sourcefuse/terraform-aws-arc-eks) module provides a secure and modular foundation for deploying EKS clusters on AWS.
 
 ![arc_eks_hla](./static/arc_eks_hla.png)
 
@@ -98,9 +98,9 @@ If you encounter a bug or issue, please report it on the [GitHub repository](htt
 
 Understand the security considerations related to EKS and Kubernetes clusters on AWS when using this module.
 
-### Best Practices for AWS Network
+### Best Practices for AWS EKS
 
-Follow best practices to ensure secure Network configurations:
+Follow best practices to ensure secure EKS configurations:
 
 - [EKS security on AWS](https://docs.aws.amazon.com/eks/latest/userguide/security.html)
 
