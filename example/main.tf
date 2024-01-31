@@ -27,18 +27,13 @@ module "eks_cluster" {
   min_size             = var.min_size
   subnet_ids           = data.aws_subnets.private.ids
   region               = var.region
-  //  route_53_zone                             = var.route_53_zone
   vpc_id                    = data.aws_vpc.vpc.id
   enabled                   = true
   kubernetes_version        = var.kubernetes_version
   apply_config_map_aws_auth = true
   kube_data_auth_enabled    = true
   kube_exec_auth_enabled    = true
-  csi_driver_enabled        = var.csi_driver_enabled
+#  csi_driver_enabled        = var.csi_driver_enabled
   map_additional_iam_roles  = var.map_additional_iam_roles
   allowed_security_groups   = concat(data.aws_security_groups.eks_sg.ids, data.aws_security_groups.db_sg.ids)
-}
-
-data "aws_route53_zone" "default_domain" {
-  name = var.route_53_zone
 }
