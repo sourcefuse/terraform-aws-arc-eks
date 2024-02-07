@@ -40,7 +40,7 @@ addons = [
   },
 ]
 kubernetes_namespace = "sf-ref-arch"
-// TODO: tighten RBAC
+// TODO: tighten RBAC (define more fine-grained ddefault groups for like developers, devops, testers. developers, and testers should be restricted to a particular namespace(roles, rolebindings), devops should have clusterroles, clusterolebindings)
 map_additional_iam_roles = [
   {
     username = "admin",

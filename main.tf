@@ -53,6 +53,7 @@ resource "aws_iam_role" "eks_admin" {
   tags = var.tags
 }
 
+# TODO: update to add a loop to create a separate fargate profile for every user defined namespace
 module "eks_fargate_profile" {
   source  = "cloudposse/eks-fargate-profile/aws"
   version = "1.3.0"
@@ -70,7 +71,7 @@ module "eks_fargate_profile" {
   tags = var.tags
 }
 
-
+# TODO: remove this namespace, as k8s alreay creates a default namespace
 resource "kubernetes_namespace" "default_namespace" {
   count = (var.enabled && var.kubernetes_namespace != "kube-system") ? 1 : 0
 
