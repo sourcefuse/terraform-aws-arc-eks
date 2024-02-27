@@ -111,11 +111,11 @@ variable "min_size" {
 
 // TODO: To be enabled when core apps module / CSI driver is added back
 ## csi secrets driver
-# variable "csi_driver_enabled" {
-#   description = "The Secrets Store CSI Driver secrets-store.csi.k8s.io allows Kubernetes to mount multiple secrets, keys, and certs stored in enterprise-grade external secrets stores into their pods as a volume."
-#   type        = bool
-#   default     = true
-# }
+variable "csi_driver_enabled" {
+  description = "The Secrets Store CSI Driver secrets-store.csi.k8s.io allows Kubernetes to mount multiple secrets, keys, and certs stored in enterprise-grade external secrets stores into their pods as a volume."
+  type        = bool
+  default     = false
+}
 
 ## cluster configuration
 variable "cluster_encryption_config_enabled" {
@@ -218,6 +218,15 @@ variable "allowed_security_groups" {
   type        = list(string)
   default     = []
   description = "List of Security Group IDs to be allowed to connect to the EKS cluster"
+}
+
+variable "allowed_cidr_blocks" {
+  type        = list(string)
+  default     = []
+  description = <<-EOT
+    A list of IPv4 CIDRs to allow access to the cluster.
+    The length of this list must be known at "plan" time.
+    EOT
 }
 
 variable "create_fargate_profile" {
