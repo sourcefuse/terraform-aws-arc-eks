@@ -12,6 +12,7 @@ module "eks_cluster" {
   version = "3.0.0"
 
   allowed_security_groups      = var.allowed_security_groups
+  allowed_cidr_blocks          = var.allowed_cidr_blocks
   region                       = var.region
   vpc_id                       = var.vpc_id
   subnet_ids                   = var.subnet_ids
