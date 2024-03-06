@@ -267,3 +267,79 @@ variable "create_node_group" {
 #   }
 #   description = "EKS Worker node data"
 # }
+
+variable "launch_template_id" {
+  type        = list(string)
+  default     = []
+  description = "The ID (not name) of a custom launch template to use for the EKS node group. If provided, it must specify the AMI image ID."
+  validation {
+    condition = (
+      length(var.launch_template_id) < 2
+    )
+    error_message = "You may not specify more than one `launch_template_id`."
+  }
+}
+
+variable "launch_template_version" {
+  type        = list(string)
+  default     = []
+  description = "The version of the specified launch template to use. Defaults to latest version."
+  validation {
+    condition = (
+      length(var.launch_template_version) < 2
+    )
+    error_message = "You may not specify more than one `launch_template_version`."
+  }
+}
+
+variable "ami_image_id" {
+  type        = list(string)
+  default     = []
+  description = "AMI to use. Ignored if `launch_template_id` is supplied."
+  validation {
+    condition = (
+      length(var.ami_image_id) < 2
+    )
+    error_message = "You may not specify more than one `ami_image_id`."
+  }
+}
+
+variable "ami_release_version" {
+  type        = list(string)
+  default     = []
+  description = "EKS AMI version to use, e.g. For AL2 \"1.16.13-20200821\" or for bottlerocket \"1.2.0-ccf1b754\" (no \"v\") or  for Windows \"2023.02.14\". For AL2, bottlerocket and Windows, it defaults to latest version for Kubernetes version."
+  validation {
+    condition = (
+      length(var.ami_release_version) == 0 ? true : length(regexall("(^\\d+\\.\\d+\\.\\d+-[\\da-z]+$)|(^\\d+\\.\\d+\\.\\d+$)", var.ami_release_version[0])) == 1
+    )
+    error_message = "Var ami_release_version, if supplied, must be like for AL2 \"1.16.13-20200821\" or for bottlerocket \"1.2.0-ccf1b754\" (no \"v\") or for Windows \"2023.02.14\"."
+  }
+}
+
+variable "capacity_type" {
+  type        = string
+  default     = null
+  description = <<-EOT
+    Type of capacity associated with the EKS Node Group. Valid values: "ON_DEMAND", "SPOT", or `null`.
+    Terraform will only perform drift detection if a configuration value is provided.
+    EOT
+  validation {
+    condition     = var.capacity_type == null ? true : contains(["ON_DEMAND", "SPOT"], var.capacity_type)
+    error_message = "Capacity type must be either `null`, \"ON_DEMAND\", or \"SPOT\"."
+  }
+}
+
+variable "ami_type" {
+  type        = string
+  description = <<-EOT
+    Type of Amazon Machine Image (AMI) associated with the EKS Node Group.
+    Defaults to `AL2_x86_64`. Valid values: `AL2_x86_64, AL2_x86_64_GPU, AL2_ARM_64, CUSTOM, BOTTLEROCKET_ARM_64, BOTTLEROCKET_x86_64, BOTTLEROCKET_ARM_64_NVIDIA, BOTTLEROCKET_x86_64_NVIDIA, WINDOWS_CORE_2019_x86_64, WINDOWS_FULL_2019_x86_64, WINDOWS_CORE_2022_x86_64, WINDOWS_FULL_2022_x86_64`.
+    EOT
+  default     = "AL2_x86_64"
+  validation {
+    condition = (
+      contains(["AL2_x86_64", "AL2_x86_64_GPU", "AL2_ARM_64", "CUSTOM", "BOTTLEROCKET_ARM_64", "BOTTLEROCKET_x86_64", "BOTTLEROCKET_ARM_64_NVIDIA", "BOTTLEROCKET_x86_64_NVIDIA", "WINDOWS_CORE_2019_x86_64", "WINDOWS_FULL_2019_x86_64", "WINDOWS_CORE_2022_x86_64", "WINDOWS_FULL_2022_x86_64"], var.ami_type)
+    )
+    error_message = "Var ami_type must be one of \"AL2_x86_64\",\"AL2_x86_64_GPU\",\"AL2_ARM_64\",\"BOTTLEROCKET_ARM_64\",\"BOTTLEROCKET_x86_64\",\"BOTTLEROCKET_ARM_64_NVIDIA\",\"BOTTLEROCKET_x86_64_NVIDIA\",\"WINDOWS_CORE_2019_x86_64\",\"WINDOWS_FULL_2019_x86_64\",\"WINDOWS_CORE_2022_x86_64\",\"WINDOWS_FULL_2022_x86_64\", or \"CUSTOM\"."
+  }
+}
