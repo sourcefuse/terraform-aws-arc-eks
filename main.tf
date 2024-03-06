@@ -86,7 +86,7 @@ resource "kubernetes_namespace" "default_namespace" {
 
 module "eks_node_group" {
   source  = "cloudposse/eks-node-group/aws"
-  version = "2.6.0"
+  version = "2.12.0"
 
   enabled = var.create_node_group
 
@@ -98,6 +98,12 @@ module "eks_node_group" {
   max_size                   = var.max_size
   kubernetes_labels          = var.kubernetes_labels
   cluster_autoscaler_enabled = true
+  ami_type                   = var.ami_type
+  capacity_type              = var.capacity_type
+  ami_image_id               = var.ami_image_id
+  ami_release_version        = var.ami_release_version
+  launch_template_id         = var.launch_template_id
+  launch_template_version    = var.launch_template_version
 
   # Prevent the node groups from being created before the Kubernetes aws-auth ConfigMap
   module_depends_on = module.eks_cluster.kubernetes_config_map_id
