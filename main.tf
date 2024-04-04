@@ -1,12 +1,3 @@
-# module "label" {
-#   source     = "cloudposse/label/null"
-#   version    = "0.25.0"
-#   attributes = ["cluster"]
-
-#   context = module.this.context
-# }
-
-
 module "eks_cluster" {
   source  = "cloudposse/eks-cluster/aws"
   version = "3.0.0"
