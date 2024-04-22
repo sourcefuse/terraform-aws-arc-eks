@@ -1,3 +1,4 @@
+---
 site_name: terraform-aws-ref-eks-cloudfront
 site_description: Terraform module for setting up Sourcefuse AWS EKS Cluster.
 plugins:

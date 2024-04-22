@@ -1,3 +1,4 @@
+---
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
@@ -5,6 +6,7 @@ metadata:
   namespace: arc
   description: Terraform module for setting up Sourcefuse AWS EKS Cluster
   annotations:
+    snyk.io/org-id: 04111b7b-2ba8-404b-8a16-42a04448794d
     github.com/project-slug: sourcefuse/terraform-aws-ref-arch-eks
     backstage.io/techdocs-ref: dir:.
   links:
@@ -22,6 +24,12 @@ metadata:
       icon: dashboard
     - url: https://github.com/cloudposse/terraform-null-label
       title: Provider Link
+      icon: dashboard
+    - url: https://sourcefuse.github.io/arc-docs/arc-iac-docs/
+      title: ARC Docs
+      icon: dashboard
+    - url: https://sourcefuse.github.io/arc-docs/arc-iac-docs/modules/terraform-aws-ref-arch-eks/
+      title: ARC EKS Docs
       icon: dashboard
 spec:
   type: service
