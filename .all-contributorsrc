@@ -32,6 +32,19 @@
         "maintenance",
         "mentoring"
       ]
+    },
+    {
+      "login": "tsaucier-sf",
+      "name": "Travis Saucier",
+      "avatar_url": "https://avatars.githubusercontent.com/u/89415058?v=4",
+      "profile": "https://sourcefuse.com",
+      "contributions": [
+        "code",
+        "infra",
+        "doc",
+        "maintenance",
+        "mentoring"
+      ]
     }
   ],
   "contributorsPerLine": 7,
