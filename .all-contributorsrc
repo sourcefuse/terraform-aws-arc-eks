@@ -45,6 +45,19 @@
         "maintenance",
         "mentoring"
       ]
+    },
+    {
+      "login": "mayank0202",
+      "name": "Mayank Sharma",
+      "avatar_url": "https://avatars.githubusercontent.com/u/83959396?v=4",
+      "profile": "https://github.com/mayank0202",
+      "contributions": [
+        "code",
+        "infra",
+        "doc",
+        "maintenance",
+        "mentoring"
+      ]
     }
   ],
   "contributorsPerLine": 7,
