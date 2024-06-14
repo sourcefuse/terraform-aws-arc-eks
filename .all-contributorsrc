@@ -1,0 +1,30 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "mayank0202",
+      "name": "Mayank Sharma",
+      "avatar_url": "https://avatars.githubusercontent.com/u/83959396?v=4",
+      "profile": "https://github.com/mayank0202",
+      "contributions": [
+        "code",
+        "infra",
+        "doc",
+        "maintenance",
+        "mentoring"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "terraform-aws-arc-eks",
+  "projectOwner": "sourcefuse"
+}
