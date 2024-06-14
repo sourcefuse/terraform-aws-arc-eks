@@ -1,0 +1,30 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "tsaucier-sf",
+      "name": "Travis Saucier",
+      "avatar_url": "https://avatars.githubusercontent.com/u/89415058?v=4",
+      "profile": "https://sourcefuse.com",
+      "contributions": [
+        "code",
+        "infra",
+        "doc",
+        "maintenance",
+        "mentoring"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "terraform-aws-arc-eks",
+  "projectOwner": "sourcefuse"
+}
