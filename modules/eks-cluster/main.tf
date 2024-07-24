@@ -42,8 +42,8 @@ resource "aws_eks_cluster" "default" {
       ip_family = "ipv6"
     }
   }
-   dynamic "encryption_config" {
- 
+  dynamic "encryption_config" {
+
     for_each = var.cluster_encryption_config_enabled ? [local.cluster_encryption_config] : []
     content {
       resources = encryption_config.value.resources
@@ -79,9 +79,9 @@ resource "aws_eks_cluster" "default" {
 #####################################################
 
 module "kms" {
-  source                  = "sourcefuse/arc-kms/aws"
-  version                 = "1.0.0" // use the latest version from registry.
- // count                   = var.cluster_encryption_config_enabled && var.cluster_encryption_config_kms_key_id == "" ? 1 : 0
+  source  = "sourcefuse/arc-kms/aws"
+  version = "1.0.0" // use the latest version from registry.
+  // count                   = var.cluster_encryption_config_enabled && var.cluster_encryption_config_kms_key_id == "" ? 1 : 0
   enabled                 = var.cluster_encryption_config_enabled && var.cluster_encryption_config_kms_key_id == "" ? 1 : 0
   deletion_window_in_days = var.cluster_encryption_config_kms_key_deletion_window_in_days
   enable_key_rotation     = var.cluster_encryption_config_kms_key_enable_key_rotation
@@ -108,7 +108,7 @@ resource "aws_iam_openid_connect_provider" "default" {
 ######################################################
 
 resource "aws_eks_addon" "cluster" {
-  for_each = {for x in var.addons : x.addon_name => addon}
+  for_each = { for x in var.addons : x.addon_name => addon }
 
   cluster_name                = aws_eks_cluster.default[0].name
   addon_name                  = each.key

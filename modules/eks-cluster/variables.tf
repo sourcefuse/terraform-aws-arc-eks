@@ -20,13 +20,13 @@ variable "cluster_log_retention_period" {
   default     = 0
 }
 
-variable "cloudwatch_log_group_name" {              //
+variable "cloudwatch_log_group_name" { //
   type        = string
   description = "Name for Logging group "
   default     = ""
 }
 
-variable "tags" {                                                       //
+variable "tags" { //
   type        = map(string)
   description = "Tags for AWS resources"
 }
@@ -36,14 +36,14 @@ variable "tags" {                                                       //
 ## Cluster
 #####################################################
 
-variable "create_eks_cluster" {                                         //
+variable "create_eks_cluster" { //
   type        = string
-  description = "Flag for create eks cluster"  
+  description = "Flag for create eks cluster"
 }
 
-variable "eks_cluster_name" {                                           //
+variable "eks_cluster_name" { //
   type        = string
-  description = "Name to be used for EKS Cluster"  
+  description = "Name to be used for EKS Cluster"
 }
 
 
@@ -221,7 +221,7 @@ variable "permissions_boundary" {
 }
 
 #####################################################
-## EKS-Addon 
+## EKS-Addon
 #####################################################
 
 variable "addons" {
@@ -252,7 +252,6 @@ variable "addons" {
 
 variable "oidc_provider_enabled" {
   type        = bool
-  description = "Creating OIDC provider helps to create IAM roles to associate with a service account in the cluster"   
+  description = "Creating OIDC provider helps to create IAM roles to associate with a service account in the cluster"
   default     = false
 }
-
