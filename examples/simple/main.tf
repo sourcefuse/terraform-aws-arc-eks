@@ -14,14 +14,14 @@ module "tags" {
 }
 
 module "eks_cluster" {
-  source               = "../../"
-  namespace            = "arc"
-  environment          = "dev"
-  kubernetes_version   = "1.31"
-  name                 = local.name
-  vpc_config           = local.vpc_config
-  access_config        = local.access_config
-  enable_oidc_provider = false
-  envelope_encryption  = local.envelope_encryption
+  source                    = "../../"
+  namespace                 = "arc"
+  environment               = "dev"
+  kubernetes_version        = "1.31"
+  name                      = local.name
+  vpc_config                = local.vpc_config
+  access_config             = local.access_config
+  enable_oidc_provider      = false
+  envelope_encryption       = local.envelope_encryption
   kubernetes_network_config = local.kubernetes_network_config
 }

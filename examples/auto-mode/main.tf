@@ -14,18 +14,18 @@ module "tags" {
 }
 
 module "eks_cluster" {
-  source                    = "../../"
-  namespace                 = "arc"
-  environment               = "dev"
-  kubernetes_version        = "1.31"
-  name                      = local.name
-  vpc_config                = local.vpc_config
-  auto_mode_config          = local.auto_mode_config
+  source                                = "../../"
+  namespace                             = "arc"
+  environment                           = "dev"
+  kubernetes_version                    = "1.31"
+  name                                  = local.name
+  vpc_config                            = local.vpc_config
+  auto_mode_config                      = local.auto_mode_config
   bootstrap_self_managed_addons_enabled = false
-  access_config             = local.access_config
-  enable_oidc_provider      = false
-  envelope_encryption       = local.envelope_encryption
-  kubernetes_network_config = local.kubernetes_network_config
+  access_config                         = local.access_config
+  enable_oidc_provider                  = false
+  envelope_encryption                   = local.envelope_encryption
+  kubernetes_network_config             = local.kubernetes_network_config
 }
 
 // "errorMessage": "User: arn:aws:sts::884360309640:assumed-role/arc-poc-k8s-eks-role/aws-go-sdk-1744220212198998255

@@ -127,6 +127,3 @@ resource "aws_iam_openid_connect_provider" "this" {
   thumbprint_list = [data.tls_certificate.this[0].certificates[0].sha1_fingerprint]
   tags            = var.tags
 }
-
-
-

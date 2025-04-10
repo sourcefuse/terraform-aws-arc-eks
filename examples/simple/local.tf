@@ -17,8 +17,8 @@ locals {
     kms_deletion_window_in_days = 15
   }
 
-  kubernetes_network_config= {
-    ip_family         = "ipv4"
+  kubernetes_network_config = {
+    ip_family = "ipv4"
   }
 
 }

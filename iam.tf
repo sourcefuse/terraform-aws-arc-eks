@@ -35,8 +35,8 @@ resource "aws_iam_role_policy_attachment" "node_polcies" {
 
 data "aws_iam_policy_document" "iam" {
   statement {
-    sid     = "VisualEditor0"
-    effect  = "Allow"
+    sid    = "VisualEditor0"
+    effect = "Allow"
 
     actions = [
       "iam:CreateInstanceProfile",
@@ -65,8 +65,8 @@ data "aws_iam_policy_document" "iam" {
 }
 
 resource "aws_iam_policy" "iam" {
-  name        = "${var.name}-eks-iam-policy"
-  policy      = data.aws_iam_policy_document.iam.json
+  name   = "${var.name}-eks-iam-policy"
+  policy = data.aws_iam_policy_document.iam.json
 }
 
 resource "aws_iam_role_policy_attachment" "iam" {

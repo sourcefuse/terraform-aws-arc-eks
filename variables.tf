@@ -23,11 +23,11 @@ variable "auto_mode_config" {
     node_role_arn = optional(string, null)
   })
   description = <<-EOF
-  (optional) EKS automates routine cluster tasks for compute, storage, and networking. 
-  When a new pod can't fit onto existing nodes, EKS creates a new node. 
+  (optional) EKS automates routine cluster tasks for compute, storage, and networking.
+  When a new pod can't fit onto existing nodes, EKS creates a new node.
   EKS combines cluster infrastructure managed by AWS with integrated Kubernetes capabilities to meet application compute needs.
   EOF
-  default     = {
+  default = {
     enable = false
   }
 }
