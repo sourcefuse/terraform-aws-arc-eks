@@ -16,7 +16,7 @@ module "eks_cluster" {
 
   endpoint_private_access  = var.endpoint_private_access
   endpoint_public_access   = var.endpoint_public_access
-  
+
   cluster_encryption_config_enabled                         = var.cluster_encryption_config_enabled
   cluster_encryption_config_kms_key_id                      = var.cluster_encryption_config_kms_key_id
   cluster_encryption_config_kms_key_enable_key_rotation     = var.cluster_encryption_config_kms_key_enable_key_rotation
