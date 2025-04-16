@@ -76,6 +76,18 @@ variable "public_access_cidrs" {
   default     = ["0.0.0.0/0"]
 }
 
+variable "endpoint_private_access" {
+  type        = bool
+  description = "Indicates whether or not the Amazon EKS private API server endpoint is enabled. Default to AWS EKS resource and it is false"
+  default     = false
+}
+
+variable "endpoint_public_access" {
+  type        = bool
+  description = "Indicates whether or not the Amazon EKS public API server endpoint is enabled. Default to AWS EKS resource and it is true"
+  default     = true
+}
+
 ## workers
 variable "local_exec_interpreter" {
   description = "shell to use for local_exec"
