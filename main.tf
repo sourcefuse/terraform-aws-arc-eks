@@ -80,16 +80,6 @@ resource "aws_eks_cluster" "this" {
   tags = var.tags
 }
 
-resource "aws_eks_access_policy_association" "this" {
-  cluster_name  = aws_eks_cluster.this.name
-  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
-  principal_arn = data.aws_iam_session_context.this.issuer_arn
-
-  access_scope {
-    type = "cluster"
-  }
-}
-
 resource "aws_iam_role" "this" {
   name = "${var.name}-eks-role"
   assume_role_policy = jsonencode({
@@ -110,8 +100,9 @@ resource "aws_iam_role" "this" {
 }
 
 resource "aws_iam_role_policy_attachment" "eks_cluster_policy" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+  for_each   = local.eks_policy_arns
   role       = aws_iam_role.this.name
+  policy_arn = each.value
 }
 
 data "tls_certificate" "this" {
@@ -126,4 +117,27 @@ resource "aws_iam_openid_connect_provider" "this" {
   client_id_list  = ["sts.amazonaws.com"]
   thumbprint_list = [data.tls_certificate.this[0].certificates[0].sha1_fingerprint]
   tags            = var.tags
+}
+
+
+################################################################################
+# AddOn
+################################################################################
+
+resource "aws_eks_addon" "this" {
+  for_each = var.eks_addons
+
+  cluster_name = aws_eks_cluster.this.name
+  addon_name   = each.key
+
+  addon_version               = try(each.value.addon_version, null)
+  service_account_role_arn    = try(each.value.service_account_role_arn, null)
+  resolve_conflicts_on_update = try(each.value.resolve_conflicts_on_update, "OVERWRITE")
+  resolve_conflicts_on_create = try(each.value.resolve_conflicts_on_create, "OVERWRITE")
+
+  tags = {
+    "Name" = each.key
+  }
+
+  depends_on = [aws_eks_cluster.this]
 }

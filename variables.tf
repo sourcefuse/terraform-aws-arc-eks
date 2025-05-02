@@ -161,3 +161,158 @@ EOT
     ip_family = "ipv4"
   }
 }
+
+
+
+
+variable "eks_policy_arns" {
+  description = "List of IAM policy ARNs to attach to the EKS role"
+  type        = list(string)
+  default = [
+    "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
+    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+    "arn:aws:iam::aws:policy/AmazonEKSNetworkingPolicy",
+    "arn:aws:iam::aws:policy/AmazonEKSComputePolicy"
+
+  ]
+}
+
+variable "eks_additional_policy_arns" {
+  description = "Optional additional policy ARNs that user wants to attach"
+  type        = list(string)
+  default     = []
+}
+
+################################################################################
+# Node Group
+################################################################################
+
+variable "node_group_config" {
+  type = map(object({
+    node_group_name = optional(string)
+    node_role_arn   = optional(string)
+    release_version = optional(string)
+    scaling_config = object({
+      desired_size = number
+      max_size     = number
+      min_size     = number
+    })
+    taints = optional(list(object({
+      key    = string
+      value  = optional(string)
+      effect = string
+    })), [])
+    update_config = optional(object({
+      max_unavailable            = optional(number)
+      max_unavailable_percentage = optional(number)
+    }))
+    remote_access = optional(object({
+      ec2_ssh_key               = string
+      source_security_group_ids = list(string)
+    }))
+    launch_template = optional(object({
+      id      = optional(string)
+      name    = optional(string)
+      version = string
+    }))
+    node_repair_config = optional(object({
+      enabled = bool
+    }))
+    instance_types      = optional(list(string), ["t3.medium"])
+    ami_type            = optional(string)
+    disk_size           = optional(number)
+    capacity_type       = optional(string, "ON_DEMAND")
+    labels              = optional(map(string), {})
+    ignore_desired_size = optional(bool, false)
+    subnet_ids          = list(string)
+    kubernetes_version  = optional(string)
+  }))
+  default = {}
+}
+variable "node_group_policy_arns" {
+  description = "Default policies for EKS node group"
+  type        = list(string)
+  default = [
+    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+  ]
+}
+
+variable "additional_node_group_policy_arns" {
+  description = "Optional additional policies to attach to node group role"
+  type        = list(string)
+  default     = []
+}
+
+################################################################################
+# AddOn
+################################################################################
+
+variable "eks_addons" {
+  description = "Map of EKS Add-ons to create"
+  type = map(object({
+    addon_version               = optional(string)
+    service_account_role_arn    = optional(string)
+    resolve_conflicts_on_update = optional(string)
+    resolve_conflicts_on_create = optional(string)
+  }))
+  default = {}
+}
+
+
+
+################################################################################
+# aws-auth ConfigMap
+################################################################################
+
+variable "aws_auth_config" {
+  description = <<-EOT
+    Configuration for the aws-auth ConfigMap.
+    - `create`: Create the configmap (use only when it doesn't exist).
+    - `manage`: Manage the configmap lifecycle.
+    - `roles`: List of IAM roles to map.
+    - `users`: List of IAM users to map.
+    - `accounts`: List of AWS accounts to map.
+  EOT
+
+  type = object({
+    create   = optional(bool, false)
+    manage   = optional(bool, true)
+    roles    = optional(list(any), [])
+    users    = optional(list(any), [])
+    accounts = optional(list(any), [])
+  })
+
+  default = {}
+}
+
+
+################################################################################
+# aws eks access entry
+################################################################################
+
+variable "eks_access_entries" {
+  description = "List of EKS access entries to create"
+  type        = list(string)
+  default     = []
+}
+variable "eks_access_policy_associations" {
+  description = "List of EKS access policy associations"
+  type = list(object({
+    principal_arn = string
+    policy_arn    = string
+    access_scope = object({
+      type       = string
+      namespaces = optional(list(string))
+    })
+  }))
+  default = []
+}
+
+variable "enable_creator_admin_access" {
+  description = "Grant admin access to the creator"
+  type        = bool
+  default     = true
+}

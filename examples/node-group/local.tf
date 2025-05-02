@@ -1,6 +1,6 @@
 locals {
 
-  name = "arc-simple-k8s"
+  name = "arc-poc-k8s"
 
   vpc_config = {
     //security_group_ids      = var.vpc_config.security_group_ids // TODO

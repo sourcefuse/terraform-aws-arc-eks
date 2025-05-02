@@ -1,3 +1,29 @@
 locals {
+  eks_policy_arns        = toset(concat(var.eks_policy_arns, var.eks_additional_policy_arns))
+  node_group_policy_arns = toset(concat(var.node_group_policy_arns, var.additional_node_group_policy_arns))
 
+  ################################################################################
+  # aws-auth configmap
+  ################################################################################
+
+  aws_auth_configmap_data = {
+    mapRoles    = yamlencode(lookup(var.aws_auth_config, "roles", []))
+    mapUsers    = yamlencode(lookup(var.aws_auth_config, "users", []))
+    mapAccounts = yamlencode(lookup(var.aws_auth_config, "accounts", []))
+  }
+
+
+  ################################################################################
+  # aws eks access entry
+  ################################################################################
+
+  creator_access = var.enable_creator_admin_access ? [{
+    principal_arn = data.aws_iam_session_context.this.issuer_arn
+    policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+    access_scope = {
+      type = "cluster"
+    }
+  }] : []
+
+  all_access_associations = concat(local.creator_access, var.eks_access_policy_associations)
 }

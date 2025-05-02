@@ -15,7 +15,6 @@ resource "aws_iam_role" "auto" {
   })
 }
 
-
 resource "aws_iam_role_policy_attachment" "node_AmazonEC2ContainerRegistryPullOnly" {
   count      = var.auto_mode_config.enable ? 1 : 0
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPullOnly"
@@ -72,4 +71,31 @@ resource "aws_iam_policy" "iam" {
 resource "aws_iam_role_policy_attachment" "iam" {
   policy_arn = aws_iam_policy.iam.arn
   role       = aws_iam_role.this.name
+}
+
+
+################################################################################
+# Node Group IAM
+################################################################################
+
+resource "aws_iam_role" "eks_node_group" {
+  name = "${var.namespace}-${var.environment}-eks-node-group-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      },
+      Action = "sts:AssumeRole"
+    }]
+  })
+
+  tags = var.tags
+}
+resource "aws_iam_role_policy_attachment" "this" {
+  for_each   = local.node_group_policy_arns
+  role       = aws_iam_role.eks_node_group.name
+  policy_arn = each.value
 }
