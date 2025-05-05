@@ -1,7 +1,5 @@
 locals {
 
-  name = "arc-fargate-k8s"
-
   vpc_config = {
     //security_group_ids      = var.vpc_config.security_group_ids // TODO
     subnet_ids             = data.aws_subnets.private.ids

@@ -18,7 +18,7 @@ module "eks_cluster" {
   namespace                 = "arc"
   environment               = "dev"
   kubernetes_version        = "1.31"
-  name                      = local.name
+  name                      = "${var.namespace}-${var.environment}-cluster"
   vpc_config                = local.vpc_config
   access_config             = local.access_config
   enable_oidc_provider      = false
