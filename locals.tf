@@ -1,6 +1,7 @@
 locals {
-  eks_policy_arns        = toset(concat(var.eks_policy_arns, var.eks_additional_policy_arns))
-  node_group_policy_arns = toset(concat(var.node_group_policy_arns, var.additional_node_group_policy_arns))
+  eks_policy_arns             = toset(concat(var.eks_policy_arns, var.eks_additional_policy_arns))
+  node_group_policy_arns      = toset(concat(var.node_group_policy_arns, var.additional_node_group_policy_arns))
+  fargate_profile_policy_arns = toset(concat(var.fargate_profile_policy_arns, var.additional_fargate_profile_policy_arns))
 
   ################################################################################
   # aws-auth configmap

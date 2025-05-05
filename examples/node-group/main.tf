@@ -18,16 +18,13 @@ module "eks_cluster" {
   namespace                 = "arc"
   environment               = "dev"
   kubernetes_version        = "1.31"
-  name                      = local.name
+  name                      = "${var.namespace}-${var.environment}-cluster"
   vpc_config                = local.vpc_config
   access_config             = local.access_config
   enable_oidc_provider      = false
   envelope_encryption       = local.envelope_encryption
   kubernetes_network_config = local.kubernetes_network_config
   # eks_additional_policy_arns =["arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"]   To add additional policy to EKS Cluster
-
-
-
   node_group_config = {
     general-ng = {
       node_group_name = "general-nodegroup"
@@ -62,9 +59,6 @@ module "eks_cluster" {
     }
 
     kube-proxy = {} # version will default to latest
-
-    coredns = {
-      addon_version = "v1.11.4-eksbuild.2"
-    }
   }
+  tags = module.tags
 }

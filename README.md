@@ -101,14 +101,17 @@ Hence the state of that configuration has to be independently managed.
 | [aws_eks_access_policy_association.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_access_policy_association) | resource |
 | [aws_eks_addon.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_addon) | resource |
 | [aws_eks_cluster.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_cluster) | resource |
+| [aws_eks_fargate_profile.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_fargate_profile) | resource |
 | [aws_eks_node_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_node_group) | resource |
 | [aws_iam_openid_connect_provider.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_openid_connect_provider) | resource |
 | [aws_iam_policy.iam](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_policy.kms](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_role.auto](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_iam_role.eks_fargate_profile](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.eks_node_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy_attachment.eks_cluster_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_iam_role_policy_attachment.fargate](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.iam](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.kms](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.node_AmazonEC2ContainerRegistryPullOnly](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
@@ -126,6 +129,7 @@ Hence the state of that configuration has to be independently managed.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_access_config"></a> [access\_config](#input\_access\_config) | Access configuration for the cluster. | <pre>object({<br/>    authentication_mode                         = optional(string, "CONFIG_MAP")<br/>    bootstrap_cluster_creator_admin_permissions = optional(bool, false)<br/>  })</pre> | n/a | yes |
+| <a name="input_additional_fargate_profile_policy_arns"></a> [additional\_fargate\_profile\_policy\_arns](#input\_additional\_fargate\_profile\_policy\_arns) | Optional additional policies to attach to node group role | `list(string)` | `[]` | no |
 | <a name="input_additional_node_group_policy_arns"></a> [additional\_node\_group\_policy\_arns](#input\_additional\_node\_group\_policy\_arns) | Optional additional policies to attach to node group role | `list(string)` | `[]` | no |
 | <a name="input_auto_mode_config"></a> [auto\_mode\_config](#input\_auto\_mode\_config) | (optional) EKS automates routine cluster tasks for compute, storage, and networking.<br/>When a new pod can't fit onto existing nodes, EKS creates a new node.<br/>EKS combines cluster infrastructure managed by AWS with integrated Kubernetes capabilities to meet application compute needs. | <pre>object({<br/>    enable        = optional(bool, false)<br/>    node_pools    = optional(list(string), ["general-purpose", "system"])<br/>    node_role_arn = optional(string, null)<br/>  })</pre> | <pre>{<br/>  "enable": false<br/>}</pre> | no |
 | <a name="input_aws_auth_config"></a> [aws\_auth\_config](#input\_aws\_auth\_config) | Configuration for the aws-auth ConfigMap.<br/>- `create`: Create the configmap (use only when it doesn't exist).<br/>- `manage`: Manage the configmap lifecycle.<br/>- `roles`: List of IAM roles to map.<br/>- `users`: List of IAM users to map.<br/>- `accounts`: List of AWS accounts to map. | <pre>object({<br/>    create   = optional(bool, false)<br/>    manage   = optional(bool, true)<br/>    roles    = optional(list(any), [])<br/>    users    = optional(list(any), [])<br/>    accounts = optional(list(any), [])<br/>  })</pre> | `{}` | no |
@@ -141,6 +145,8 @@ Hence the state of that configuration has to be independently managed.
 | <a name="input_enabled_cluster_log_types"></a> [enabled\_cluster\_log\_types](#input\_enabled\_cluster\_log\_types) | A list of the desired control plane logging to enable. Valid values [`api`, `audit`, `authenticator`, `controllerManager`, `scheduler`] | `list(string)` | `[]` | no |
 | <a name="input_envelope_encryption"></a> [envelope\_encryption](#input\_envelope\_encryption) | Whether to enable Envelope encryption | <pre>object({<br/>    enable                      = optional(bool, false)<br/>    kms_deletion_window_in_days = optional(number, 10)<br/>    resources                   = optional(list(string), ["secrets"])<br/>    key_arn                     = optional(string, null) // if null it created new KMS key<br/>  })</pre> | <pre>{<br/>  "enable": false<br/>}</pre> | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | ID element. Usually used for region e.g. 'uw2', 'us-west-2', OR role 'prod', 'staging', 'dev', 'UAT' | `string` | n/a | yes |
+| <a name="input_fargate_profile_config"></a> [fargate\_profile\_config](#input\_fargate\_profile\_config) | Combined configuration for the EKS Fargate profile. | <pre>object({<br/>    fargate_profile_name   = optional(string)<br/>    pod_execution_role_arn = optional(string)<br/>    subnet_ids             = optional(list(string))<br/>    selectors = optional(list(object({<br/>      namespace = string<br/>      labels    = optional(map(string))<br/>    })))<br/>    tags = optional(map(string), {})<br/>  })</pre> | `{}` | no |
+| <a name="input_fargate_profile_policy_arns"></a> [fargate\_profile\_policy\_arns](#input\_fargate\_profile\_policy\_arns) | Default policies for EKS node group | `list(string)` | <pre>[<br/>  "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"<br/>]</pre> | no |
 | <a name="input_kubernetes_network_config"></a> [kubernetes\_network\_config](#input\_kubernetes\_network\_config) | Configuration block for Kubernetes network.<br/><br/>- `service_ipv4_cidr`: Optional custom CIDR block for Kubernetes service IPs. Must be within 10.0.0.0/8, 172.16.0.0/12, or 192.168.0.0/16 and have a netmask between /12 and /24.<br/>- `ip_family`: The IP family to assign (ipv4 or ipv6). Default is ipv4. | <pre>object({<br/>    ipv4_cidr = optional(string, null)<br/>    ip_family = optional(string, "ipv4")<br/>  })</pre> | <pre>{<br/>  "ip_family": "ipv4"<br/>}</pre> | no |
 | <a name="input_kubernetes_version"></a> [kubernetes\_version](#input\_kubernetes\_version) | Desired Kubernetes master version | `string` | n/a | yes |
 | <a name="input_name"></a> [name](#input\_name) | EKS Cluster name | `string` | n/a | yes |
@@ -155,6 +161,8 @@ Hence the state of that configuration has to be independently managed.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_eks_cluster_id"></a> [eks\_cluster\_id](#output\_eks\_cluster\_id) | The name of the cluster |
+| <a name="output_eks_cluster_security_group_id"></a> [eks\_cluster\_security\_group\_id](#output\_eks\_cluster\_security\_group\_id) | The security group attached to eks cluster |
 | <a name="output_name"></a> [name](#output\_name) | The name of the EKS cluster |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 

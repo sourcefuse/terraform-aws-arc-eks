@@ -139,5 +139,8 @@ resource "aws_eks_addon" "this" {
     "Name" = each.key
   }
 
-  depends_on = [aws_eks_cluster.this]
+  depends_on = [aws_eks_cluster.this,
+    aws_eks_node_group.this,
+    aws_eks_fargate_profile.this
+  ]
 }

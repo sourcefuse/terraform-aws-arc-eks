@@ -316,3 +316,37 @@ variable "enable_creator_admin_access" {
   type        = bool
   default     = true
 }
+
+
+################################################################################
+# Fargate Profile
+################################################################################
+
+variable "fargate_profile_config" {
+  description = "Combined configuration for the EKS Fargate profile."
+  type = object({
+    fargate_profile_name   = optional(string)
+    pod_execution_role_arn = optional(string)
+    subnet_ids             = optional(list(string))
+    selectors = optional(list(object({
+      namespace = string
+      labels    = optional(map(string))
+    })))
+    tags = optional(map(string), {})
+  })
+  default = {}
+}
+
+variable "fargate_profile_policy_arns" {
+  description = "Default policies for EKS node group"
+  type        = list(string)
+  default = [
+    "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"
+  ]
+}
+
+variable "additional_fargate_profile_policy_arns" {
+  description = "Optional additional policies to attach to node group role"
+  type        = list(string)
+  default     = []
+}
