@@ -24,10 +24,10 @@ module "eks_cluster" {
   enable_oidc_provider      = false
   envelope_encryption       = local.envelope_encryption
   kubernetes_network_config = local.kubernetes_network_config
-  # eks_additional_policy_arns =["arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"]   To add additional policy to EKS Cluster
+
   node_group_config = {
-    general-ng = {
-      node_group_name = "general-nodegroup"
+    karpenter = {
+      node_group_name = "karpenter-nodegroup"
       subnet_ids      = data.aws_subnets.private.ids
       scaling_config = {
         desired_size = 2
@@ -39,19 +39,6 @@ module "eks_cluster" {
       disk_size      = 20
       ami_type       = "AL2_x86_64"
     }
-    # spot-ng = {
-    #   node_group_name = "spot-nodegroup"
-    #   subnet_ids      = data.aws_subnets.private.ids
-    #   scaling_config = {
-    #     desired_size = 1
-    #     max_size     = 2
-    #     min_size     = 1
-    #   }
-    #   instance_types = ["t3.medium"]
-    #   capacity_type  = "SPOT"
-    #   disk_size      = 20
-    #   ami_type       = "AL2_x86_64"
-    # }
   }
   eks_addons = {
     vpc-cni = {
@@ -60,5 +47,28 @@ module "eks_cluster" {
 
     kube-proxy = {} # version will default to latest
   }
+
+
   tags = module.tags.tags
+}
+
+
+################################################################################
+# Karpenter
+################################################################################
+
+module "karpenter" {
+  source = "../../modules/karpenter"
+  providers = {
+    helm = helm
+  }
+  karpenter_config = {
+    cluster_name               = module.eks_cluster.name
+    cluster_endpoint           = module.eks_cluster.endpoint
+    cluster_oidc_provider      = module.eks_cluster.oidc_provider_url
+    cluster_arn                = module.eks_cluster.arn
+    certificate_authority_data = module.eks_cluster.certificate_authority_data
+  }
+
+  depends_on = [module.eks_cluster.eks_cluster_id]
 }
