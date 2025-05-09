@@ -184,6 +184,20 @@ variable "eks_additional_policy_arns" {
   default     = []
 }
 
+variable "additional_cluster_security_group_rules" {
+  description = "List of ingress security group rules to apply to the EKS cluster security group"
+  type = list(object({
+    from_port        = number
+    to_port          = number
+    protocol         = string
+    cidr_blocks      = optional(list(string), [])
+    ipv6_cidr_blocks = optional(list(string), [])
+    description      = optional(string)
+  }))
+  default = []
+}
+
+
 ################################################################################
 # Node Group
 ################################################################################

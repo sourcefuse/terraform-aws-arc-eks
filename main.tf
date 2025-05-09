@@ -119,6 +119,21 @@ resource "aws_iam_openid_connect_provider" "this" {
   tags            = var.tags
 }
 
+resource "aws_security_group_rule" "cluster_ingress_rules" {
+  for_each = {
+    for idx, rule in var.additional_cluster_security_group_rules : idx => rule
+  }
+
+  type              = "ingress"
+  from_port         = each.value.from_port
+  to_port           = each.value.to_port
+  protocol          = each.value.protocol
+  cidr_blocks       = try(each.value.cidr_blocks, [])
+  ipv6_cidr_blocks  = try(each.value.ipv6_cidr_blocks, [])
+  description       = try(each.value.description, null)
+  security_group_id = aws_eks_cluster.this.vpc_config[0].cluster_security_group_id
+}
+
 
 ################################################################################
 # AddOn

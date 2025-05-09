@@ -44,5 +44,7 @@
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_security_group"></a> [security\_group](#output\_security\_group) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

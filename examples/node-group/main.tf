@@ -60,5 +60,15 @@ module "eks_cluster" {
 
     kube-proxy = {} # version will default to latest
   }
+
+
+  additional_cluster_security_group_rules = [
+    {
+      from_port   = 5432
+      to_port     = 5432
+      protocol    = "tcp"
+      cidr_blocks = ["10.0.0.0/16"]
+    }
+  ]
   tags = module.tags.tags
 }

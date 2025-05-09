@@ -117,6 +117,7 @@ Hence the state of that configuration has to be independently managed.
 | [aws_iam_role_policy_attachment.node_AmazonEC2ContainerRegistryPullOnly](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.node_polcies](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_security_group_rule.cluster_ingress_rules](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [kubernetes_config_map.aws_auth](https://registry.terraform.io/providers/hashicorp/kubernetes/2.24.0/docs/resources/config_map) | resource |
 | [kubernetes_config_map_v1.aws_auth](https://registry.terraform.io/providers/hashicorp/kubernetes/2.24.0/docs/resources/config_map_v1) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
@@ -129,6 +130,7 @@ Hence the state of that configuration has to be independently managed.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_access_config"></a> [access\_config](#input\_access\_config) | Access configuration for the cluster. | <pre>object({<br/>    authentication_mode                         = optional(string, "CONFIG_MAP")<br/>    bootstrap_cluster_creator_admin_permissions = optional(bool, false)<br/>  })</pre> | n/a | yes |
+| <a name="input_additional_cluster_security_group_rules"></a> [additional\_cluster\_security\_group\_rules](#input\_additional\_cluster\_security\_group\_rules) | List of ingress security group rules to apply to the EKS cluster security group | <pre>list(object({<br/>    from_port        = number<br/>    to_port          = number<br/>    protocol         = string<br/>    cidr_blocks      = optional(list(string), [])<br/>    ipv6_cidr_blocks = optional(list(string), [])<br/>    description      = optional(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_additional_fargate_profile_policy_arns"></a> [additional\_fargate\_profile\_policy\_arns](#input\_additional\_fargate\_profile\_policy\_arns) | Optional additional policies to attach to node group role | `list(string)` | `[]` | no |
 | <a name="input_additional_node_group_policy_arns"></a> [additional\_node\_group\_policy\_arns](#input\_additional\_node\_group\_policy\_arns) | Optional additional policies to attach to node group role | `list(string)` | `[]` | no |
 | <a name="input_auto_mode_config"></a> [auto\_mode\_config](#input\_auto\_mode\_config) | (optional) EKS automates routine cluster tasks for compute, storage, and networking.<br/>When a new pod can't fit onto existing nodes, EKS creates a new node.<br/>EKS combines cluster infrastructure managed by AWS with integrated Kubernetes capabilities to meet application compute needs. | <pre>object({<br/>    enable        = optional(bool, false)<br/>    node_pools    = optional(list(string), ["general-purpose", "system"])<br/>    node_role_arn = optional(string, null)<br/>  })</pre> | <pre>{<br/>  "enable": false<br/>}</pre> | no |
@@ -164,6 +166,7 @@ Hence the state of that configuration has to be independently managed.
 | <a name="output_arn"></a> [arn](#output\_arn) | EKS cluster ARN |
 | <a name="output_certificate_authority_data"></a> [certificate\_authority\_data](#output\_certificate\_authority\_data) | n/a |
 | <a name="output_eks_cluster_id"></a> [eks\_cluster\_id](#output\_eks\_cluster\_id) | The name of the cluster |
+| <a name="output_eks_cluster_security_group"></a> [eks\_cluster\_security\_group](#output\_eks\_cluster\_security\_group) | n/a |
 | <a name="output_eks_cluster_security_group_id"></a> [eks\_cluster\_security\_group\_id](#output\_eks\_cluster\_security\_group\_id) | The security group attached to eks cluster |
 | <a name="output_endpoint"></a> [endpoint](#output\_endpoint) | EKS cluster endpoint |
 | <a name="output_name"></a> [name](#output\_name) | The name of the EKS cluster |
