@@ -29,3 +29,10 @@ data "aws_eks_cluster_auth" "this" {
 # data "aws_eks_cluster_auth" "cluster" {
 #   name = module.eks_cluster.name
 # }
+data "aws_iam_role" "karpenter_controller_role" {
+  name = "KarpenterControllerRole-${data.aws_eks_cluster.this.name}"
+}
+
+data "aws_iam_instance_profile" "karpenter_instance_profile" {
+  name = "KarpenterNodeInstanceProfile-${data.aws_eks_cluster.this.name}"
+}

@@ -35,17 +35,6 @@ module "eks_cluster" {
     coredns    = {}
   }
 }
-module "arc_security_group" {
-  source  = "sourcefuse/arc-security-group/aws"
-  version = "0.0.1"
-
-  name          = "additional-sg-${var.namespace}-${var.environment}"
-  vpc_id        = data.aws_vpc.vpc.id
-  ingress_rules = local.security_group_data.ingress_rules
-  egress_rules  = local.security_group_data.egress_rules
-
-  tags = module.tags.tags
-}
 
 
 // "errorMessage": "User: arn:aws:sts::884360309640:assumed-role/arc-poc-k8s-eks-role/aws-go-sdk-1744220212198998255

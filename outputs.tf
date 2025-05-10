@@ -32,3 +32,13 @@ output "certificate_authority_data" {
 output "eks_cluster_security_group" {
   value = aws_eks_cluster.this.vpc_config[0].cluster_security_group_id
 }
+
+output "karpenter_instance_profile_name" {
+  description = "The name of the Karpenter instance profile"
+  value       = var.karpenter_config.enable ? aws_iam_instance_profile.karpenter_instance_profile[0].name : null
+}
+
+output "karpenter_controller_role_arn" {
+  description = "The ARN of the Karpenter controller IAM role"
+  value       = var.karpenter_config.enable ? aws_iam_role.karpenter_controller_role[0].arn : null
+}

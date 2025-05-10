@@ -84,6 +84,7 @@ Hence the state of that configuration has to be independently managed.
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 5.94.1 |
+| <a name="provider_helm"></a> [helm](#provider\_helm) | 2.12.1 |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | 2.24.0 |
 | <a name="provider_tls"></a> [tls](#provider\_tls) | 4.0.6 |
 
@@ -103,21 +104,27 @@ Hence the state of that configuration has to be independently managed.
 | [aws_eks_cluster.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_cluster) | resource |
 | [aws_eks_fargate_profile.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_fargate_profile) | resource |
 | [aws_eks_node_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_node_group) | resource |
+| [aws_iam_instance_profile.karpenter_instance_profile](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_instance_profile) | resource |
 | [aws_iam_openid_connect_provider.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_openid_connect_provider) | resource |
 | [aws_iam_policy.iam](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_policy.kms](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_role.auto](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.eks_fargate_profile](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.eks_node_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_iam_role.karpenter_controller_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_iam_role.karpenter_node_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_iam_role_policy.karpenter_controller_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy_attachment.eks_cluster_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.fargate](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.iam](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_iam_role_policy_attachment.karpenter_node_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.kms](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.node_AmazonEC2ContainerRegistryPullOnly](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.node_polcies](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_security_group_rule.cluster_ingress_rules](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [helm_release.karpenter](https://registry.terraform.io/providers/hashicorp/helm/2.12.1/docs/resources/release) | resource |
 | [kubernetes_config_map.aws_auth](https://registry.terraform.io/providers/hashicorp/kubernetes/2.24.0/docs/resources/config_map) | resource |
 | [kubernetes_config_map_v1.aws_auth](https://registry.terraform.io/providers/hashicorp/kubernetes/2.24.0/docs/resources/config_map_v1) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
@@ -149,6 +156,7 @@ Hence the state of that configuration has to be independently managed.
 | <a name="input_environment"></a> [environment](#input\_environment) | ID element. Usually used for region e.g. 'uw2', 'us-west-2', OR role 'prod', 'staging', 'dev', 'UAT' | `string` | n/a | yes |
 | <a name="input_fargate_profile_config"></a> [fargate\_profile\_config](#input\_fargate\_profile\_config) | Combined configuration for the EKS Fargate profile. | <pre>object({<br/>    fargate_profile_name   = optional(string)<br/>    pod_execution_role_arn = optional(string)<br/>    subnet_ids             = optional(list(string))<br/>    selectors = optional(list(object({<br/>      namespace = string<br/>      labels    = optional(map(string))<br/>    })))<br/>    tags = optional(map(string), {})<br/>  })</pre> | `{}` | no |
 | <a name="input_fargate_profile_policy_arns"></a> [fargate\_profile\_policy\_arns](#input\_fargate\_profile\_policy\_arns) | Default policies for EKS node group | `list(string)` | <pre>[<br/>  "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"<br/>]</pre> | no |
+| <a name="input_karpenter_config"></a> [karpenter\_config](#input\_karpenter\_config) | Configuration for Karpenter | <pre>object({<br/>    enable                                  = bool<br/>    karpenter_version                       = optional(string, "0.36.0")<br/>    helm_repository                         = optional(string, "oci://public.ecr.aws/karpenter")<br/>    additional_karpenter_node_role_policies = optional(list(string), [])<br/>    helm_release_values                     = optional(any)<br/>    helm_release_set_values = optional(list(object({<br/>      name  = string<br/>      value = string<br/>    })), [])<br/>  })</pre> | <pre>{<br/>  "enable": false<br/>}</pre> | no |
 | <a name="input_kubernetes_network_config"></a> [kubernetes\_network\_config](#input\_kubernetes\_network\_config) | Configuration block for Kubernetes network.<br/><br/>- `service_ipv4_cidr`: Optional custom CIDR block for Kubernetes service IPs. Must be within 10.0.0.0/8, 172.16.0.0/12, or 192.168.0.0/16 and have a netmask between /12 and /24.<br/>- `ip_family`: The IP family to assign (ipv4 or ipv6). Default is ipv4. | <pre>object({<br/>    ipv4_cidr = optional(string, null)<br/>    ip_family = optional(string, "ipv4")<br/>  })</pre> | <pre>{<br/>  "ip_family": "ipv4"<br/>}</pre> | no |
 | <a name="input_kubernetes_version"></a> [kubernetes\_version](#input\_kubernetes\_version) | Desired Kubernetes master version | `string` | n/a | yes |
 | <a name="input_name"></a> [name](#input\_name) | EKS Cluster name | `string` | n/a | yes |
@@ -169,6 +177,8 @@ Hence the state of that configuration has to be independently managed.
 | <a name="output_eks_cluster_security_group"></a> [eks\_cluster\_security\_group](#output\_eks\_cluster\_security\_group) | n/a |
 | <a name="output_eks_cluster_security_group_id"></a> [eks\_cluster\_security\_group\_id](#output\_eks\_cluster\_security\_group\_id) | The security group attached to eks cluster |
 | <a name="output_endpoint"></a> [endpoint](#output\_endpoint) | EKS cluster endpoint |
+| <a name="output_karpenter_controller_role_arn"></a> [karpenter\_controller\_role\_arn](#output\_karpenter\_controller\_role\_arn) | The ARN of the Karpenter controller IAM role |
+| <a name="output_karpenter_instance_profile_name"></a> [karpenter\_instance\_profile\_name](#output\_karpenter\_instance\_profile\_name) | The name of the Karpenter instance profile |
 | <a name="output_name"></a> [name](#output\_name) | The name of the EKS cluster |
 | <a name="output_oidc_provider_url"></a> [oidc\_provider\_url](#output\_oidc\_provider\_url) | OIDC provider URL without https:// |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

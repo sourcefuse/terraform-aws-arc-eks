@@ -364,3 +364,25 @@ variable "additional_fargate_profile_policy_arns" {
   type        = list(string)
   default     = []
 }
+
+################################################################################
+# karpenter_config
+################################################################################
+
+variable "karpenter_config" {
+  description = "Configuration for Karpenter"
+  type = object({
+    enable                                  = bool
+    karpenter_version                       = optional(string, "0.36.0")
+    helm_repository                         = optional(string, "oci://public.ecr.aws/karpenter")
+    additional_karpenter_node_role_policies = optional(list(string), [])
+    helm_release_values                     = optional(any)
+    helm_release_set_values = optional(list(object({
+      name  = string
+      value = string
+    })), [])
+  })
+  default = {
+    enable = false
+  }
+}

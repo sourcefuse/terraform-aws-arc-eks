@@ -27,4 +27,22 @@ locals {
   }] : []
 
   all_access_associations = concat(local.creator_access, var.eks_access_policy_associations)
+
+
+  ################################################################################
+  # karpenter
+  ################################################################################
+
+  karpenter_node_role_policies = [
+    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+    "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+  ]
+
+  all_karpenter_node_role_policies = concat(
+    local.karpenter_node_role_policies,
+    var.karpenter_config.additional_karpenter_node_role_policies
+  )
+
 }

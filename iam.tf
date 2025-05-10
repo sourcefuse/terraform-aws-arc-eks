@@ -128,3 +128,135 @@ resource "aws_iam_role_policy_attachment" "fargate" {
   role       = aws_iam_role.eks_fargate_profile.name
   policy_arn = each.value
 }
+
+
+################################################################################
+# Karpenter IAM
+################################################################################
+
+# resource "aws_iam_role_policy_attachment" "karpenter_node_policy_attachment" {
+#   role       = aws_iam_role.karpenter_node_role.name
+#   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+# }
+
+# resource "aws_iam_role_policy_attachment" "karpenter_cni_policy_attachment" {
+#   role       = aws_iam_role.karpenter_node_role.name
+#   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+# }
+
+# resource "aws_iam_role_policy_attachment" "karpenter_registry_policy_attachment" {
+#   role       = aws_iam_role.karpenter_node_role.name
+#   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+# }
+
+# resource "aws_iam_role_policy_attachment" "karpenter_ssm_policy_attachment" {
+#   role       = aws_iam_role.karpenter_node_role.name
+#   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+# }
+resource "aws_iam_role_policy_attachment" "karpenter_node_policy_attachment" {
+  for_each = var.karpenter_config.enable ? {
+    for policy_arn in local.all_karpenter_node_role_policies : policy_arn => policy_arn
+  } : {}
+
+  role       = aws_iam_role.karpenter_node_role[0].name
+  policy_arn = each.value
+}
+
+resource "aws_iam_role" "karpenter_node_role" {
+  count = var.karpenter_config.enable ? 1 : 0
+  name  = "KarpenterNodeRole-${aws_eks_cluster.this.name}"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_instance_profile" "karpenter_instance_profile" {
+  count = var.karpenter_config.enable ? 1 : 0
+  name  = "KarpenterNodeInstanceProfile-${aws_eks_cluster.this.name}"
+  role  = aws_iam_role.karpenter_node_role[0].name
+}
+
+resource "aws_iam_role" "karpenter_controller_role" {
+  count = var.karpenter_config.enable ? 1 : 0
+  name  = "KarpenterControllerRole-${aws_eks_cluster.this.name}"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Principal = {
+        Federated = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${replace(aws_eks_cluster.this.identity[0].oidc[0].issuer, "https://", "")}"
+      }
+      Action = "sts:AssumeRoleWithWebIdentity"
+      Condition = {
+        StringEquals = {
+          "${replace(aws_eks_cluster.this.identity[0].oidc[0].issuer, "https://", "")}:aud" = "sts.amazonaws.com"
+          "${replace(aws_eks_cluster.this.identity[0].oidc[0].issuer, "https://", "")}:sub" = "system:serviceaccount:karpenter:karpenter"
+        }
+      }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy" "karpenter_controller_policy" {
+  count = var.karpenter_config.enable ? 1 : 0
+  role  = aws_iam_role.karpenter_controller_role[0].name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "Karpenter"
+        Effect = "Allow"
+        Action = [
+          "ssm:GetParameter",
+          "ec2:DescribeImages",
+          "ec2:RunInstances",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeLaunchTemplates",
+          "ec2:DescribeInstances",
+          "ec2:DescribeInstanceTypes",
+          "ec2:DescribeInstanceTypeOfferings",
+          "ec2:DescribeAvailabilityZones",
+          "ec2:DeleteLaunchTemplate",
+          "ec2:CreateTags",
+          "ec2:CreateLaunchTemplate",
+          "ec2:CreateFleet",
+          "ec2:DescribeSpotPriceHistory",
+          "pricing:GetProducts"
+        ]
+        Resource = "*"
+      },
+      {
+        Sid      = "ConditionalEC2Termination"
+        Effect   = "Allow"
+        Action   = "ec2:TerminateInstances"
+        Resource = "*"
+        Condition = {
+          StringLike = {
+            "ec2:ResourceTag/karpenter.sh/provisioner-name" = "*"
+          }
+        }
+      },
+      {
+        Sid      = "PassNodeIAMRole"
+        Effect   = "Allow"
+        Action   = "iam:PassRole"
+        Resource = aws_iam_role.karpenter_node_role[0].arn
+      },
+      {
+        Sid      = "EKSClusterEndpointLookup"
+        Effect   = "Allow"
+        Action   = "eks:DescribeCluster"
+        Resource = aws_eks_cluster.this.arn
+      }
+    ]
+  })
+}

@@ -21,7 +21,7 @@ module "eks_cluster" {
   name                      = "${var.namespace}-${var.environment}-debash"
   vpc_config                = local.vpc_config
   access_config             = local.access_config
-  enable_oidc_provider      = false
+  enable_oidc_provider      = true
   envelope_encryption       = local.envelope_encryption
   kubernetes_network_config = local.kubernetes_network_config
 
@@ -50,25 +50,54 @@ module "eks_cluster" {
 
 
   tags = module.tags.tags
-}
 
-
-################################################################################
-# Karpenter
-################################################################################
-
-module "karpenter" {
-  source = "../../modules/karpenter"
-  providers = {
-    helm = helm
-  }
   karpenter_config = {
-    cluster_name               = module.eks_cluster.name
-    cluster_endpoint           = module.eks_cluster.endpoint
-    cluster_oidc_provider      = module.eks_cluster.oidc_provider_url
-    cluster_arn                = module.eks_cluster.arn
-    certificate_authority_data = module.eks_cluster.certificate_authority_data
+    enable                        = false
+    karpenter_version             = "0.36.0"
+    additional_node_role_policies = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
+
+    helm_release_values = [
+      yamlencode({
+        controller = {
+          resources = {
+            requests = {
+              cpu    = "1"
+              memory = "1Gi"
+            }
+            limits = {
+              cpu    = "1"
+              memory = "1Gi"
+            }
+          }
+        },
+        webhook = {
+          enabled = true
+        },
+        certController = {
+          enabled = true
+        }
+      })
+    ]
+
+    helm_release_set_values = [
+      {
+        name  = "settings.clusterName"
+        value = data.aws_eks_cluster.this.name
+      },
+      {
+        name  = "settings.clusterEndpoint"
+        value = data.aws_eks_cluster.this.endpoint
+      },
+      {
+        name  = "settings.defaultInstanceProfile"
+        value = data.aws_iam_instance_profile.karpenter_instance_profile.name
+      },
+      {
+        name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+        value = data.aws_iam_role.karpenter_controller_role.arn
+      }
+    ]
   }
 
-  depends_on = [module.eks_cluster.eks_cluster_id]
+
 }
