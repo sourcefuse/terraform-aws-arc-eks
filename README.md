@@ -177,8 +177,6 @@ Hence the state of that configuration has to be independently managed.
 | <a name="output_eks_cluster_security_group"></a> [eks\_cluster\_security\_group](#output\_eks\_cluster\_security\_group) | n/a |
 | <a name="output_eks_cluster_security_group_id"></a> [eks\_cluster\_security\_group\_id](#output\_eks\_cluster\_security\_group\_id) | The security group attached to eks cluster |
 | <a name="output_endpoint"></a> [endpoint](#output\_endpoint) | EKS cluster endpoint |
-| <a name="output_karpenter_controller_role_arn"></a> [karpenter\_controller\_role\_arn](#output\_karpenter\_controller\_role\_arn) | The ARN of the Karpenter controller IAM role |
-| <a name="output_karpenter_instance_profile_name"></a> [karpenter\_instance\_profile\_name](#output\_karpenter\_instance\_profile\_name) | The name of the Karpenter instance profile |
 | <a name="output_name"></a> [name](#output\_name) | The name of the EKS cluster |
 | <a name="output_oidc_provider_url"></a> [oidc\_provider\_url](#output\_oidc\_provider\_url) | OIDC provider URL without https:// |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

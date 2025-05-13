@@ -48,11 +48,40 @@ module "eks_cluster" {
     kube-proxy = {} # version will default to latest
   }
 
+  aws_auth_config = {
+    create = false
+    manage = true
+    roles = [
+      {
+        rolearn = data.aws_iam_role.karpenter_node_role.arn
+        groups = [
+          "system:bootstrappers",
+          "system:nodes"
+        ]
+        username = "system:node:{{EC2PrivateDNSName}}"
+      }
+    ]
+    users    = []
+    accounts = []
+  }
+  eks_access_entries = [
+    "arn:aws:iam::884360309640:role/KarpenterNodeRole-arc-poc-debash"
+  ]
 
-  tags = module.tags.tags
+  eks_access_policy_associations = [
+    {
+      principal_arn = "arn:aws:iam::884360309640:role/KarpenterNodeRole-arc-poc-debash"
+      policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+      access_scope = {
+        type = "cluster"
+      }
+    }
+  ]
+
+
 
   karpenter_config = {
-    enable                        = false
+    enable                        = true
     karpenter_version             = "0.36.0"
     additional_node_role_policies = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
 
@@ -79,25 +108,7 @@ module "eks_cluster" {
       })
     ]
 
-    helm_release_set_values = [
-      {
-        name  = "settings.clusterName"
-        value = data.aws_eks_cluster.this.name
-      },
-      {
-        name  = "settings.clusterEndpoint"
-        value = data.aws_eks_cluster.this.endpoint
-      },
-      {
-        name  = "settings.defaultInstanceProfile"
-        value = data.aws_iam_instance_profile.karpenter_instance_profile.name
-      },
-      {
-        name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-        value = data.aws_iam_role.karpenter_controller_role.arn
-      }
-    ]
+    # helm_release_set_values = [ ] Add Additional Values for helm
   }
-
-
+  tags = module.tags.tags
 }

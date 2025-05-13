@@ -256,6 +256,14 @@ resource "aws_iam_role_policy" "karpenter_controller_policy" {
         Effect   = "Allow"
         Action   = "eks:DescribeCluster"
         Resource = aws_eks_cluster.this.arn
+      },
+      {
+        Sid    = "InstanceProfilePermissions"
+        Effect = "Allow"
+        Action = [
+          "iam:GetInstanceProfile"
+        ]
+        Resource = aws_iam_instance_profile.karpenter_instance_profile[0].arn
       }
     ]
   })

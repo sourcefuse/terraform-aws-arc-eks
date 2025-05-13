@@ -44,5 +44,24 @@ locals {
     local.karpenter_node_role_policies,
     var.karpenter_config.additional_karpenter_node_role_policies
   )
+  required_set_values = [
+    {
+      name  = "settings.clusterName"
+      value = aws_eks_cluster.this.name
+    },
+    {
+      name  = "settings.clusterEndpoint"
+      value = aws_eks_cluster.this.endpoint
+    },
+    {
+      name  = "settings.defaultInstanceProfile"
+      value = aws_iam_instance_profile.karpenter_instance_profile[0].name
+    },
+    {
+      name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+      value = aws_iam_role.karpenter_controller_role[0].arn
+    }
+  ]
 
+  merged_set_values = concat(local.required_set_values, try(var.karpenter_config.helm_release_set_values, []))
 }

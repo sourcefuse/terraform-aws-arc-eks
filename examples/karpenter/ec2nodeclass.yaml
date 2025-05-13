@@ -1,0 +1,19 @@
+---
+apiVersion: karpenter.k8s.aws/v1beta1
+kind: EC2NodeClass
+metadata:
+  name: general
+spec:
+  metadataOptions:
+    httpPutResponseHopLimit: 2
+  amiFamily: AL2
+  # role: KarpenterNodeRole-arc-poc-debash
+  instanceProfile: KarpenterNodeInstanceProfile-arc-poc-debash
+  subnetSelectorTerms:
+    - tags:
+        "karpenter.sh/discovery": "arc-poc-debash"
+  securityGroupSelectorTerms:
+    - tags:
+        "karpenter.sh/discovery": "arc-poc-debash"
+  tags:
+    Name: karpenter-node
