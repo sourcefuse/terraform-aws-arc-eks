@@ -337,7 +337,7 @@ variable "enable_creator_admin_access" {
 ################################################################################
 
 variable "fargate_profile_config" {
-  description = "Combined configuration for the EKS Fargate profile."
+  description = "Combined configuration for the EKS Fargate profile, including IAM policies."
   type = object({
     fargate_profile_name   = optional(string)
     pod_execution_role_arn = optional(string)
@@ -346,24 +346,13 @@ variable "fargate_profile_config" {
       namespace = string
       labels    = optional(map(string))
     })))
-    tags = optional(map(string), {})
+    tags                   = optional(map(string), {})
+    policy_arns            = optional(list(string), ["arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"])
+    additional_policy_arns = optional(list(string), [])
   })
   default = {}
 }
 
-variable "fargate_profile_policy_arns" {
-  description = "Default policies for EKS node group"
-  type        = list(string)
-  default = [
-    "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"
-  ]
-}
-
-variable "additional_fargate_profile_policy_arns" {
-  description = "Optional additional policies to attach to node group role"
-  type        = list(string)
-  default     = []
-}
 
 ################################################################################
 # karpenter_config

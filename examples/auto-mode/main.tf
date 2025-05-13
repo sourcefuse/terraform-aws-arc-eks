@@ -18,7 +18,7 @@ module "eks_cluster" {
   namespace                             = "arc"
   environment                           = "poc"
   kubernetes_version                    = "1.31"
-  name                                  = "${var.namespace}-${var.environment}-debash"
+  name                                  = "${var.namespace}-${var.environment}-cluster"
   vpc_config                            = local.vpc_config
   auto_mode_config                      = local.auto_mode_config
   bootstrap_self_managed_addons_enabled = false

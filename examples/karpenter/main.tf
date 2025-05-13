@@ -18,7 +18,7 @@ module "eks_cluster" {
   namespace                 = "arc"
   environment               = "poc"
   kubernetes_version        = "1.31"
-  name                      = "${var.namespace}-${var.environment}-debash"
+  name                      = "${var.namespace}-${var.environment}-cluster"
   vpc_config                = local.vpc_config
   access_config             = local.access_config
   enable_oidc_provider      = true
@@ -65,12 +65,12 @@ module "eks_cluster" {
     accounts = []
   }
   eks_access_entries = [
-    "arn:aws:iam::884360309640:role/KarpenterNodeRole-arc-poc-debash"
+    ""
   ]
 
   eks_access_policy_associations = [
     {
-      principal_arn = "arn:aws:iam::884360309640:role/KarpenterNodeRole-arc-poc-debash"
+      principal_arn = ""
       policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
       access_scope = {
         type = "cluster"

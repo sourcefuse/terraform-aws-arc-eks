@@ -24,10 +24,10 @@ module "eks_cluster" {
   enable_oidc_provider      = false
   envelope_encryption       = local.envelope_encryption
   kubernetes_network_config = local.kubernetes_network_config
-  # additional_fargate_profile_policy_arns = ""   # To add additional policy to Fargate Profile
   fargate_profile_config = {
-    fargate_profile_name = "example"
-    subnet_ids           = data.aws_subnets.private.ids
+    fargate_profile_name   = "example"
+    subnet_ids             = data.aws_subnets.private.ids
+    additional_policy_arns = ["arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"] # To add additional policy to Fargate Profile
     selectors = [
       {
         namespace = "example"
@@ -46,5 +46,6 @@ module "eks_cluster" {
 
     kube-proxy = {} # version will default to latest
   }
+
 
 }
