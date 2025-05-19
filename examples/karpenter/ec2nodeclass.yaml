@@ -7,7 +7,7 @@ spec:
   metadataOptions:
     httpPutResponseHopLimit: 2
   amiFamily: AL2
-  instanceProfile: KarpenterNodeInstanceProfile-arc-poc-debash
+  instanceProfile: KarpenterNodeInstanceProfile-arc-poc-cluster
   subnetSelectorTerms:
     - tags:
         "karpenter.sh/discovery": <cluster_name> # Replace with the EKS cluster name
