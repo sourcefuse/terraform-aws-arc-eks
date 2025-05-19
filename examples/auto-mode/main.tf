@@ -26,14 +26,6 @@ module "eks_cluster" {
   enable_oidc_provider                  = false
   envelope_encryption                   = local.envelope_encryption
   kubernetes_network_config             = local.kubernetes_network_config
-  eks_addons = {
-    vpc-cni = {
-      addon_version = "v1.19.0-eksbuild.1"
-    }
-
-    kube-proxy = {} # version will default to latest
-    coredns    = {}
-  }
 }
 
 

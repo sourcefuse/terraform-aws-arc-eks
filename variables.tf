@@ -48,21 +48,6 @@ variable "enabled_cluster_log_types" {
   description = "A list of the desired control plane logging to enable. Valid values [`api`, `audit`, `authenticator`, `controllerManager`, `scheduler`]"
   default     = []
 }
-
-variable "access_config" {
-  type = object({
-    authentication_mode                         = optional(string, "CONFIG_MAP")
-    bootstrap_cluster_creator_admin_permissions = optional(bool, false)
-  })
-
-  description = "Access configuration for the cluster."
-
-  validation {
-    condition     = contains(["CONFIG_MAP", "API", "API_AND_CONFIG_MAP"], var.access_config.authentication_mode)
-    error_message = "authentication_mode must be one of 'CONFIG_MAP', 'API', or 'API_AND_CONFIG_MAP'."
-  }
-}
-
 variable "enable_oidc_provider" {
   type        = bool
   description = "Whether to enable OIDC provider"
@@ -277,58 +262,50 @@ variable "eks_addons" {
 
 
 
-################################################################################
-# aws-auth ConfigMap
-################################################################################
+# ################################################################################
+# # access config
+# ################################################################################
 
-variable "aws_auth_config" {
+variable "access_config" {
   description = <<-EOT
-    Configuration for the aws-auth ConfigMap.
-    - `create`: Create the configmap (use only when it doesn't exist).
-    - `manage`: Manage the configmap lifecycle.
-    - `roles`: List of IAM roles to map.
-    - `users`: List of IAM users to map.
-    - `accounts`: List of AWS accounts to map.
+  Access configuration for the cluster.
+  - `authentication_mode`: One of "API" or "API_AND_CONFIG_MAP"
+  - `bootstrap_cluster_creator_admin_permissions`: Grant creator admin access
+  - `aws_auth_config`: (optional) Config for aws-auth ConfigMap
+  - `eks_access_entries`: (optional) List of principals to grant access
+  - `eks_access_policy_associations`: (optional) Policy associations for access entries
   EOT
 
   type = object({
-    create   = optional(bool, false)
-    manage   = optional(bool, true)
-    roles    = optional(list(any), [])
-    users    = optional(list(any), [])
-    accounts = optional(list(any), [])
+    authentication_mode                         = optional(string, "API")
+    bootstrap_cluster_creator_admin_permissions = optional(bool, false)
+    aws_auth_config = optional(object({
+      create   = optional(bool, false)
+      manage   = optional(bool, true)
+      roles    = optional(list(any), [])
+      users    = optional(list(any), [])
+      accounts = optional(list(string), [])
+    }), {})
+    eks_access_entries = optional(list(string), [])
+    eks_access_policy_associations = optional(list(object({
+      principal_arn = string
+      policy_arn    = list(string)
+      access_scope = object({
+        type       = string
+        namespaces = optional(list(string))
+      })
+    })), [])
   })
 
-  default = {}
-}
+  validation {
+    condition     = contains(["API", "API_AND_CONFIG_MAP"], var.access_config.authentication_mode)
+    error_message = "authentication_mode must be one of 'API' or 'API_AND_CONFIG_MAP'."
+  }
 
-
-################################################################################
-# aws eks access entry
-################################################################################
-
-variable "eks_access_entries" {
-  description = "List of EKS access entries to create"
-  type        = list(string)
-  default     = []
-}
-variable "eks_access_policy_associations" {
-  description = "List of EKS access policy associations"
-  type = list(object({
-    principal_arn = string
-    policy_arn    = string
-    access_scope = object({
-      type       = string
-      namespaces = optional(list(string))
-    })
-  }))
-  default = []
-}
-
-variable "enable_creator_admin_access" {
-  description = "Grant admin access to the creator"
-  type        = bool
-  default     = true
+  default = {
+    authentication_mode                         = "API"
+    bootstrap_cluster_creator_admin_permissions = false
+  }
 }
 
 

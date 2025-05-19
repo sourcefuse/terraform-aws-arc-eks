@@ -26,9 +26,6 @@ data "aws_eks_cluster_auth" "this" {
   name = module.eks_cluster.eks_cluster_id
 }
 
-# data "aws_eks_cluster_auth" "cluster" {
-#   name = module.eks_cluster.name
-# }
 data "aws_iam_role" "karpenter_node_role" {
-  name = "KarpenterNodeRole-${data.aws_eks_cluster.this.name}"
+  name = "KarpenterNodeRole-${var.namespace}-${var.environment}-debash"
 }

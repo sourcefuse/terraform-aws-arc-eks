@@ -18,7 +18,7 @@ module "eks_cluster" {
   namespace                 = "arc"
   environment               = "poc"
   kubernetes_version        = "1.31"
-  name                      = "${var.namespace}-${var.environment}-cluster"
+  name                      = "${var.namespace}-${var.environment}-debash"
   vpc_config                = local.vpc_config
   access_config             = local.access_config
   enable_oidc_provider      = true
@@ -47,39 +47,6 @@ module "eks_cluster" {
 
     kube-proxy = {} # version will default to latest
   }
-
-  aws_auth_config = {
-    create = false
-    manage = true
-    roles = [
-      {
-        rolearn = data.aws_iam_role.karpenter_node_role.arn
-        groups = [
-          "system:bootstrappers",
-          "system:nodes"
-        ]
-        username = "system:node:{{EC2PrivateDNSName}}"
-      }
-    ]
-    users    = []
-    accounts = []
-  }
-  eks_access_entries = [
-    ""
-  ]
-
-  eks_access_policy_associations = [
-    {
-      principal_arn = ""
-      policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
-      access_scope = {
-        type = "cluster"
-      }
-    }
-  ]
-
-
-
   karpenter_config = {
     enable                        = true
     karpenter_version             = "0.36.0"
@@ -108,7 +75,12 @@ module "eks_cluster" {
       })
     ]
 
-    # helm_release_set_values = [ ] Add Additional Values for helm
+    helm_release_set_values = [ 
+      {
+        name = "dnsPolicy"
+        value = "Default"    # This ensures that Karpenter reaches out to the VPC DNS service when running its controllers, allowing Karpenter to start-up without the DNS application pods running, enabling Karpenter to manage the capacity for these pods.
+      }
+    ] 
   }
   tags = module.tags.tags
 }

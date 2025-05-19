@@ -4,31 +4,51 @@ locals {
   fargate_profile_policy_arns = toset(concat(try(var.fargate_profile_config.policy_arns, []), try(var.fargate_profile_config.additional_policy_arns, [])
   ))
 
-  ################################################################################
-  # aws-auth configmap
-  ################################################################################
+  # ################################################################################
+  # # aws-auth configmap
+  # ################################################################################
+
+  aws_auth_config = lookup(var.access_config, "aws_auth_config", {})
+
+  aws_auth_enabled = var.access_config.authentication_mode == "API_AND_CONFIG_MAP"
+
 
   aws_auth_configmap_data = {
-    mapRoles    = yamlencode(lookup(var.aws_auth_config, "roles", []))
-    mapUsers    = yamlencode(lookup(var.aws_auth_config, "users", []))
-    mapAccounts = yamlencode(lookup(var.aws_auth_config, "accounts", []))
+    mapRoles    = yamlencode(lookup(local.aws_auth_config, "roles", []))
+    mapUsers    = yamlencode(lookup(local.aws_auth_config, "users", []))
+    mapAccounts = yamlencode(lookup(local.aws_auth_config, "accounts", []))
   }
 
 
-  ################################################################################
-  # aws eks access entry
-  ################################################################################
+  # ################################################################################
+  # # aws eks access entry
+  # ################################################################################
 
-  creator_access = var.enable_creator_admin_access ? [{
+
+  eks_api_enabled = contains(["API", "API_AND_CONFIG_MAP"], var.access_config.authentication_mode)
+
+  creator_access = var.access_config.bootstrap_cluster_creator_admin_permissions ? [{
     principal_arn = data.aws_iam_session_context.this.issuer_arn
-    policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+    policy_arn    = ["arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"]
     access_scope = {
       type = "cluster"
     }
   }] : []
 
-  all_access_associations = concat(local.creator_access, var.eks_access_policy_associations)
+  expanded_access_associations = flatten([
+    for assoc in concat(local.creator_access, var.access_config.eks_access_policy_associations) : [
+      for policy_arn in assoc.policy_arn : {
+        principal_arn = assoc.principal_arn
+        policy_arn    = policy_arn
+        access_scope  = assoc.access_scope
+      }
+    ]
+  ])
 
+  all_access_associations = {
+    for assoc in local.expanded_access_associations :
+    "${assoc.principal_arn}|${assoc.policy_arn}" => assoc
+  }
 
   ################################################################################
   # karpenter

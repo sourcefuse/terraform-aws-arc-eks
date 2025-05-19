@@ -7,8 +7,25 @@ locals {
   }
 
   access_config = {
-    authentication_mode                         = "API"
+    authentication_mode                         = "API_AND_CONFIG_MAP"
     bootstrap_cluster_creator_admin_permissions = true
+
+    aws_auth_config = {
+      create = false
+      manage = true
+      roles = [
+        {
+          rolearn = data.aws_iam_role.karpenter_node_role.arn
+          groups = [
+            "system:bootstrappers",
+            "system:nodes"
+          ]
+          username = "system:node:{{EC2PrivateDNSName}}"
+        }
+      ]
+      users    = []
+      accounts = []
+    }
   }
   envelope_encryption = {
     enable                      = true
