@@ -35,5 +35,4 @@ locals {
   kubernetes_network_config = {
     ip_family = "ipv4"
   }
-
 }

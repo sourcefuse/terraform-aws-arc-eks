@@ -75,12 +75,12 @@ module "eks_cluster" {
       })
     ]
 
-    helm_release_set_values = [ 
+    helm_release_set_values = [
       {
-        name = "dnsPolicy"
-        value = "Default"    # This ensures that Karpenter reaches out to the VPC DNS service when running its controllers, allowing Karpenter to start-up without the DNS application pods running, enabling Karpenter to manage the capacity for these pods.
+        name  = "dnsPolicy"
+        value = "Default" # This ensures that Karpenter reaches out to the VPC DNS service when running its controllers, allowing Karpenter to start-up without the DNS application pods running, enabling Karpenter to manage the capacity for these pods.
       }
-    ] 
+    ]
   }
   tags = module.tags.tags
 }
