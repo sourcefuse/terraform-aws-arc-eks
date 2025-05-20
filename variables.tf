@@ -271,29 +271,29 @@ variable "access_config" {
   Access configuration for the cluster.
   - `authentication_mode`: One of "API" or "API_AND_CONFIG_MAP"
   - `bootstrap_cluster_creator_admin_permissions`: Grant creator admin access
-  - `aws_auth_config`: (optional) Config for aws-auth ConfigMap
-  - `eks_access_entries`: (optional) List of principals to grant access
-  - `eks_access_policy_associations`: (optional) Policy associations for access entries
+  - `aws_auth_config_map`: (optional) Config for aws-auth ConfigMap
+  - `eks_access_entries`: (optional) List of principals and their policy associations
   EOT
 
   type = object({
     authentication_mode                         = optional(string, "API")
     bootstrap_cluster_creator_admin_permissions = optional(bool, false)
-    aws_auth_config = optional(object({
+
+    aws_auth_config_map = optional(object({
       create   = optional(bool, false)
-      manage   = optional(bool, true)
+      manage   = optional(bool, false)
       roles    = optional(list(any), [])
       users    = optional(list(any), [])
       accounts = optional(list(string), [])
     }), {})
-    eks_access_entries = optional(list(string), [])
-    eks_access_policy_associations = optional(list(object({
-      principal_arn = string
-      policy_arn    = list(string)
-      access_scope = object({
+
+    eks_access_entries = optional(list(object({
+      principal_arn = optional(string)
+      policy_arns   = optional(list(string))
+      access_scope = optional(object({
         type       = string
         namespaces = optional(list(string))
-      })
+      }))
     })), [])
   })
 
@@ -307,7 +307,6 @@ variable "access_config" {
     bootstrap_cluster_creator_admin_permissions = false
   }
 }
-
 
 ################################################################################
 # Fargate Profile
@@ -339,8 +338,12 @@ variable "karpenter_config" {
   description = "Configuration for Karpenter"
   type = object({
     enable                                  = bool
+    name                                    = optional(string)
+    namespace                               = optional(string, "karpenter")
+    create_namespace                        = optional(bool)
     karpenter_version                       = optional(string, "0.36.0")
     helm_repository                         = optional(string, "oci://public.ecr.aws/karpenter")
+    chart                                   = optional(string)
     additional_karpenter_node_role_policies = optional(list(string), [])
     helm_release_values                     = optional(any)
     helm_release_set_values = optional(list(object({

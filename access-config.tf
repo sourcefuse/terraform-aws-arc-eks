@@ -2,7 +2,7 @@
 # # aws-auth configmap
 # ################################################################################
 resource "kubernetes_config_map" "aws_auth" {
-  count = (local.aws_auth_enabled && local.aws_auth_config.create) ? 1 : 0
+  count = (local.aws_auth_enabled && var.access_config.aws_auth_config_map.create) ? 1 : 0
 
   metadata {
     name      = "aws-auth"
@@ -16,9 +16,9 @@ resource "kubernetes_config_map" "aws_auth" {
   }
 }
 
-resource "kubernetes_config_map_v1" "aws_auth" {
-  count = (local.aws_auth_enabled && local.aws_auth_config.manage) ? 1 : 0
-
+resource "kubernetes_config_map_v1_data" "aws_auth" {
+  count = (local.aws_auth_enabled && var.access_config.aws_auth_config_map.manage) ? 1 : 0
+  force = true
   metadata {
     name      = "aws-auth"
     namespace = "kube-system"
@@ -27,7 +27,7 @@ resource "kubernetes_config_map_v1" "aws_auth" {
   data = local.aws_auth_configmap_data
 
   depends_on = [
-    kubernetes_config_map.aws_auth,
+    kubernetes_config_map.aws_auth
   ]
 }
 
@@ -36,7 +36,11 @@ resource "kubernetes_config_map_v1" "aws_auth" {
 # ################################################################################
 
 resource "aws_eks_access_entry" "this" {
-  for_each = local.eks_api_enabled ? toset(var.access_config.eks_access_entries) : toset([])
+  for_each = local.eks_api_enabled ? {
+    for principal_arn in toset([
+      for assoc in local.expanded_access_associations : assoc.principal_arn
+    ]) : principal_arn => principal_arn
+  } : {}
 
   cluster_name  = aws_eks_cluster.this.name
   principal_arn = each.value
@@ -58,5 +62,3 @@ resource "aws_eks_access_policy_association" "this" {
     aws_eks_access_entry.this
   ]
 }
-
-
