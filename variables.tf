@@ -56,7 +56,7 @@ variable "enable_oidc_provider" {
 
 variable "envelope_encryption" {
   type = object({
-    enable                      = optional(bool, false)
+    enable                      = optional(bool, true)
     kms_deletion_window_in_days = optional(number, 10)
     resources                   = optional(list(string), ["secrets"])
     key_arn                     = optional(string, null) // if null it created new KMS key
