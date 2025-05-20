@@ -63,7 +63,7 @@ variable "envelope_encryption" {
   })
   description = "Whether to enable Envelope encryption"
   default = {
-    enable = false
+    enable = true
   }
 }
 

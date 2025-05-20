@@ -24,3 +24,9 @@ spec:
             requests:
               cpu: 2
               memory: 2Gi
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
