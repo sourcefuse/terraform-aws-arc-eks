@@ -164,14 +164,13 @@ Hence the state of that configuration has to be independently managed.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_arn"></a> [arn](#output\_arn) | EKS cluster ARN |
-| <a name="output_certificate_authority_data"></a> [certificate\_authority\_data](#output\_certificate\_authority\_data) | n/a |
-| <a name="output_eks_cluster_id"></a> [eks\_cluster\_id](#output\_eks\_cluster\_id) | The name of the cluster |
-| <a name="output_eks_cluster_security_group"></a> [eks\_cluster\_security\_group](#output\_eks\_cluster\_security\_group) | n/a |
-| <a name="output_eks_cluster_security_group_id"></a> [eks\_cluster\_security\_group\_id](#output\_eks\_cluster\_security\_group\_id) | The security group attached to eks cluster |
-| <a name="output_endpoint"></a> [endpoint](#output\_endpoint) | EKS cluster endpoint |
+| <a name="output_arn"></a> [arn](#output\_arn) | The Amazon Resource Name (ARN) of the EKS cluster |
+| <a name="output_certificate_authority_data"></a> [certificate\_authority\_data](#output\_certificate\_authority\_data) | The base64-encoded certificate data required to communicate with the EKS cluster |
+| <a name="output_eks_cluster_id"></a> [eks\_cluster\_id](#output\_eks\_cluster\_id) | The unique identifier of the EKS cluster |
+| <a name="output_eks_cluster_security_group_id"></a> [eks\_cluster\_security\_group\_id](#output\_eks\_cluster\_security\_group\_id) | The ID of the security group associated with the EKS cluster's control plane |
+| <a name="output_endpoint"></a> [endpoint](#output\_endpoint) | The endpoint for the EKS cluster API server |
 | <a name="output_name"></a> [name](#output\_name) | The name of the EKS cluster |
-| <a name="output_oidc_provider_url"></a> [oidc\_provider\_url](#output\_oidc\_provider\_url) | OIDC provider URL without https:// |
+| <a name="output_oidc_provider_url"></a> [oidc\_provider\_url](#output\_oidc\_provider\_url) | The OIDC identity provider URL for the EKS cluster (without the https:// prefix) |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Kubernetes dashboard

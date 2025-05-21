@@ -76,7 +76,7 @@ module "eks_cluster" {
 # Ensure all security groups intended for use by Karpenter-managed nodes are tagged accordingly.
 # This enables Karpenter to automatically discover and associate the appropriate security groups.
 resource "aws_ec2_tag" "karpenter_discovery_security_group" {
-  resource_id = module.eks_cluster.eks_cluster_security_group
+  resource_id = module.eks_cluster.eks_cluster_security_group_id
   key         = "karpenter.sh/discovery"
   value       = module.eks_cluster.name
 }
