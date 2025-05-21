@@ -189,47 +189,55 @@ variable "additional_cluster_security_group_rules" {
 ################################################################################
 
 variable "node_group_config" {
-  type = map(object({
-    node_group_name = optional(string)
-    node_role_arn   = optional(string)
-    release_version = optional(string)
-    scaling_config = object({
-      desired_size = number
-      max_size     = number
-      min_size     = number
-    })
-    taints = optional(list(object({
-      key    = string
-      value  = optional(string)
-      effect = string
-    })), [])
-    update_config = optional(object({
-      max_unavailable            = optional(number)
-      max_unavailable_percentage = optional(number)
+  type = object({
+    enable = bool
+    config = map(object({
+      node_group_name = optional(string)
+      node_role_arn   = optional(string)
+      release_version = optional(string)
+      scaling_config = object({
+        desired_size = number
+        max_size     = number
+        min_size     = number
+      })
+      taints = optional(list(object({
+        key    = string
+        value  = optional(string)
+        effect = string
+      })), [])
+      update_config = optional(object({
+        max_unavailable            = optional(number)
+        max_unavailable_percentage = optional(number)
+      }))
+      remote_access = optional(object({
+        ec2_ssh_key               = string
+        source_security_group_ids = list(string)
+      }))
+      launch_template = optional(object({
+        id      = optional(string)
+        name    = optional(string)
+        version = string
+      }))
+      node_repair_config = optional(object({
+        enabled = bool
+      }))
+      instance_types      = optional(list(string), ["t3.medium"])
+      ami_type            = optional(string)
+      disk_size           = optional(number)
+      capacity_type       = optional(string, "ON_DEMAND")
+      labels              = optional(map(string), {})
+      ignore_desired_size = optional(bool, false)
+      subnet_ids          = list(string)
+      kubernetes_version  = optional(string)
     }))
-    remote_access = optional(object({
-      ec2_ssh_key               = string
-      source_security_group_ids = list(string)
-    }))
-    launch_template = optional(object({
-      id      = optional(string)
-      name    = optional(string)
-      version = string
-    }))
-    node_repair_config = optional(object({
-      enabled = bool
-    }))
-    instance_types      = optional(list(string), ["t3.medium"])
-    ami_type            = optional(string)
-    disk_size           = optional(number)
-    capacity_type       = optional(string, "ON_DEMAND")
-    labels              = optional(map(string), {})
-    ignore_desired_size = optional(bool, false)
-    subnet_ids          = list(string)
-    kubernetes_version  = optional(string)
-  }))
-  default = {}
+  })
+
+  default = {
+    enable = false
+    config = {}
+  }
 }
+
 variable "node_group_policy_arns" {
   description = "Default policies for EKS node group"
   type        = list(string)
@@ -316,6 +324,7 @@ variable "access_config" {
 variable "fargate_profile_config" {
   description = "Combined configuration for the EKS Fargate profile, including IAM policies."
   type = object({
+    enable                 = bool
     fargate_profile_name   = optional(string)
     pod_execution_role_arn = optional(string)
     subnet_ids             = optional(list(string))
@@ -327,7 +336,9 @@ variable "fargate_profile_config" {
     policy_arns            = optional(list(string), ["arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"])
     additional_policy_arns = optional(list(string), [])
   })
-  default = {}
+  default = {
+    enable = false
+  }
 }
 
 

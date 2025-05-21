@@ -1,23 +1,6 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
-  # SNYK-CC-TF-94:
-  #   - 'main.tf > *':
-  #       reason: >-
-  #         The user of this module may specify an appropriate address range. The
-  #         default is 0.0.0.0/0 (same as EKS default)
-  # SNYK-CC-K8S-48:
-  #   - 'core-apps/metrics-server.yaml > *':
-  #       reason: >-
-  #         metric-server is a core component and is safe to install in kube system-namespace
-  # SNYK-CC-K8S-47:
-  #   - 'core-apps/eks-dashboard-viewer-service-account.yaml > *':
-  #       reason: >-
-  #         The custom role only allows "get", "watch", "list" verbs on most resources that are
-  #         displayed on kubernetes-dashboard. It only allows "list" on secrets.
-  #   - 'core-apps/dashboard.yaml > *':
-  #       reason: >-
-  #         The the role is required as is by kubernetes dashboard to fetch the necessary metrics and details.
   SNYK-CC-TF-107:
     - 'main.tf > *':
         reason: >-

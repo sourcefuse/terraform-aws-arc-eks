@@ -18,7 +18,7 @@ module "eks_cluster" {
   namespace                 = "arc"
   environment               = "poc"
   kubernetes_version        = "1.31"
-  name                      = "${var.namespace}-${var.environment}-debash"
+  name                      = "${var.namespace}-${var.environment}-cluster"
   vpc_config                = local.vpc_config
   access_config             = local.access_config
   enable_oidc_provider      = true
@@ -26,19 +26,23 @@ module "eks_cluster" {
   kubernetes_network_config = local.kubernetes_network_config
 
   node_group_config = {
-    karpenter = {
-      node_group_name = "karpenter-nodegroup"
-      subnet_ids      = data.aws_subnets.private.ids
-      scaling_config = {
-        desired_size = 2
-        max_size     = 3
-        min_size     = 1
+    enable = true
+    config = {
+      karpenter = {
+        node_group_name = "karpenter-nodegroup"
+        subnet_ids      = data.aws_subnets.private.ids
+        scaling_config = {
+          desired_size = 2
+          max_size     = 3
+          min_size     = 1
+        }
+        instance_types = ["t3.medium"]
+        capacity_type  = "ON_DEMAND"
+        disk_size      = 20
+        ami_type       = "AL2_x86_64"
       }
-      instance_types = ["t3.medium"]
-      capacity_type  = "ON_DEMAND"
-      disk_size      = 20
-      ami_type       = "AL2_x86_64"
     }
+
   }
   eks_addons = {
     vpc-cni = {

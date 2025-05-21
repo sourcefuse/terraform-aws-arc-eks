@@ -24,8 +24,4 @@ module "eks_cluster" {
   enable_oidc_provider      = false
   envelope_encryption       = local.envelope_encryption
   kubernetes_network_config = local.kubernetes_network_config
-  auto_mode_config = {
-    enable = true
-  }
-
 }

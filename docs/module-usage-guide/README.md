@@ -104,6 +104,8 @@ You need a general-purpose node group for application workloads and a spot node 
 **How to Use:**
 ```hcl
 node_group_config = {
+  enable          = true
+  config = {
   general-ng = {
     node_group_name = "general-nodegroup"
     subnet_ids      = data.aws_subnets.private.ids
@@ -116,6 +118,7 @@ node_group_config = {
     capacity_type  = "ON_DEMAND"
     disk_size      = 20
     ami_type       = "AL2_x86_64"
+  }
   }
 }
 ```
@@ -137,6 +140,7 @@ An `AWS EKS Fargate profile` allows an administrator to declare which pods run o
 **How to Use:**
 ```hcl
 fargate_profile_config = {
+  enable               = true
   fargate_profile_name = "example"
   subnet_ids           = data.aws_subnets.private.ids
   selectors = [

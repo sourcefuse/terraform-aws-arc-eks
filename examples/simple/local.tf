@@ -8,28 +8,22 @@ locals {
 
   access_config = {
     authentication_mode                         = "API"
-    bootstrap_cluster_creator_admin_permissions = true
+    bootstrap_cluster_creator_admin_permissions = false
     aws_auth_config_map = {
-      create = false
-      manage = true
-      roles = [
-        {
-          rolearn = ""
-        }
-      ]
+      create   = false
+      manage   = true
+      roles    = []
       users    = []
       accounts = []
     }
-    eks_access_policy_associations = [
+    eks_access_entries = [
       {
-        principal_arn = ""
-        policy_arn = [
-          "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy",
-          "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminViewPolicy"
+        principal_arn = data.aws_iam_session_context.this.issuer_arn
+        policy_arns = [
+          "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
         ]
         access_scope = {
-          type       = "namespace"
-          namespaces = ["karpenter", "default"]
+          type = "cluster"
         }
       }
     ]

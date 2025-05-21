@@ -79,7 +79,9 @@ resource "aws_iam_role_policy_attachment" "iam" {
 ################################################################################
 
 resource "aws_iam_role" "eks_node_group" {
-  name = "${var.namespace}-${var.environment}-eks-node-group-role"
+  for_each = var.node_group_config.enable ? var.node_group_config.config : {}
+
+  name = "${var.namespace}-${var.environment}-${each.key}-eks-node-group-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -94,11 +96,27 @@ resource "aws_iam_role" "eks_node_group" {
 
   tags = var.tags
 }
+
 resource "aws_iam_role_policy_attachment" "this" {
-  for_each   = local.node_group_policy_arns
-  role       = aws_iam_role.eks_node_group.name
-  policy_arn = each.value
+  for_each = var.node_group_config.enable ? {
+    for pair in flatten([
+      for k, v in var.node_group_config.config : [
+        for policy in local.node_group_policy_arns : {
+          key        = "${k}-${replace(policy, ":", "-")}"
+          role_key   = k
+          policy_arn = policy
+        }
+      ]
+      ]) : pair.key => {
+      role_key   = pair.role_key
+      policy_arn = pair.policy_arn
+    }
+  } : {}
+
+  role       = aws_iam_role.eks_node_group[each.value.role_key].name
+  policy_arn = each.value.policy_arn
 }
+
 
 
 ################################################################################
@@ -106,7 +124,8 @@ resource "aws_iam_role_policy_attachment" "this" {
 ################################################################################
 
 resource "aws_iam_role" "eks_fargate_profile" {
-  name = "${var.namespace}-${var.environment}-fargate-role"
+  count = var.fargate_profile_config.enable ? 1 : 0
+  name  = "${var.namespace}-${var.environment}-fargate-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -124,8 +143,8 @@ resource "aws_iam_role" "eks_fargate_profile" {
   tags = var.tags
 }
 resource "aws_iam_role_policy_attachment" "fargate" {
-  for_each   = local.fargate_profile_policy_arns
-  role       = aws_iam_role.eks_fargate_profile.name
+  for_each   = var.fargate_profile_config.enable ? toset(local.fargate_profile_policy_arns) : toset([])
+  role       = aws_iam_role.eks_fargate_profile[0].name
   policy_arn = each.value
 }
 

@@ -6,7 +6,7 @@ resource "aws_eks_fargate_profile" "this" {
 
   cluster_name           = aws_eks_cluster.this.name
   fargate_profile_name   = var.fargate_profile_config.fargate_profile_name
-  pod_execution_role_arn = aws_iam_role.eks_fargate_profile.arn
+  pod_execution_role_arn = aws_iam_role.eks_fargate_profile[0].arn
   subnet_ids             = var.fargate_profile_config.subnet_ids
   tags                   = var.fargate_profile_config.tags
 

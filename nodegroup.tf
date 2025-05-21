@@ -1,9 +1,9 @@
 resource "aws_eks_node_group" "this" {
-  for_each = var.node_group_config
+  for_each = var.node_group_config.enable ? var.node_group_config.config : {}
 
   cluster_name    = aws_eks_cluster.this.name
   node_group_name = each.value.node_group_name
-  node_role_arn   = aws_iam_role.eks_node_group.arn
+  node_role_arn   = aws_iam_role.eks_node_group[each.key].arn
   subnet_ids      = each.value.subnet_ids
   version         = try(each.value.kubernetes_version, null)
   release_version = each.value.release_version
