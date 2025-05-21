@@ -5,7 +5,7 @@ resource "helm_release" "karpenter" {
   create_namespace = var.karpenter_config.create_namespace
   repository       = var.karpenter_config.helm_repository
   chart            = var.karpenter_config.chart
-  version          = var.karpenter_config.karpenter_version
+  version          = var.karpenter_config.version
   values           = var.karpenter_config.helm_release_values
 
   dynamic "set" {
@@ -17,7 +17,7 @@ resource "helm_release" "karpenter" {
   }
 
   depends_on = [
-    aws_iam_role_policy.karpenter_controller_policy,
+    aws_iam_role_policy.karpenter_controller,
     aws_eks_cluster.this,
     aws_eks_node_group.this
   ]

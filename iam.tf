@@ -219,7 +219,7 @@ resource "aws_iam_role" "karpenter_controller_role" {
   ]
 }
 
-resource "aws_iam_role_policy" "karpenter_controller_policy" {
+resource "aws_iam_role_policy" "karpenter_controller" {
   count = var.karpenter_config.enable ? 1 : 0
   role  = aws_iam_role.karpenter_controller_role[0].name
 

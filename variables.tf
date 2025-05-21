@@ -189,6 +189,32 @@ variable "additional_cluster_security_group_rules" {
 ################################################################################
 
 variable "node_group_config" {
+  description = <<-EOT
+  Configuration for EKS managed node groups.
+
+  - enable: Controls whether EKS node groups should be created.
+  - config: A map of node group configurations, where each key is an identifier for a node group.
+    Each node group object may include:
+
+    - node_group_name: (Optional) Custom name for the node group. If not specified, a default will be used.
+    - node_role_arn: (Optional) ARN of the IAM role for the node group.
+    - release_version: (Optional) AMI version for the node group.
+    - scaling_config: Required settings for desired, minimum, and maximum node counts.
+    - taints: (Optional) List of taints applied to nodes, each with a key, value (optional), and effect.
+    - update_config: (Optional) Configuration for rolling updates, such as max unavailable nodes.
+    - remote_access: (Optional) SSH access configuration, including key name and allowed source security group IDs.
+    - launch_template: (Optional) Launch template settings, including ID, name, and version.
+    - node_repair_config: (Optional) Node auto-repair configuration (e.g., self-healing).
+    - instance_types: (Optional) List of EC2 instance types to use (default is ["t3.medium"]).
+    - ami_type: (Optional) AMI type (e.g., "AL2_x86_64", "BOTTLEROCKET_x86_64").
+    - disk_size: (Optional) Size in GiB of the root EBS volume.
+    - capacity_type: (Optional) Capacity type ("ON_DEMAND" or "SPOT"), defaults to "ON_DEMAND".
+    - labels: (Optional) Key-value map of Kubernetes labels to apply to the nodes.
+    - ignore_desired_size: (Optional) If true, the desired size will be ignored during updates (default: false).
+    - subnet_ids: Required list of subnet IDs where the node group will be deployed.
+    - kubernetes_version: (Optional) Kubernetes version to use for the node group.
+
+  EOT
   type = object({
     enable = bool
     config = map(object({
@@ -353,7 +379,7 @@ variable "karpenter_config" {
     name                                    = optional(string)
     namespace                               = optional(string, "karpenter")
     create_namespace                        = optional(bool)
-    karpenter_version                       = optional(string, "0.36.0")
+    version                                 = optional(string, "0.36.0")
     helm_repository                         = optional(string, "oci://public.ecr.aws/karpenter")
     chart                                   = optional(string)
     additional_karpenter_node_role_policies = optional(list(string), [])

@@ -57,7 +57,7 @@ module "eks_cluster" {
     namespace                     = "karpenter"
     create_namespace              = true
     chart                         = "karpenter"
-    karpenter_version             = "0.36.0"
+    version                       = "0.36.0"
     additional_node_role_policies = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
 
     helm_release_values = [file("${path.module}/karpenter-helm-values.yaml")]

@@ -204,7 +204,7 @@ karpenter_config = {
   enable            = true
   name              = "karpenter"
   namespace         = "karpenter"
-  karpenter_version = "0.36.0"
+  version = "0.36.0"
   helm_release_values = [file("${path.module}/karpenter-helm-values.yaml")]
   helm_release_set_values = [
     {
