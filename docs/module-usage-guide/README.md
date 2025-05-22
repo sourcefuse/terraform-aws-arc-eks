@@ -18,7 +18,7 @@ Before using this module, ensure you have the following:
 
 - AWS credentials configured.
 - Terraform installed.
-- A working knowledge of AWS VPC, EKS, Kubernetes, Helm and Terraform concepts.
+- A working knowledge of AWS VPC, EKS, Kubernetes, Helm, Karpenter and Terraform concepts.
 
 ## Getting Started
 
@@ -29,7 +29,7 @@ To use the module in your Terraform configuration, include the following source 
 ```hcl
 module "arc-eks" {
   source  = "sourcefuse/arc-eks/aws"
-  version = "5.0.0"
+  version = "5.0.16"
   # insert the 8 required variables here
 }
 ```
@@ -41,7 +41,7 @@ Refer to the [Terraform Registry](https://registry.terraform.io/modules/sourcefu
 Integrate the module with your existing Terraform mono repo configuration, follow the steps below:
 
 1. Create a new folder in `terraform/` named `eks`.
-2. Create the required files, see the [examples](https://github.com/sourcefuse/terraform-aws-arc-eks/tree/main/example) to base off of.
+2. Create the required files, see the [examples](https://github.com/sourcefuse/terraform-aws-arc-eks/tree/main/examples) to base off of.
 3. Configure with your backend
   - Create the environment backend configuration file: `config.<environment>.hcl`
     - **region**: Where the backend resides
@@ -55,7 +55,7 @@ Integrate the module with your existing Terraform mono repo configuration, follo
 Ensure that the AWS credentials used to execute Terraform have the necessary permissions to create, list and modify:
 
 - EKS cluster
-- EKS node groups, EC2 AMIs, Launch templates
+- EKS node groups, EC2 AMIs
 - EKS Fargate profile
 - Security Groups and Security Group rules
 - Cloudwatch Log groups
@@ -76,7 +76,7 @@ For a list of outputs, see the README [Outputs](https://github.com/sourcefuse/te
 
 ### Basic Usage
 
-For basic usage, see the [examples](https://github.com/sourcefuse/terraform-aws-arc-eks/tree/main/examples/simple) folder.
+For basic usage, see the [examples/simple](https://github.com/sourcefuse/terraform-aws-arc-eks/tree/main/examples/simple) folder.
 
 This example will create:
 
@@ -89,6 +89,8 @@ Below are advanced usage examples enabled by this module to support a range of E
 ---
 
 #### 1. **EKS with Managed Node Groups**
+
+For EKS Cluster with node-group creation, see the [examples/node-group](https://github.com/sourcefuse/terraform-aws-arc-eks/tree/main/examples/node-group) folder.
 
 Use `node_group_config` to provision one or more managed node groups with specific instance types, scaling configuration, and networking.
 
@@ -127,6 +129,8 @@ node_group_config = {
 
 #### 2. **EKS with Fargate Profile**
 
+For EKS Cluster with fargate-profile creation, see the [examples/fargate-profile](https://github.com/sourcefuse/terraform-aws-arc-eks/tree/main/examples/fargate-profile) folder.
+
 Enable `fargate_profile_config` to run specific workloads on AWS Fargate — a serverless compute engine — ideal for lightweight, isolated, or on-demand applications without managing underlying infrastructure.
 
 **Key Capabilities:**
@@ -155,6 +159,8 @@ fargate_profile_config = {
 
 #### 3. **Auto Mode Support**
 
+For EKS Cluster with auto-mode creation, see the [examples/auto-mode](https://github.com/sourcefuse/terraform-aws-arc-eks/tree/main/examples/auto-mode) folder.
+
 This module supports an **Auto Mode** configuration, `EKS Auto Mode` extends AWS management of Kubernetes clusters beyond the cluster itself, to allow AWS to also set up and manage the infrastructure that enables the smooth operation of your workloads.
 
 **Key Capabilities:**
@@ -179,7 +185,11 @@ module "eks_cluster" {
   name                                  = "${var.namespace}-${var.environment}-cluster"
   vpc_config                            = local.vpc_config
   auto_mode_config                      = local.auto_mode_config
-  ...
+  bootstrap_self_managed_addons_enabled = false                       # Make sure this is false for auto-mode creation
+  access_config                         = local.access_config
+  enable_oidc_provider                  = false
+  envelope_encryption                   = local.envelope_encryption
+  kubernetes_network_config             = local.kubernetes_network_config
 }
 ```
 
@@ -187,13 +197,14 @@ module "eks_cluster" {
 
 #### 4. **Karpenter Integration**
 
+For EKS Cluster with karpenter creation, see the [examples/karpenter](https://github.com/sourcefuse/terraform-aws-arc-eks/tree/main/examples/karpenter) folder.
+
 Enable `karpenter_config` to provision and manage dynamic compute capacity for Kubernetes workloads using [Karpenter](https://karpenter.sh/).
 
 **Key Capabilities:**
 - Auto-provision capacity based on pod requirements.
 - Faster scaling and cost-optimization compared to static node groups.
 - Fully automated with Helm-based deployment.
-- Supports tagging of subnets and security groups for auto-discovery.
 
 **Example Use Case:**
 You need highly dynamic compute provisioning with support for heterogeneous workloads and instance types, with minimal manual intervention.
