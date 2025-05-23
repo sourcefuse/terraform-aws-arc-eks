@@ -1,44 +1,101 @@
 locals {
-  map_additional_iam_roles = concat(var.map_additional_iam_roles, [
+  eks_policy_arns        = toset(concat(var.eks_policy_arns, var.eks_additional_policy_arns))
+  node_group_policy_arns = toset(concat(var.node_group_policy_arns, var.additional_node_group_policy_arns))
+  fargate_profile_policy_arns = toset(concat(try(var.fargate_profile_config.policy_arns, []), try(var.fargate_profile_config.additional_policy_arns, [])
+  ))
+
+  ################################################################################
+  # aws-auth configmap
+  ################################################################################
+
+  aws_auth_config_base = lookup(var.access_config, "aws_auth_config_map", {})
+
+  # Conditionally add Karpenter role if enabled
+  aws_auth_config = merge(
+    local.aws_auth_config_base,
     {
-      rolearn  = aws_iam_role.eks_admin.arn,
-      username = "eks-admin",
-      groups   = ["system:masters"]
+      roles = concat(
+        lookup(local.aws_auth_config_base, "roles", []),
+        var.karpenter_config.enable ? [
+          {
+            rolearn  = aws_iam_role.karpenter_node_role[0].arn
+            groups   = ["system:bootstrappers", "system:nodes"]
+            username = "system:node:{{EC2PrivateDNSName}}"
+          }
+        ] : []
+      )
     }
+  )
+
+  aws_auth_enabled = var.access_config.authentication_mode == "API_AND_CONFIG_MAP"
+
+  aws_auth_configmap_data = {
+    mapRoles    = yamlencode(lookup(local.aws_auth_config, "roles", []))
+    mapUsers    = yamlencode(lookup(local.aws_auth_config, "users", []))
+    mapAccounts = yamlencode(lookup(local.aws_auth_config, "accounts", []))
+  }
+
+
+
+  # ################################################################################
+  # # aws eks access entry
+  # ################################################################################
+
+  eks_api_enabled = contains(["API", "API_AND_CONFIG_MAP"], var.access_config.authentication_mode)
+
+  # User-defined access entries
+  user_defined_access = try(var.access_config.eks_access_entries, [])
+
+  # Flatten user-defined policy associations
+  expanded_access_associations = flatten([
+    for assoc in local.user_defined_access : [
+      for policy_arn in assoc.policy_arns : {
+        principal_arn = assoc.principal_arn
+        policy_arn    = policy_arn
+        access_scope  = assoc.access_scope
+      }
+    ]
   ])
-  admin_principal = var.admin_principal != null ? var.admin_principal : ["arn:aws:iam::${data.aws_caller_identity.source.account_id}:root"]
-  #kubernetes_config_map_id = module.eks_cluster.kubernetes_config_map_id
 
-  # ingress_settings = {
-  #   "awsVpcID" : data.aws_vpc.vpc.id
-  #   "awsRegion" : var.region
-  # }
+  # Unique map of policy associations, keyed by principal and policy ARN
+  all_access_associations = {
+    for assoc in local.expanded_access_associations :
+    "${assoc.principal_arn}|${assoc.policy_arn}" => assoc
+  }
 
-  # The usage of the specific kubernetes.io/cluster/* resource tags below are required
-  # for EKS and Kubernetes to discover and manage networking resources
-  # https://www.terraform.io/docs/providers/aws/guides/eks-getting-started.html#base-vpc-networking
+  ################################################################################
+  # karpenter
+  ################################################################################
 
-  #tags = { "kubernetes.io/cluster/${module.label.id}" = "shared" }
+  karpenter_node_role_policies = [
+    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+    "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+  ]
 
-  # Unfortunately, most_recent (https://github.com/cloudposse/terraform-aws-eks-workers/blob/34a43c25624a6efb3ba5d2770a601d7cb3c0d391/main.tf#L141)
-  # variable does not work as expected, if you are not going to use custom ami you should
-  # enforce usage of eks_worker_ami_name_filter variable to set the right kubernetes version for EKS workers,
-  # otherwise will be used the first version of Kubernetes supported by AWS (v1.11) for EKS workers but
-  # EKS control plane will use the version specified by kubernetes_version variable.
+  all_karpenter_node_role_policies = concat(
+    local.karpenter_node_role_policies,
+    var.karpenter_config.additional_karpenter_node_role_policies
+  )
+  required_set_values = [
+    {
+      name  = "settings.clusterName"
+      value = aws_eks_cluster.this.name
+    },
+    {
+      name  = "settings.clusterEndpoint"
+      value = aws_eks_cluster.this.endpoint
+    },
+    {
+      name  = "settings.defaultInstanceProfile"
+      value = var.karpenter_config.enable ? aws_iam_instance_profile.karpenter_instance_profile[0].name : ""
+    },
+    {
+      name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+      value = var.karpenter_config.enable ? aws_iam_role.karpenter_controller_role[0].arn : ""
+    }
+  ]
 
-  #eks_worker_ami_name_filter = "amazon-eks-node-${var.kubernetes_version}*"
-
-  # required tags to make ALB ingress work https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
-  # public_subnets_additional_tags = {
-  #   "kubernetes.io/role/elb" : 1
-  # }
-
-  # private_subnets_additional_tags = {
-  #   "kubernetes.io/role/internal-elb" : 1
-  # }
-
-  # aws_csi_secrets_store_provider_installer_manifest_enabled = var.csi_driver_enabled == true ? 1 : 0
-  # kubectl_path_documents_docs = [
-  #   for file in fileset(path.module, "/manifests/*.yaml") : file
-  # ]
+  merged_set_values = concat(local.required_set_values, try(var.karpenter_config.helm_release_set_values, []))
 }

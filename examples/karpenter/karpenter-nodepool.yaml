@@ -1,0 +1,21 @@
+---
+apiVersion: karpenter.sh/v1beta1
+kind: NodePool
+metadata:
+  name: general
+spec:
+  template:
+    spec:
+      nodeClassRef:
+        kind: EC2NodeClass
+        name: general
+      requirements:
+        - key: "karpenter.k8s.aws/instance-category"
+          operator: In
+          values: ["m", "c", "r"]
+        - key: "karpenter.sh/capacity-type"
+          operator: In
+          values: ["on-demand"]
+  disruption:
+    consolidationPolicy: WhenUnderutilized
+    expireAfter: 168h

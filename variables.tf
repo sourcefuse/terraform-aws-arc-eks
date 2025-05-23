@@ -1,357 +1,389 @@
-variable "region" {
+variable "environment" {
+  description = "ID element. Usually used for region e.g. 'uw2', 'us-west-2', OR role 'prod', 'staging', 'dev', 'UAT'"
   type        = string
-  description = "AWS region"
 }
 
-#######################################################
-## eks / kubernetes / helm
-#######################################################
+variable "namespace" {
+  type        = string
+  description = <<-EOF
+    Namespace your resource belongs to.
+    Usually an abbreviation of your organization name, e.g. 'example' or 'arc', to help ensure generated IDs are globally unique"
+  EOF
+}
+
+variable "name" {
+  type        = string
+  description = "EKS Cluster name"
+}
+
+variable "auto_mode_config" {
+  type = object({
+    enable        = optional(bool, false)
+    node_pools    = optional(list(string), ["general-purpose", "system"])
+    node_role_arn = optional(string, null)
+  })
+  description = <<-EOF
+  (optional) EKS automates routine cluster tasks for compute, storage, and networking.
+  When a new pod can't fit onto existing nodes, EKS creates a new node.
+  EKS combines cluster infrastructure managed by AWS with integrated Kubernetes capabilities to meet application compute needs.
+  EOF
+  default = {
+    enable = false
+  }
+}
+
 variable "kubernetes_version" {
-  description = "Desired Kubernetes master version. If you do not specify a value, the latest available version is used"
   type        = string
-  default     = "1.25"
+  description = "Desired Kubernetes master version"
 }
 
-variable "enabled_cluster_log_types" {
-  description = "A list of the desired control plane logging to enable. For more information, see https://docs.aws.amazon.com/en_us/eks/latest/userguide/control-plane-logs.html. Possible values [`api`, `audit`, `authenticator`, `controllerManager`, `scheduler`]"
-  type        = list(string)
-
-  default = [
-    "api",
-    "audit",
-    "authenticator",
-    "controllerManager",
-    "scheduler"
-  ]
-}
-
-variable "cluster_log_retention_period" {
-  description = "Number of days to retain cluster logs. Requires `enabled_cluster_log_types` to be set. See https://docs.aws.amazon.com/en_us/eks/latest/userguide/control-plane-logs.html."
-  type        = number
-  default     = 0
-}
-
-# variable "map_additional_aws_accounts" {
-#   description = "Additional AWS account numbers to add to `config-map-aws-auth` ConfigMap"
-#   type        = list(string)
-#   default     = []
-# }
-
-## iam
-variable "map_additional_iam_roles" {
-  type = list(object({
-    rolearn  = string
-    username = string
-    groups   = list(string)
-  }))
-  description = "Additional IAM roles to add to `config-map-aws-auth` ConfigMap"
-  default     = []
-}
-
-variable "map_additional_iam_users" {
-  type = list(object({
-    userarn  = string
-    username = string
-    groups   = list(string)
-  }))
-  description = "Additional IAM users to add to `config-map-aws-auth` ConfigMap"
-  default     = []
-}
-
-variable "oidc_provider_enabled" {
-  description = "Create an IAM OIDC identity provider for the cluster, then you can create IAM roles to associate with a service account in the cluster, instead of using `kiam` or `kube2iam`. For more information, see https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html"
-  type        = bool
-  default     = true
-}
-
-variable "admin_principal" {
-  description = "list of arns of IAM users/roles to be allowed to assume the eks-admin role. Default behaviour it to allow all users in the same AWS account as the caller"
-  type        = list(string)
-  default     = null
-}
-
-variable "public_access_cidrs" {
-  description = "Specify the cidr blocks which will be able to access the eks public api endpoint"
-  type        = list(string)
-  default     = ["0.0.0.0/0"]
-}
-
-variable "endpoint_private_access" {
-  type        = bool
-  description = "Indicates whether or not the Amazon EKS private API server endpoint is enabled. Default to AWS EKS resource and it is false"
-  default     = false
-}
-
-variable "endpoint_public_access" {
-  type        = bool
-  description = "Indicates whether or not the Amazon EKS public API server endpoint is enabled. Default to AWS EKS resource and it is true"
-  default     = true
-}
-
-## workers
-variable "local_exec_interpreter" {
-  description = "shell to use for local_exec"
-  type        = list(string)
-  default     = ["/bin/sh", "-c"]
-}
-
-variable "instance_types" {
-  description = "Set of instance types associated with the EKS Node Group. Defaults to [\"t3.medium\"]. Terraform will only perform drift detection if a configuration value is provided"
-  type        = list(string)
-}
-
-variable "kubernetes_labels" {
-  description = "Key-value mapping of Kubernetes labels. Only labels that are applied with the EKS API are managed by this argument. Other Kubernetes labels applied to the EKS Node Group will not be managed"
+variable "tags" {
   type        = map(string)
+  description = "Tags for EKS resources"
   default     = {}
 }
 
-variable "desired_size" {
-  description = "Desired number of worker nodes"
-  type        = number
+variable "enabled_cluster_log_types" {
+  type        = list(string)
+  description = "A list of the desired control plane logging to enable. Valid values [`api`, `audit`, `authenticator`, `controllerManager`, `scheduler`]"
+  default     = []
 }
 
-variable "max_size" {
-  description = "The maximum size of the AutoScaling Group"
-  type        = number
-}
-
-variable "min_size" {
-  description = "The minimum size of the AutoScaling Group"
-  type        = number
-}
-
-// TODO: To be enabled when core apps module / CSI driver is added back
-## csi secrets driver
-variable "csi_driver_enabled" {
-  description = "The Secrets Store CSI Driver secrets-store.csi.k8s.io allows Kubernetes to mount multiple secrets, keys, and certs stored in enterprise-grade external secrets stores into their pods as a volume."
+variable "enable_oidc_provider" {
   type        = bool
+  description = "Whether to enable OIDC provider"
+  default     = true
+}
+
+variable "envelope_encryption" {
+  type = object({
+    enable                      = optional(bool, true)
+    kms_deletion_window_in_days = optional(number, 10)
+    resources                   = optional(list(string), ["secrets"])
+    key_arn                     = optional(string, null) // if null it created new KMS key
+  })
+  description = "Whether to enable Envelope encryption"
+  default = {
+    enable    = true
+    resources = ["secrets"]
+  }
+}
+
+variable "vpc_config" {
+  description = <<EOT
+  Configuration block for VPC settings:
+  - security_group_ids: List of security group IDs associated with the VPC.
+  - subnet_ids: List of subnet IDs where resources will be deployed.
+  - endpoint_private_access: Enable or disable private access to the cluster endpoint.
+  - endpoint_public_access: Enable or disable public access to the cluster endpoint.
+  - public_access_cidrs: CIDR blocks that can access the public endpoint (if enabled).
+  EOT
+  type = object({
+    security_group_ids      = optional(list(string), [])
+    subnet_ids              = list(string)
+    endpoint_private_access = optional(bool, false)
+    endpoint_public_access  = optional(bool, true)
+    public_access_cidrs     = optional(list(string), ["0.0.0.0/0"])
+  })
+}
+
+variable "bootstrap_self_managed_addons_enabled" {
+  type        = bool
+  description = "(optional) Install default unmanaged add-ons, such as aws-cni, kube-proxy, and CoreDNS during cluster creation. If false, you must manually install desired add-ons. Changing this value will force a new cluster to be created."
+  default     = true
+}
+
+variable "enable_arc_zonal_shift" {
+  type        = bool
+  description = "(optional) Whether to enable ARC Zonal shift , it shift application traffic away from an impaired Availability Zone (AZ) in your EKS cluster. "
   default     = false
 }
 
-## cluster configuration
-variable "cluster_encryption_config_enabled" {
-  description = "Set to `true` to enable Cluster Encryption Configuration"
-  type        = bool
-  default     = true
-}
-
-variable "cluster_encryption_config_kms_key_id" {
-  description = "KMS Key ID to use for cluster encryption config"
+variable "upgrade_policy" {
   type        = string
-  default     = ""
+  description = <<EOT
+   (optional) Support type to use for the cluster. If the cluster is set to EXTENDED, it will enter extended support at the end of standard support.
+    If the cluster is set to STANDARD, it will be automatically upgraded at the end of standard support.
+    Valid values are EXTENDED, STANDARD"
+
+    STANDARD - This option supports the Kubernetes version for 14 months after the release date. There is no additional cost. When standard support ends, your cluster will be auto upgraded to the next version.
+    EXTENDED - This option supports the Kubernetes version for 26 months after the release date. The extended support period has an additional hourly cost that begins after the standard support period ends. When extended support ends, your cluster will be auto upgraded to the next version.
+  EOT
+  default     = "STANDARD"
+  validation {
+    condition     = var.upgrade_policy == "STANDARD" || var.upgrade_policy == "EXTENDED"
+    error_message = "upgrade_policy must be either 'STANDARD' or 'EXTENDED'."
+  }
 }
 
-variable "cluster_encryption_config_kms_key_enable_key_rotation" {
-  description = "Cluster Encryption Config KMS Key Resource argument - enable kms key rotation"
-  type        = bool
-  default     = true
+variable "kubernetes_network_config" {
+  type = object({
+    ipv4_cidr = optional(string, null)
+    ip_family = optional(string, "ipv4")
+  })
+
+  description = <<EOT
+Configuration block for Kubernetes network.
+
+- `service_ipv4_cidr`: Optional custom CIDR block for Kubernetes service IPs. Must be within 10.0.0.0/8, 172.16.0.0/12, or 192.168.0.0/16 and have a netmask between /12 and /24.
+- `ip_family`: The IP family to assign (ipv4 or ipv6). Default is ipv4.
+EOT
+
+  validation {
+    condition = (
+      !contains(keys(var.kubernetes_network_config), "service_ipv4_cidr") ||
+      can(regex("^((10\\.|172\\.(1[6-9]|2[0-9]|3[0-1])|192\\.168)\\.(\\d{1,3})\\.(\\d{1,3}))/([1][2-9]|2[0-4])$", var.kubernetes_network_config.service_ipv4_cidr))
+    )
+    error_message = "service_ipv4_cidr must be a valid CIDR block within 10.0.0.0/8, 172.16.0.0/12, or 192.168.0.0/16 and have a subnet mask between /12 and /24."
+  }
+
+  validation {
+    condition = (
+      contains(["ipv4", "ipv6"], var.kubernetes_network_config.ip_family)
+    )
+    error_message = "ip_family must be either 'ipv4' or 'ipv6'."
+  }
+
+  default = {
+    ip_family = "ipv4"
+  }
 }
 
-variable "cluster_encryption_config_kms_key_deletion_window_in_days" {
-  description = "Cluster Encryption Config KMS Key Resource argument - key deletion windows in days post destruction"
-  type        = number
-  default     = 10
+variable "eks_policy_arns" {
+  description = "List of IAM policy ARNs to attach to the EKS role"
+  type        = list(string)
+  default = [
+    "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
+    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+    "arn:aws:iam::aws:policy/AmazonEKSNetworkingPolicy",
+    "arn:aws:iam::aws:policy/AmazonEKSComputePolicy"
+
+  ]
 }
 
-variable "cluster_encryption_config_kms_key_policy" {
-  description = "Cluster Encryption Config KMS Key Resource argument - key policy"
-  type        = string
-  default     = null
+variable "eks_additional_policy_arns" {
+  description = "Optional additional policy ARNs that user wants to attach"
+  type        = list(string)
+  default     = []
 }
 
-variable "cluster_encryption_config_resources" {
-  description = "Cluster Encryption Config Resources to encrypt, e.g. ['secrets']"
-  type        = list(any)
-  default     = ["secrets"]
-}
-
-variable "addons" {
+variable "additional_cluster_security_group_rules" {
+  description = "List of ingress security group rules to apply to the EKS cluster security group"
   type = list(object({
-    addon_name                  = string
-    addon_version               = optional(string, null)
-    configuration_values        = optional(string, null)
-    resolve_conflicts_on_create = optional(string, null)
-    resolve_conflicts_on_update = optional(string, null)
-    service_account_role_arn    = optional(string, null)
-    create_timeout              = optional(string, null)
-    update_timeout              = optional(string, null)
-    delete_timeout              = optional(string, null)
+    from_port        = number
+    to_port          = number
+    protocol         = string
+    cidr_blocks      = optional(list(string), [])
+    ipv6_cidr_blocks = optional(list(string), [])
+    description      = optional(string)
   }))
-  description = "Manages [`aws_eks_addon`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_addon) resources"
-  default     = []
+  default = []
 }
 
-variable "kubernetes_namespace" {
-  type        = string
-  description = "Kubernetes namespace for selection"
-}
+################################################################################
+# Node Group
+################################################################################
 
-#######################################################
-## data lookups
-#######################################################
-variable "vpc_id" {
-  type        = string
-  description = "VPC ID"
-}
-
-variable "subnet_ids" {
-  description = "Subnet IDs"
-  type        = list(string)
-}
-
-# auth variables
-variable "apply_config_map_aws_auth" {
-  type        = bool
-  default     = true
-  description = "Whether to apply the ConfigMap to allow worker nodes to join the EKS cluster and allow additional users, accounts and roles to acces the cluster"
-}
-
-variable "kube_data_auth_enabled" {
-  type        = bool
-  default     = true
+variable "node_group_config" {
   description = <<-EOT
-    If `true`, use an `aws_eks_cluster_auth` data source to authenticate to the EKS cluster.
-    Disabled by `kubeconfig_path_enabled` or `kube_exec_auth_enabled`.
-    EOT
-}
+  Configuration for EKS managed node groups.
 
+  - enable: Controls whether EKS node groups should be created.
+  - config: A map of node group configurations, where each key is an identifier for a node group.
+    Each node group object may include:
 
-variable "kube_exec_auth_enabled" {
-  type        = bool
-  default     = false
-  description = <<-EOT
-    If `true`, use the Kubernetes provider `exec` feature to execute `aws eks get-token` to authenticate to the EKS cluster.
-    Disabled by `kubeconfig_path_enabled`, overrides `kube_data_auth_enabled`.
-    EOT
-}
+    - node_group_name: (Optional) Custom name for the node group. If not specified, a default will be used.
+    - node_role_arn: (Optional) ARN of the IAM role for the node group.
+    - release_version: (Optional) AMI version for the node group.
+    - scaling_config: Required settings for desired, minimum, and maximum node counts.
+    - taints: (Optional) List of taints applied to nodes, each with a key, value (optional), and effect.
+    - update_config: (Optional) Configuration for rolling updates, such as max unavailable nodes.
+    - remote_access: (Optional) SSH access configuration, including key name and allowed source security group IDs.
+    - launch_template: (Optional) Launch template settings, including ID, name, and version.
+    - node_repair_config: (Optional) Node auto-repair configuration (e.g., self-healing).
+    - instance_types: (Optional) List of EC2 instance types to use (default is ["t3.medium"]).
+    - ami_type: (Optional) AMI type (e.g., "AL2_x86_64", "BOTTLEROCKET_x86_64").
+    - disk_size: (Optional) Size in GiB of the root EBS volume.
+    - capacity_type: (Optional) Capacity type ("ON_DEMAND" or "SPOT"), defaults to "ON_DEMAND".
+    - labels: (Optional) Key-value map of Kubernetes labels to apply to the nodes.
+    - ignore_desired_size: (Optional) If true, the desired size will be ignored during updates (default: false).
+    - subnet_ids: Required list of subnet IDs where the node group will be deployed.
+    - kubernetes_version: (Optional) Kubernetes version to use for the node group.
 
-variable "allowed_security_groups" {
-  type        = list(string)
-  default     = []
-  description = "List of Security Group IDs to be allowed to connect to the EKS cluster"
-}
+  EOT
+  type = object({
+    enable = bool
+    config = map(object({
+      node_group_name = optional(string)
+      node_role_arn   = optional(string)
+      release_version = optional(string)
+      scaling_config = object({
+        desired_size = number
+        max_size     = number
+        min_size     = number
+      })
+      taints = optional(list(object({
+        key    = string
+        value  = optional(string)
+        effect = string
+      })), [])
+      update_config = optional(object({
+        max_unavailable            = optional(number)
+        max_unavailable_percentage = optional(number)
+      }))
+      remote_access = optional(object({
+        ec2_ssh_key               = string
+        source_security_group_ids = list(string)
+      }))
+      launch_template = optional(object({
+        id      = optional(string)
+        name    = optional(string)
+        version = string
+      }))
+      node_repair_config = optional(object({
+        enabled = bool
+      }))
+      instance_types      = optional(list(string), ["t3.medium"])
+      ami_type            = optional(string)
+      disk_size           = optional(number)
+      capacity_type       = optional(string, "ON_DEMAND")
+      labels              = optional(map(string), {})
+      ignore_desired_size = optional(bool, false)
+      subnet_ids          = list(string)
+      kubernetes_version  = optional(string)
+    }))
+  })
 
-variable "allowed_cidr_blocks" {
-  type        = list(string)
-  default     = []
-  description = <<-EOT
-    A list of IPv4 CIDRs to allow access to the cluster.
-    The length of this list must be known at "plan" time.
-    EOT
-}
-
-variable "create_fargate_profile" {
-  type        = bool
-  default     = false
-  description = "Whether to create EKS Fargate profile"
-}
-
-variable "create_node_group" {
-  type        = bool
-  default     = false
-  description = "Whether to create EKS Node Group"
-}
-
-# TODO:  enable after testing
-# variable "create_worker_nodes" {
-#   type        = bool
-#   default     = false
-#   description = "Whether to create unmanaged Worker nodes"
-# }
-
-# variable "worker_node_data" {
-#   type = object({
-#     instance_type                          = string
-#     health_check_type                      = optional(string, "EC2")
-#     min_size                               = number
-#     max_size                               = number
-#     wait_for_capacity_timeout              = optional(string, "10m")
-#     autoscaling_policies_enabled           = optional(bool, false)
-#     cpu_utilization_high_threshold_percent = optional(number, 90)
-#     cpu_utilization_low_threshold_percent  = optional(number, 10)
-#   })
-#   default = {
-#     instance_type     = "t3.small"
-#     health_check_type = "EC2"
-#     min_size          = 2
-#     max_size          = 2
-#   }
-#   description = "EKS Worker node data"
-# }
-
-variable "launch_template_id" {
-  type        = list(string)
-  default     = []
-  description = "The ID (not name) of a custom launch template to use for the EKS node group. If provided, it must specify the AMI image ID."
-  validation {
-    condition = (
-      length(var.launch_template_id) < 2
-    )
-    error_message = "You may not specify more than one `launch_template_id`."
+  default = {
+    enable = false
+    config = {}
   }
 }
 
-variable "launch_template_version" {
+variable "node_group_policy_arns" {
+  description = "Default policies for EKS node group"
   type        = list(string)
-  default     = []
-  description = "The version of the specified launch template to use. Defaults to latest version."
-  validation {
-    condition = (
-      length(var.launch_template_version) < 2
-    )
-    error_message = "You may not specify more than one `launch_template_version`."
-  }
+  default = [
+    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+  ]
 }
 
-variable "ami_image_id" {
+variable "additional_node_group_policy_arns" {
+  description = "Optional additional policies to attach to node group role"
   type        = list(string)
   default     = []
-  description = "AMI to use. Ignored if `launch_template_id` is supplied."
-  validation {
-    condition = (
-      length(var.ami_image_id) < 2
-    )
-    error_message = "You may not specify more than one `ami_image_id`."
-  }
 }
 
-variable "ami_release_version" {
-  type        = list(string)
-  default     = []
-  description = "EKS AMI version to use, e.g. For AL2 \"1.16.13-20200821\" or for bottlerocket \"1.2.0-ccf1b754\" (no \"v\") or  for Windows \"2023.02.14\". For AL2, bottlerocket and Windows, it defaults to latest version for Kubernetes version."
-  validation {
-    condition = (
-      length(var.ami_release_version) == 0 ? true : length(regexall("(^\\d+\\.\\d+\\.\\d+-[\\da-z]+$)|(^\\d+\\.\\d+\\.\\d+$)", var.ami_release_version[0])) == 1
-    )
-    error_message = "Var ami_release_version, if supplied, must be like for AL2 \"1.16.13-20200821\" or for bottlerocket \"1.2.0-ccf1b754\" (no \"v\") or for Windows \"2023.02.14\"."
-  }
+################################################################################
+# AddOn
+################################################################################
+
+variable "eks_addons" {
+  description = "Map of EKS Add-ons to create"
+  type = map(object({
+    addon_version               = optional(string)
+    service_account_role_arn    = optional(string)
+    resolve_conflicts_on_update = optional(string)
+    resolve_conflicts_on_create = optional(string)
+  }))
+  default = {}
 }
 
-variable "capacity_type" {
-  type        = string
-  default     = null
+# ################################################################################
+# # access config
+# ################################################################################
+
+variable "access_config" {
   description = <<-EOT
-    Type of capacity associated with the EKS Node Group. Valid values: "ON_DEMAND", "SPOT", or `null`.
-    Terraform will only perform drift detection if a configuration value is provided.
-    EOT
+  Access configuration for the cluster.
+  - `authentication_mode`: One of "API" or "API_AND_CONFIG_MAP"
+  - `bootstrap_cluster_creator_admin_permissions`: Grant creator admin access
+  - `aws_auth_config_map`: (optional) Config for aws-auth ConfigMap
+  - `eks_access_entries`: (optional) List of principals and their policy associations
+  EOT
+
+  type = object({
+    authentication_mode                         = optional(string, "API")
+    bootstrap_cluster_creator_admin_permissions = optional(bool, false)
+
+    aws_auth_config_map = optional(object({
+      create   = optional(bool, false)
+      manage   = optional(bool, false)
+      roles    = optional(list(any), [])
+      users    = optional(list(any), [])
+      accounts = optional(list(string), [])
+    }), {})
+
+    eks_access_entries = optional(list(object({
+      principal_arn = optional(string)
+      policy_arns   = optional(list(string))
+      access_scope = optional(object({
+        type       = string
+        namespaces = optional(list(string))
+      }))
+    })), [])
+  })
+
   validation {
-    condition     = var.capacity_type == null ? true : contains(["ON_DEMAND", "SPOT"], var.capacity_type)
-    error_message = "Capacity type must be either `null`, \"ON_DEMAND\", or \"SPOT\"."
+    condition     = contains(["API", "API_AND_CONFIG_MAP"], var.access_config.authentication_mode)
+    error_message = "authentication_mode must be one of 'API' or 'API_AND_CONFIG_MAP'."
+  }
+
+  default = {
+    authentication_mode                         = "API"
+    bootstrap_cluster_creator_admin_permissions = false
   }
 }
 
-variable "ami_type" {
-  type        = string
-  description = <<-EOT
-    Type of Amazon Machine Image (AMI) associated with the EKS Node Group.
-    Defaults to `AL2_x86_64`. Valid values: `AL2_x86_64, AL2_x86_64_GPU, AL2_ARM_64, CUSTOM, BOTTLEROCKET_ARM_64, BOTTLEROCKET_x86_64, BOTTLEROCKET_ARM_64_NVIDIA, BOTTLEROCKET_x86_64_NVIDIA, WINDOWS_CORE_2019_x86_64, WINDOWS_FULL_2019_x86_64, WINDOWS_CORE_2022_x86_64, WINDOWS_FULL_2022_x86_64`.
-    EOT
-  default     = "AL2_x86_64"
-  validation {
-    condition = (
-      contains(["AL2_x86_64", "AL2_x86_64_GPU", "AL2_ARM_64", "CUSTOM", "BOTTLEROCKET_ARM_64", "BOTTLEROCKET_x86_64", "BOTTLEROCKET_ARM_64_NVIDIA", "BOTTLEROCKET_x86_64_NVIDIA", "WINDOWS_CORE_2019_x86_64", "WINDOWS_FULL_2019_x86_64", "WINDOWS_CORE_2022_x86_64", "WINDOWS_FULL_2022_x86_64"], var.ami_type)
-    )
-    error_message = "Var ami_type must be one of \"AL2_x86_64\",\"AL2_x86_64_GPU\",\"AL2_ARM_64\",\"BOTTLEROCKET_ARM_64\",\"BOTTLEROCKET_x86_64\",\"BOTTLEROCKET_ARM_64_NVIDIA\",\"BOTTLEROCKET_x86_64_NVIDIA\",\"WINDOWS_CORE_2019_x86_64\",\"WINDOWS_FULL_2019_x86_64\",\"WINDOWS_CORE_2022_x86_64\",\"WINDOWS_FULL_2022_x86_64\", or \"CUSTOM\"."
+################################################################################
+# Fargate Profile
+################################################################################
+
+variable "fargate_profile_config" {
+  description = "Combined configuration for the EKS Fargate profile, including IAM policies."
+  type = object({
+    enable                 = bool
+    fargate_profile_name   = optional(string)
+    pod_execution_role_arn = optional(string)
+    subnet_ids             = optional(list(string))
+    selectors = optional(list(object({
+      namespace = string
+      labels    = optional(map(string))
+    })))
+    tags                   = optional(map(string), {})
+    policy_arns            = optional(list(string), ["arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"])
+    additional_policy_arns = optional(list(string), [])
+  })
+  default = {
+    enable = false
+  }
+}
+
+################################################################################
+# karpenter_config
+################################################################################
+
+variable "karpenter_config" {
+  description = "Configuration for Karpenter"
+  type = object({
+    enable                                  = bool
+    name                                    = optional(string)
+    namespace                               = optional(string, "karpenter")
+    create_namespace                        = optional(bool)
+    version                                 = optional(string, "0.36.0")
+    helm_repository                         = optional(string, "oci://public.ecr.aws/karpenter")
+    chart                                   = optional(string)
+    additional_karpenter_node_role_policies = optional(list(string), [])
+    helm_release_values                     = optional(any)
+    helm_release_set_values = optional(list(object({
+      name  = string
+      value = string
+    })), [])
+  })
+  default = {
+    enable = false
   }
 }
