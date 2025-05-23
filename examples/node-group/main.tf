@@ -43,19 +43,19 @@ module "eks_cluster" {
         disk_size      = 20
         ami_type       = "AL2_x86_64"
       }
-      # spot-ng = {
-      #   node_group_name = "spot-nodegroup"
-      #   subnet_ids      = data.aws_subnets.private.ids
-      #   scaling_config = {
-      #     desired_size = 1
-      #     max_size     = 2
-      #     min_size     = 1
-      #   }
-      #   instance_types = ["t3.medium"]
-      #   capacity_type  = "SPOT"
-      #   disk_size      = 20
-      #   ami_type       = "AL2_x86_64"
-      # }
+      spot-ng = {
+        node_group_name = "spot-nodegroup"
+        subnet_ids      = data.aws_subnets.private.ids
+        scaling_config = {
+          desired_size = 1
+          max_size     = 2
+          min_size     = 1
+        }
+        instance_types = ["t3.medium"]
+        capacity_type  = "SPOT"
+        disk_size      = 20
+        ami_type       = "AL2_x86_64"
+      }
     }
 
   }

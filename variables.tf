@@ -48,6 +48,7 @@ variable "enabled_cluster_log_types" {
   description = "A list of the desired control plane logging to enable. Valid values [`api`, `audit`, `authenticator`, `controllerManager`, `scheduler`]"
   default     = []
 }
+
 variable "enable_oidc_provider" {
   type        = bool
   description = "Whether to enable OIDC provider"
@@ -148,9 +149,6 @@ EOT
   }
 }
 
-
-
-
 variable "eks_policy_arns" {
   description = "List of IAM policy ARNs to attach to the EKS role"
   type        = list(string)
@@ -182,7 +180,6 @@ variable "additional_cluster_security_group_rules" {
   }))
   default = []
 }
-
 
 ################################################################################
 # Node Group
@@ -295,8 +292,6 @@ variable "eks_addons" {
   default = {}
 }
 
-
-
 # ################################################################################
 # # access config
 # ################################################################################
@@ -366,7 +361,6 @@ variable "fargate_profile_config" {
     enable = false
   }
 }
-
 
 ################################################################################
 # karpenter_config

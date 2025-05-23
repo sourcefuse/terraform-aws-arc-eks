@@ -27,8 +27,3 @@ module "eks_cluster" {
   envelope_encryption                   = local.envelope_encryption
   kubernetes_network_config             = local.kubernetes_network_config
 }
-
-
-// "errorMessage": "User: arn:aws:sts::884360309640:assumed-role/arc-poc-k8s-eks-role/aws-go-sdk-1744220212198998255
-// is not authorized to perform: iam:AddRoleToInstanceProfile on resource: instance profile eks-us-east-1-arc-poc-k8s-6339084366055886033
-// because no identity-based policy allows the iam:AddRoleToInstanceProfile action
