@@ -134,7 +134,6 @@ resource "aws_security_group_rule" "cluster_ingress_rules" {
   security_group_id = aws_eks_cluster.this.vpc_config[0].cluster_security_group_id
 }
 
-
 ################################################################################
 # AddOn
 ################################################################################
