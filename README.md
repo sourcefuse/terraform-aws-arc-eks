@@ -13,23 +13,21 @@
 
 ## Overview
 
-SourceFuse AWS Reference Architecture (ARC) Terraform module for managing EKS clusters on AWS.
+SourceFuse AWS Reference Architecture (ARC) Terraform module provisions a EKS (Elastic Kubernetes Service) cluster with support for multiple operational modes and integrations:
+
+- **EKS Cluster Creation**: Automates the setup of the EKS control plane and associated IAM roles, VPC configurations, and security groups.
+
+- **EKS Auto Mode Support**: Enables simplified node management with AWS-managed node groups and automatic provisioning.
+
+- **Karpenter Installation**: Optionally installs and configures Karpenter, a flexible autoscaler that dynamically launches compute based on pod requirements.
+
+- **Fargate Support**: Allows deployment of serverless workloads on AWS Fargate by creating the required Fargate profiles and IAM roles.
+
+This module helps streamline EKS provisioning while offering flexibility in compute options—ideal for both production and cost-optimized environments.
 
 For more information about this repository and its usage, please see [Terraform AWS ARC EKS Module Usage Guide](docs/module-usage-guide/README.md).
 
 ![arc_eks_hla](./static/arc_eks_hla.png)
-
-Create the following AWS resources in a single region
-
-* eks cluster with essential network, security and logging configuration
-* eks fargate profile
-* eks node group
-
-Bootstrap the eks cluster with the following components (WIP, currently unavailable)
-
-* metrics server
-* kubernetes dashboard
-* AWS secrets store CSI driver
 
 ## Usage
 See `examples` directory for usage  examples, including configurations for `auto-mode`, `fargate-profile`, `karpenter`, and `nodegroup`. Below is the example for a simple EKS cluster creation.
