@@ -28,7 +28,6 @@ module "eks_cluster" {
   kubernetes_network_config             = local.kubernetes_network_config
   eks_addons = {
     vpc-cni = {
-      addon_version = "v1.19.0-eksbuild.1"
     }
 
     kube-proxy = {} # version will default to latest
@@ -36,7 +35,15 @@ module "eks_cluster" {
   }
 }
 
-
-// "errorMessage": "User: arn:aws:sts::884360309640:assumed-role/arc-poc-k8s-eks-role/aws-go-sdk-1744220212198998255
-// is not authorized to perform: iam:AddRoleToInstanceProfile on resource: instance profile eks-us-east-1-arc-poc-k8s-6339084366055886033
-// because no identity-based policy allows the iam:AddRoleToInstanceProfile action
+resource "kubectl_manifest" "node_class" {
+  depends_on = [module.eks_cluster]
+  yaml_body = templatefile(
+    "${path.module}/node-class.yaml",
+    {
+      namespace     = "arc"
+      environment   = "poc"
+      cluster_name  = "${var.namespace}-${var.environment}-cluster"
+      map_tag_value = "dummy345fg"
+    }
+  )
+}

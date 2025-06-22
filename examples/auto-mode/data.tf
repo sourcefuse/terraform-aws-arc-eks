@@ -10,8 +10,7 @@ data "aws_subnets" "private" {
     name = "tag:Name"
 
     values = [
-      "${var.namespace}-${var.environment}-private-subnet-private-${var.region}a",
-      "${var.namespace}-${var.environment}-private-subnet-private-${var.region}b"
+      "test-subnet-private*"
     ]
   }
 }
