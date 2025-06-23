@@ -1,21 +1,14 @@
 locals {
 
   vpc_config = {
+    # security_group_ids     = []
     subnet_ids             = data.aws_subnets.private.ids
     endpoint_public_access = true
   }
 
   access_config = {
-    authentication_mode                         = "API_AND_CONFIG_MAP"
+    authentication_mode                         = "API"
     bootstrap_cluster_creator_admin_permissions = true
-
-    aws_auth_config_map = {
-      create   = false
-      manage   = true
-      roles    = []
-      users    = []
-      accounts = []
-    }
   }
   envelope_encryption = {
     enable                      = true
@@ -25,4 +18,10 @@ locals {
   kubernetes_network_config = {
     ip_family = "ipv4"
   }
+
+  auto_mode_config = {
+    enable     = true
+    node_pools = []
+  }
+
 }

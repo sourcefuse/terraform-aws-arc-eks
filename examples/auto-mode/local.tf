@@ -20,8 +20,8 @@ locals {
   }
 
   auto_mode_config = {
-    enable        = true
-    node_pools    = ["general-purpose"]
-    node_role_arn = "arn:aws:iam::341707006720:role/AmazonEKSAutoNodeRole" // TODO:
+    enable     = true
+    node_pools = ["general-purpose", "system"]
   }
+
 }

@@ -1,9 +1,8 @@
-################################################################################
-# aws-auth configmap
-################################################################################
-
+# ################################################################################
+# # aws-auth configmap
+# ################################################################################
 resource "kubernetes_config_map" "aws_auth" {
-  count = var.aws_auth_config.create ? 1 : 0
+  count = (local.aws_auth_enabled && var.access_config.aws_auth_config_map.create) ? 1 : 0
 
   metadata {
     name      = "aws-auth"
@@ -17,9 +16,9 @@ resource "kubernetes_config_map" "aws_auth" {
   }
 }
 
-resource "kubernetes_config_map_v1" "aws_auth" {
-  count = var.aws_auth_config.manage ? 1 : 0
-
+resource "kubernetes_config_map_v1_data" "aws_auth" {
+  count = (local.aws_auth_enabled && var.access_config.aws_auth_config_map.manage) ? 1 : 0
+  force = true
   metadata {
     name      = "aws-auth"
     namespace = "kube-system"
@@ -28,25 +27,27 @@ resource "kubernetes_config_map_v1" "aws_auth" {
   data = local.aws_auth_configmap_data
 
   depends_on = [
-    kubernetes_config_map.aws_auth,
+    kubernetes_config_map.aws_auth
   ]
 }
 
-################################################################################
-# aws eks access entry
-################################################################################
+# ################################################################################
+# # aws eks access entry
+# ################################################################################
 
 resource "aws_eks_access_entry" "this" {
-  for_each = toset(var.eks_access_entries)
+  for_each = local.eks_api_enabled ? {
+    for principal_arn in toset([
+      for assoc in local.expanded_access_associations : assoc.principal_arn
+    ]) : principal_arn => principal_arn
+  } : {}
 
   cluster_name  = aws_eks_cluster.this.name
   principal_arn = each.value
 }
+
 resource "aws_eks_access_policy_association" "this" {
-  for_each = {
-    for idx, assoc in local.all_access_associations :
-    idx => assoc
-  }
+  for_each = local.eks_api_enabled ? local.all_access_associations : tomap({})
 
   cluster_name  = aws_eks_cluster.this.name
   principal_arn = each.value.principal_arn
@@ -56,7 +57,32 @@ resource "aws_eks_access_policy_association" "this" {
     type       = each.value.access_scope.type
     namespaces = lookup(each.value.access_scope, "namespaces", null)
   }
+
   depends_on = [
     aws_eks_access_entry.this
+  ]
+}
+
+resource "aws_eks_access_entry" "auto_role" {
+  // When Auto mode is enabled but default nodepools are not used, this provides Auto node role the access to cluster
+  count         = var.auto_mode_config.enable && length(var.auto_mode_config.node_pools) == 0 ? 1 : 0
+  cluster_name  = aws_eks_cluster.this.name
+  principal_arn = aws_iam_role.auto[0].arn
+  type          = "EC2"
+}
+
+resource "aws_eks_access_policy_association" "auto_role" {
+  // When Auto mode is enabled but default nodepools are not used, this provides Auto node role the access to cluster
+  count         = var.auto_mode_config.enable && length(var.auto_mode_config.node_pools) == 0 ? 1 : 0
+  cluster_name  = aws_eks_cluster.this.name
+  principal_arn = aws_iam_role.auto[0].arn
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAutoNodePolicy"
+
+  access_scope {
+    type = "cluster"
+  }
+
+  depends_on = [
+    aws_eks_access_entry.auto_role
   ]
 }

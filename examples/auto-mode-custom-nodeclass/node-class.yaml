@@ -1,3 +1,4 @@
+---
 apiVersion: eks.amazonaws.com/v1
 kind: NodeClass
 metadata:
@@ -20,10 +21,10 @@ spec:
     throughput: 125
   networkPolicy: DefaultAllow
   networkPolicyEventLogs: Disabled
-  role: AmazonEKSAutoNodeRole
+  role: ${node_role_name}
   securityGroupSelectorTerms:
-    - id: sg-018d50f330ac060b2
+    - id: ${security_group_id}
   snatPolicy: Random
   subnetSelectorTerms:
-  - id : subnet-0a3b45dbe7f8f5f8f
-  - id : subnet-0dedd248e98c2e0a5
+  - id: subnet-0a3b45dbe7f8f5f8f
+  - id: subnet-0dedd248e98c2e0a5

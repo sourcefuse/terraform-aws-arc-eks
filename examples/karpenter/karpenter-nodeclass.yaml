@@ -7,13 +7,12 @@ spec:
   metadataOptions:
     httpPutResponseHopLimit: 2
   amiFamily: AL2
-  # role: KarpenterNodeRole-arc-poc-debash
-  instanceProfile: KarpenterNodeInstanceProfile-arc-poc-debash
+  instanceProfile: KarpenterNodeInstanceProfile-arc-poc-cluster
   subnetSelectorTerms:
     - tags:
-        "karpenter.sh/discovery": "arc-poc-debash"
+        "karpenter.sh/discovery": arc-poc-cluster                # Replace with the EKS cluster name
   securityGroupSelectorTerms:
     - tags:
-        "karpenter.sh/discovery": "arc-poc-debash"
+        "karpenter.sh/discovery": arc-poc-cluster
   tags:
     Name: karpenter-node

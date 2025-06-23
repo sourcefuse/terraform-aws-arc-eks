@@ -49,20 +49,6 @@ variable "enabled_cluster_log_types" {
   default     = []
 }
 
-variable "access_config" {
-  type = object({
-    authentication_mode                         = optional(string, "CONFIG_MAP")
-    bootstrap_cluster_creator_admin_permissions = optional(bool, false)
-  })
-
-  description = "Access configuration for the cluster."
-
-  validation {
-    condition     = contains(["CONFIG_MAP", "API", "API_AND_CONFIG_MAP"], var.access_config.authentication_mode)
-    error_message = "authentication_mode must be one of 'CONFIG_MAP', 'API', or 'API_AND_CONFIG_MAP'."
-  }
-}
-
 variable "enable_oidc_provider" {
   type        = bool
   description = "Whether to enable OIDC provider"
@@ -71,14 +57,15 @@ variable "enable_oidc_provider" {
 
 variable "envelope_encryption" {
   type = object({
-    enable                      = optional(bool, false)
+    enable                      = optional(bool, true)
     kms_deletion_window_in_days = optional(number, 10)
     resources                   = optional(list(string), ["secrets"])
     key_arn                     = optional(string, null) // if null it created new KMS key
   })
   description = "Whether to enable Envelope encryption"
   default = {
-    enable = false
+    enable    = true
+    resources = ["secrets"]
   }
 }
 
@@ -162,9 +149,6 @@ EOT
   }
 }
 
-
-
-
 variable "eks_policy_arns" {
   description = "List of IAM policy ARNs to attach to the EKS role"
   type        = list(string)
@@ -200,53 +184,86 @@ variable "additional_cluster_security_group_rules" {
   default = []
 }
 
-
 ################################################################################
 # Node Group
 ################################################################################
 
 variable "node_group_config" {
-  type = map(object({
-    node_group_name = optional(string)
-    node_role_arn   = optional(string)
-    release_version = optional(string)
-    scaling_config = object({
-      desired_size = number
-      max_size     = number
-      min_size     = number
-    })
-    taints = optional(list(object({
-      key    = string
-      value  = optional(string)
-      effect = string
-    })), [])
-    update_config = optional(object({
-      max_unavailable            = optional(number)
-      max_unavailable_percentage = optional(number)
+  description = <<-EOT
+  Configuration for EKS managed node groups.
+
+  - enable: Controls whether EKS node groups should be created.
+  - config: A map of node group configurations, where each key is an identifier for a node group.
+    Each node group object may include:
+
+    - node_group_name: (Optional) Custom name for the node group. If not specified, a default will be used.
+    - node_role_arn: (Optional) ARN of the IAM role for the node group.
+    - release_version: (Optional) AMI version for the node group.
+    - scaling_config: Required settings for desired, minimum, and maximum node counts.
+    - taints: (Optional) List of taints applied to nodes, each with a key, value (optional), and effect.
+    - update_config: (Optional) Configuration for rolling updates, such as max unavailable nodes.
+    - remote_access: (Optional) SSH access configuration, including key name and allowed source security group IDs.
+    - launch_template: (Optional) Launch template settings, including ID, name, and version.
+    - node_repair_config: (Optional) Node auto-repair configuration (e.g., self-healing).
+    - instance_types: (Optional) List of EC2 instance types to use (default is ["t3.medium"]).
+    - ami_type: (Optional) AMI type (e.g., "AL2_x86_64", "BOTTLEROCKET_x86_64").
+    - disk_size: (Optional) Size in GiB of the root EBS volume.
+    - capacity_type: (Optional) Capacity type ("ON_DEMAND" or "SPOT"), defaults to "ON_DEMAND".
+    - labels: (Optional) Key-value map of Kubernetes labels to apply to the nodes.
+    - ignore_desired_size: (Optional) If true, the desired size will be ignored during updates (default: false).
+    - subnet_ids: Required list of subnet IDs where the node group will be deployed.
+    - kubernetes_version: (Optional) Kubernetes version to use for the node group.
+
+  EOT
+  type = object({
+    enable = bool
+    config = map(object({
+      node_group_name = optional(string)
+      node_role_arn   = optional(string)
+      release_version = optional(string)
+      scaling_config = object({
+        desired_size = number
+        max_size     = number
+        min_size     = number
+      })
+      taints = optional(list(object({
+        key    = string
+        value  = optional(string)
+        effect = string
+      })), [])
+      update_config = optional(object({
+        max_unavailable            = optional(number)
+        max_unavailable_percentage = optional(number)
+      }))
+      remote_access = optional(object({
+        ec2_ssh_key               = string
+        source_security_group_ids = list(string)
+      }))
+      launch_template = optional(object({
+        id      = optional(string)
+        name    = optional(string)
+        version = string
+      }))
+      node_repair_config = optional(object({
+        enabled = bool
+      }))
+      instance_types      = optional(list(string), ["t3.medium"])
+      ami_type            = optional(string)
+      disk_size           = optional(number)
+      capacity_type       = optional(string, "ON_DEMAND")
+      labels              = optional(map(string), {})
+      ignore_desired_size = optional(bool, false)
+      subnet_ids          = list(string)
+      kubernetes_version  = optional(string)
     }))
-    remote_access = optional(object({
-      ec2_ssh_key               = string
-      source_security_group_ids = list(string)
-    }))
-    launch_template = optional(object({
-      id      = optional(string)
-      name    = optional(string)
-      version = string
-    }))
-    node_repair_config = optional(object({
-      enabled = bool
-    }))
-    instance_types      = optional(list(string), ["t3.medium"])
-    ami_type            = optional(string)
-    disk_size           = optional(number)
-    capacity_type       = optional(string, "ON_DEMAND")
-    labels              = optional(map(string), {})
-    ignore_desired_size = optional(bool, false)
-    subnet_ids          = list(string)
-    kubernetes_version  = optional(string)
-  }))
-  default = {}
+  })
+
+  default = {
+    enable = false
+    config = {}
+  }
 }
+
 variable "node_group_policy_arns" {
   description = "Default policies for EKS node group"
   type        = list(string)
@@ -278,62 +295,51 @@ variable "eks_addons" {
   default = {}
 }
 
+# ################################################################################
+# # access config
+# ################################################################################
 
-
-################################################################################
-# aws-auth ConfigMap
-################################################################################
-
-variable "aws_auth_config" {
+variable "access_config" {
   description = <<-EOT
-    Configuration for the aws-auth ConfigMap.
-    - `create`: Create the configmap (use only when it doesn't exist).
-    - `manage`: Manage the configmap lifecycle.
-    - `roles`: List of IAM roles to map.
-    - `users`: List of IAM users to map.
-    - `accounts`: List of AWS accounts to map.
+  Access configuration for the cluster.
+  - `authentication_mode`: One of "API" or "API_AND_CONFIG_MAP"
+  - `bootstrap_cluster_creator_admin_permissions`: Grant creator admin access
+  - `aws_auth_config_map`: (optional) Config for aws-auth ConfigMap
+  - `eks_access_entries`: (optional) List of principals and their policy associations
   EOT
 
   type = object({
-    create   = optional(bool, false)
-    manage   = optional(bool, true)
-    roles    = optional(list(any), [])
-    users    = optional(list(any), [])
-    accounts = optional(list(any), [])
+    authentication_mode                         = optional(string, "API")
+    bootstrap_cluster_creator_admin_permissions = optional(bool, false)
+
+    aws_auth_config_map = optional(object({
+      create   = optional(bool, false)
+      manage   = optional(bool, false)
+      roles    = optional(list(any), [])
+      users    = optional(list(any), [])
+      accounts = optional(list(string), [])
+    }), {})
+
+    eks_access_entries = optional(list(object({
+      principal_arn = optional(string)
+      policy_arns   = optional(list(string))
+      access_scope = optional(object({
+        type       = string
+        namespaces = optional(list(string))
+      }))
+    })), [])
   })
 
-  default = {}
+  validation {
+    condition     = contains(["API", "API_AND_CONFIG_MAP"], var.access_config.authentication_mode)
+    error_message = "authentication_mode must be one of 'API' or 'API_AND_CONFIG_MAP'."
+  }
+
+  default = {
+    authentication_mode                         = "API"
+    bootstrap_cluster_creator_admin_permissions = false
+  }
 }
-
-
-################################################################################
-# aws eks access entry
-################################################################################
-
-variable "eks_access_entries" {
-  description = "List of EKS access entries to create"
-  type        = list(string)
-  default     = []
-}
-variable "eks_access_policy_associations" {
-  description = "List of EKS access policy associations"
-  type = list(object({
-    principal_arn = string
-    policy_arn    = string
-    access_scope = object({
-      type       = string
-      namespaces = optional(list(string))
-    })
-  }))
-  default = []
-}
-
-variable "enable_creator_admin_access" {
-  description = "Grant admin access to the creator"
-  type        = bool
-  default     = true
-}
-
 
 ################################################################################
 # Fargate Profile
@@ -342,6 +348,7 @@ variable "enable_creator_admin_access" {
 variable "fargate_profile_config" {
   description = "Combined configuration for the EKS Fargate profile, including IAM policies."
   type = object({
+    enable                 = bool
     fargate_profile_name   = optional(string)
     pod_execution_role_arn = optional(string)
     subnet_ids             = optional(list(string))
@@ -353,9 +360,10 @@ variable "fargate_profile_config" {
     policy_arns            = optional(list(string), ["arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"])
     additional_policy_arns = optional(list(string), [])
   })
-  default = {}
+  default = {
+    enable = false
+  }
 }
-
 
 ################################################################################
 # karpenter_config
@@ -365,8 +373,12 @@ variable "karpenter_config" {
   description = "Configuration for Karpenter"
   type = object({
     enable                                  = bool
-    karpenter_version                       = optional(string, "0.36.0")
+    name                                    = optional(string)
+    namespace                               = optional(string, "karpenter")
+    create_namespace                        = optional(bool)
+    version                                 = optional(string, "0.36.0")
     helm_repository                         = optional(string, "oci://public.ecr.aws/karpenter")
+    chart                                   = optional(string)
     additional_karpenter_node_role_policies = optional(list(string), [])
     helm_release_values                     = optional(any)
     helm_release_set_values = optional(list(object({

@@ -16,7 +16,6 @@
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 5.100.0 |
-| <a name="provider_kubectl"></a> [kubectl](#provider\_kubectl) | 1.19.0 |
 
 ## Modules
 
@@ -29,7 +28,6 @@
 
 | Name | Type |
 |------|------|
-| [kubectl_manifest.node_class](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
 | [aws_eks_cluster.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_cluster) | data source |
 | [aws_eks_cluster_auth.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_cluster_auth) | data source |
 | [aws_subnets.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
@@ -44,5 +42,8 @@
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_eks_cluster_security_group_id"></a> [eks\_cluster\_security\_group\_id](#output\_eks\_cluster\_security\_group\_id) | The security group attached to eks cluster |
+| <a name="output_eks_name"></a> [eks\_name](#output\_eks\_name) | The name of the EKS cluster |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

@@ -59,7 +59,7 @@ resource "aws_eks_cluster" "this" {
     content {
       enabled       = true
       node_pools    = var.auto_mode_config.node_pools
-      node_role_arn = var.auto_mode_config.node_role_arn == null ? aws_iam_role.auto[0].arn : var.auto_mode_config.node_role_arn
+      node_role_arn = length(var.auto_mode_config.node_pools) > 0 ? (var.auto_mode_config.node_role_arn == null ? aws_iam_role.auto[0].arn : var.auto_mode_config.node_role_arn) : null
     }
   }
 
@@ -105,6 +105,54 @@ resource "aws_iam_role_policy_attachment" "eks_cluster_policy" {
   policy_arn = each.value
 }
 
+data "aws_iam_policy_document" "ec2_fleet" {
+  statement {
+    sid    = "AllowScopedCreateFleet"
+    effect = "Allow"
+
+    actions = [
+      "ec2:CreateFleet",
+      "ec2:RunInstances"
+    ]
+
+    resources = [
+      "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.id}:fleet/*",
+      "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.id}:volume/*",
+      "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.id}:instance/*",
+      "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.id}:network-interface/*",
+      "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.id}:spot-instances-request/*"
+    ]
+  }
+
+  statement {
+    sid    = "AllowSupportingEC2Actions"
+    effect = "Allow"
+
+    actions = [
+      "ec2:CreateLaunchTemplate",
+      "ec2:DescribeAvailabilityZones",
+      "ec2:DescribeInstanceTypes",
+      "ec2:DescribeSubnets",
+      "ec2:DescribeVpcs",
+      "ec2:CreateTags",
+      "ec2:DescribeLaunchTemplates",
+      "ec2:DeleteLaunchTemplate"
+    ]
+
+    resources = ["*"]
+    // arn:aws:ec2:us-east-1:341707006720:launch-template/*
+  }
+
+}
+
+data "aws_region" "current" {}
+
+resource "aws_iam_role_policy" "ec2_fleet" {
+  name   = "${var.name}-eks-auto-mode-fleet-policy"
+  role   = aws_iam_role.this.name
+  policy = data.aws_iam_policy_document.ec2_fleet.json
+}
+
 data "tls_certificate" "this" {
   count = var.enable_oidc_provider ? 1 : 0
   url   = aws_eks_cluster.this.identity[0].oidc[0].issuer
@@ -133,7 +181,6 @@ resource "aws_security_group_rule" "cluster_ingress_rules" {
   description       = try(each.value.description, null)
   security_group_id = aws_eks_cluster.this.vpc_config[0].cluster_security_group_id
 }
-
 
 ################################################################################
 # AddOn

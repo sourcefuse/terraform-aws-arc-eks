@@ -25,6 +25,7 @@ module "eks_cluster" {
   envelope_encryption       = local.envelope_encryption
   kubernetes_network_config = local.kubernetes_network_config
   fargate_profile_config = {
+    enable                 = true
     fargate_profile_name   = "example"
     subnet_ids             = data.aws_subnets.private.ids
     additional_policy_arns = ["arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"] # To add additional policy to Fargate Profile

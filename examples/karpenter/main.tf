@@ -26,19 +26,23 @@ module "eks_cluster" {
   kubernetes_network_config = local.kubernetes_network_config
 
   node_group_config = {
-    karpenter = {
-      node_group_name = "karpenter-nodegroup"
-      subnet_ids      = data.aws_subnets.private.ids
-      scaling_config = {
-        desired_size = 2
-        max_size     = 3
-        min_size     = 1
+    enable = true
+    config = {
+      karpenter = {
+        node_group_name = "karpenter-nodegroup"
+        subnet_ids      = data.aws_subnets.private.ids
+        scaling_config = {
+          desired_size = 2
+          max_size     = 3
+          min_size     = 1
+        }
+        instance_types = ["t3.medium"]
+        capacity_type  = "ON_DEMAND"
+        disk_size      = 20
+        ami_type       = "AL2_x86_64"
       }
-      instance_types = ["t3.medium"]
-      capacity_type  = "ON_DEMAND"
-      disk_size      = 20
-      ami_type       = "AL2_x86_64"
     }
+
   }
   eks_addons = {
     vpc-cni = {
@@ -47,68 +51,61 @@ module "eks_cluster" {
 
     kube-proxy = {} # version will default to latest
   }
-
-  aws_auth_config = {
-    create = false
-    manage = true
-    roles = [
-      {
-        rolearn = data.aws_iam_role.karpenter_node_role.arn
-        groups = [
-          "system:bootstrappers",
-          "system:nodes"
-        ]
-        username = "system:node:{{EC2PrivateDNSName}}"
-      }
-    ]
-    users    = []
-    accounts = []
-  }
-  eks_access_entries = [
-    ""
-  ]
-
-  eks_access_policy_associations = [
-    {
-      principal_arn = ""
-      policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
-      access_scope = {
-        type = "cluster"
-      }
-    }
-  ]
-
-
-
   karpenter_config = {
     enable                        = true
-    karpenter_version             = "0.36.0"
+    name                          = "karpenter"
+    namespace                     = "karpenter"
+    create_namespace              = true
+    chart                         = "karpenter"
+    version                       = "0.36.0"
     additional_node_role_policies = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
 
-    helm_release_values = [
-      yamlencode({
-        controller = {
-          resources = {
-            requests = {
-              cpu    = "1"
-              memory = "1Gi"
-            }
-            limits = {
-              cpu    = "1"
-              memory = "1Gi"
-            }
-          }
-        },
-        webhook = {
-          enabled = true
-        },
-        certController = {
-          enabled = true
-        }
-      })
-    ]
+    helm_release_values = [file("${path.module}/karpenter-helm-values.yaml")]
 
-    # helm_release_set_values = [ ] Add Additional Values for helm
+    helm_release_set_values = [
+      {
+        name  = "dnsPolicy"
+        value = "Default" # This ensures that Karpenter reaches out to the VPC DNS service when running its controllers, allowing Karpenter to start-up without the DNS application pods running, enabling Karpenter to manage the capacity for these pods.
+      }
+    ]
   }
   tags = module.tags.tags
+}
+
+# Tag the security group for Karpenter node discovery.
+# Ensure all security groups intended for use by Karpenter-managed nodes are tagged accordingly.
+# This enables Karpenter to automatically discover and associate the appropriate security groups.
+resource "aws_ec2_tag" "karpenter_discovery_security_group" {
+  resource_id = module.eks_cluster.eks_cluster_security_group_id
+  key         = "karpenter.sh/discovery"
+  value       = module.eks_cluster.name
+}
+
+# Tag the subnets for Karpenter node discovery.
+# All subnets intended for provisioning Karpenter-managed nodes must include this tag.
+# Karpenter uses it to automatically discover and launch nodes into the correct subnets.
+resource "aws_ec2_tag" "karpenter_discovery_subnets" {
+  for_each = toset(data.aws_subnets.private.ids)
+
+  resource_id = each.value
+  key         = "karpenter.sh/discovery"
+  value       = module.eks_cluster.name
+}
+
+####################################################################################################
+# example for ec2nodeclass, nodepool and workload
+####################################################################################################
+resource "kubectl_manifest" "karpenter_nodeclass" {
+  yaml_body  = file("${path.module}/karpenter-nodeclass.yaml")
+  depends_on = [module.eks_cluster]
+}
+
+resource "kubectl_manifest" "karpenter_nodepool" {
+  yaml_body  = file("${path.module}/karpenter-nodepool.yaml")
+  depends_on = [kubectl_manifest.karpenter_nodeclass]
+}
+
+resource "kubectl_manifest" "inflate_deployment" {
+  yaml_body  = file("${path.module}/inflate_deployment.yaml")
+  depends_on = [kubectl_manifest.karpenter_nodepool]
 }
