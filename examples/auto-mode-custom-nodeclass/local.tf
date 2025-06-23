@@ -21,7 +21,7 @@ locals {
 
   auto_mode_config = {
     enable     = true
-    node_pools = ["general-purpose", "system"]
+    node_pools = []
   }
 
 }

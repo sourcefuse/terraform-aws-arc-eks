@@ -62,3 +62,27 @@ resource "aws_eks_access_policy_association" "this" {
     aws_eks_access_entry.this
   ]
 }
+
+resource "aws_eks_access_entry" "auto_role" {
+  // When Auto mode is enabled but default nodepools are not used, this provides Auto node role the access to cluster
+  count         = var.auto_mode_config.enable && length(var.auto_mode_config.node_pools) == 0 ? 1 : 0
+  cluster_name  = aws_eks_cluster.this.name
+  principal_arn = aws_iam_role.auto[0].arn
+  type          = "EC2"
+}
+
+resource "aws_eks_access_policy_association" "auto_role" {
+  // When Auto mode is enabled but default nodepools are not used, this provides Auto node role the access to cluster
+  count         = var.auto_mode_config.enable && length(var.auto_mode_config.node_pools) == 0 ? 1 : 0
+  cluster_name  = aws_eks_cluster.this.name
+  principal_arn = aws_iam_role.auto[0].arn
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAutoNodePolicy"
+
+  access_scope {
+    type = "cluster"
+  }
+
+  depends_on = [
+    aws_eks_access_entry.auto_role
+  ]
+}
