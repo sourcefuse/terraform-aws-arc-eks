@@ -1,0 +1,30 @@
+---
+apiVersion: eks.amazonaws.com/v1
+kind: NodeClass
+metadata:
+  annotations:
+    eks.amazonaws.com/nodeclass-hash-version: v2
+  finalizers:
+    - eks.amazonaws.com/termination
+  generation: 1
+  labels:
+    app.kubernetes.io/managed-by: eks
+  name: ${environment}-node-class
+spec:
+  tags:
+    environment: dev
+    map-migrated: ${map_tag_value}
+    Name: ${environment}-eks-auto-node
+  ephemeralStorage:
+    iops: 3000
+    size: 80Gi
+    throughput: 125
+  networkPolicy: DefaultAllow
+  networkPolicyEventLogs: Disabled
+  role: ${node_role_name}
+  securityGroupSelectorTerms:
+    - id: ${security_group_id}
+  snatPolicy: Random
+  subnetSelectorTerms:
+  - id: subnet-0a3b45dbe7f8f5f8f
+  - id: subnet-0dedd248e98c2e0a5

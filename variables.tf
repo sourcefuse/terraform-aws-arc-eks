@@ -157,10 +157,13 @@ variable "eks_policy_arns" {
     "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
     "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
     "arn:aws:iam::aws:policy/AmazonEKSNetworkingPolicy",
-    "arn:aws:iam::aws:policy/AmazonEKSComputePolicy"
+    "arn:aws:iam::aws:policy/AmazonEKSComputePolicy",
+    "arn:aws:iam::aws:policy/AmazonEKSBlockStoragePolicy",
+    "arn:aws:iam::aws:policy/AmazonEKSLoadBalancingPolicy"
 
   ]
 }
+
 
 variable "eks_additional_policy_arns" {
   description = "Optional additional policy ARNs that user wants to attach"

@@ -32,3 +32,8 @@ output "certificate_authority_data" {
   description = "The base64-encoded certificate data required to communicate with the EKS cluster"
   value       = aws_eks_cluster.this.certificate_authority[0].data
 }
+
+output "auto_mode_node_role_arn" {
+  description = "ARN of Auto mode node role"
+  value       = var.auto_mode_config.enable ? aws_iam_role.auto[0].arn : null
+}

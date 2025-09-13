@@ -1,0 +1,33 @@
+---
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: my-node-pool
+spec:
+  template:
+    metadata:
+      labels:
+        billing-team: my-team
+    spec:
+      nodeClassRef:
+        group: eks.amazonaws.com
+        kind: NodeClass
+        name: ${node_class}
+
+      requirements:
+        - key: "eks.amazonaws.com/instance-category"
+          operator: In
+          values: ["c", "m", "r"]
+        - key: "eks.amazonaws.com/instance-cpu"
+          operator: In
+          values: ["4", "8", "16", "32"]
+        - key: "topology.kubernetes.io/zone"
+          operator: In
+          values: ["us-east-1a", "us-east-1b"]
+        - key: "kubernetes.io/arch"
+          operator: In
+          values: ["arm64", "amd64"]
+
+  limits:
+    cpu: "1000"
+    memory: 1000Gi
