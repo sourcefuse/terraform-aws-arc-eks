@@ -1,13 +1,13 @@
 locals {
   vpc_config = {
-    subnet_ids = data.aws_subnets.private.ids
+    subnet_ids              = data.aws_subnets.private.ids
     endpoint_private_access = true
     endpoint_public_access  = true
     public_access_cidrs     = ["0.0.0.0/0"]
   }
 
   access_config = {
-    authentication_mode = "API"
+    authentication_mode                         = "API"
     bootstrap_cluster_creator_admin_permissions = true
   }
 
@@ -45,7 +45,7 @@ locals {
           # Optional: Configure RBAC role mappings
           rbac_role_mapping = [
             {
-              role     = "ADMIN"
+              role = "ADMIN"
               identity = [
                 {
                   id   = "142xxxx8-cxx1-7xxx-axxa-5xxxxxxx7"
@@ -93,7 +93,7 @@ resource "aws_iam_role" "argocd_role" {
           "sts:AssumeRole",
           "sts:TagSession"
         ]
-        Effect   = "Allow"
+        Effect = "Allow"
         Principal = {
           Service = "capabilities.eks.amazonaws.com"
         }
@@ -140,7 +140,7 @@ resource "aws_iam_role" "ack_ec2_role" {
           "sts:AssumeRole",
           "sts:TagSession"
         ]
-        Effect   = "Allow"
+        Effect = "Allow"
         Principal = {
           Service = "capabilities.eks.amazonaws.com"
         }
@@ -180,7 +180,7 @@ resource "aws_iam_role" "ack_s3_role" {
           "sts:AssumeRole",
           "sts:TagSession"
         ]
-        Effect   = "Allow"
+        Effect = "Allow"
         Principal = {
           Service = "capabilities.eks.amazonaws.com"
         }
@@ -220,7 +220,7 @@ resource "aws_iam_role" "kro_role" {
           "sts:AssumeRole",
           "sts:TagSession"
         ]
-        Effect   = "Allow"
+        Effect = "Allow"
         Principal = {
           Service = "capabilities.eks.amazonaws.com"
         }

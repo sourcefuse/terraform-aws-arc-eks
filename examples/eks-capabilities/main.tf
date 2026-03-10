@@ -22,10 +22,7 @@ module "eks_cluster" {
   vpc_config                = local.vpc_config
   access_config             = local.access_config
   enable_oidc_provider      = true
-  envelope_encryption       = {
-    enable    = false  # Temporarily disabled to avoid KMS module provider constraint
-    resources = []
-  }
+  envelope_encryption       = local.envelope_encryption
   kubernetes_network_config = local.kubernetes_network_config
 
   # Enable EKS Capabilities
