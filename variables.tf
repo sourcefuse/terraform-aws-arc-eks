@@ -390,3 +390,71 @@ variable "karpenter_config" {
     enable = false
   }
 }
+
+################################################################################
+# EKS Capabilities
+################################################################################
+
+variable "eks_capabilities_config" {
+  description = <<-EOT
+  Configuration for EKS Capabilities (ArgoCD, ACK, KRO).
+  This enables the latest EKS capabilities features for enhanced cluster functionality.
+
+  - enable: Whether to enable EKS capabilities
+  - capabilities: List of capability configurations
+
+  Each capability object may include:
+    - name: Unique identifier for the capability
+    - capability_name: The AWS EKS capability name (e.g., "ArgoCD", "ACK-EC2", "KRO")
+    - type: Capability type (ARGOCD, ACK, KRO)
+    - role_arn: (Required) IAM role ARN for the capability
+    - delete_propagation_policy: (Optional) Delete propagation policy (default: "RETAIN")
+    - argocd_config: (Optional) Configuration for ArgoCD capability
+
+  Note: ACK and KRO capabilities don't require additional configuration beyond role_arn.
+  EOT
+  type = object({
+    enable = bool
+    capabilities = list(object({
+      name                      = string
+      capability_name           = string
+      type                      = string
+      role_arn                  = string
+      delete_propagation_policy = optional(string, "RETAIN")
+
+      # ArgoCD specific configuration
+      argocd_config = optional(object({
+        namespace = optional(string, "argocd")
+
+        # AWS IAM Identity Center configuration (required by provider)
+        aws_idc = object({
+          idc_instance_arn = string
+          idc_region       = optional(string)
+        })
+
+        # Network access configuration
+        network_access = optional(object({
+          vpce_ids = optional(list(string))
+        }), null)
+
+        # RBAC role mappings
+        rbac_role_mapping = optional(list(object({
+          role = string # Valid values: ADMIN, EDITOR, VIEWER
+          identity = list(object({
+            id   = string
+            type = string # Valid values: SSO_USER, SSO_GROUP
+          }))
+        })), [])
+      }), null)
+    }))
+  })
+  default = {
+    enable       = false
+    capabilities = []
+  }
+
+  validation {
+    condition     = var.eks_capabilities_config.enable == false || length(var.eks_capabilities_config.capabilities) > 0
+    error_message = "When enable is true, at least one capability must be configured."
+  }
+}

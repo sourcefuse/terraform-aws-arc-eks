@@ -31,7 +31,7 @@ locals {
 
 module "kms" {
   source  = "sourcefuse/arc-kms/aws"
-  version = "1.0.9"
+  version = "1.0.11"
 
   count = var.envelope_encryption.enable && var.envelope_encryption.key_arn == null ? 1 : 0
 
