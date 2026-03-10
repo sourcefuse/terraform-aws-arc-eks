@@ -37,3 +37,22 @@ output "auto_mode_node_role_arn" {
   description = "ARN of Auto mode node role"
   value       = var.auto_mode_config.enable ? aws_iam_role.auto[0].arn : null
 }
+
+################################################################################
+# EKS Capabilities Outputs
+################################################################################
+
+output "eks_capabilities" {
+  description = "EKS capabilities information"
+  value = var.eks_capabilities_config.enable ? {
+    for k, v in aws_eks_capability.this : k => {
+      arn              = v.arn
+      capability_name   = v.capability_name
+      type              = v.type
+      cluster_name      = v.cluster_name
+      role_arn          = v.role_arn
+      version           = try(v.version, null)
+      tags              = try(v.tags, null)
+    }
+  } : {}
+}
