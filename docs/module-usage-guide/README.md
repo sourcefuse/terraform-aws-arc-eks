@@ -18,7 +18,7 @@ Before using this module, ensure you have the following:
 
 - AWS credentials configured.
 - Terraform installed (>= 1.6.0).
-- AWS Terraform provider (>= 5.70.0) required for EKS capabilities support.
+- AWS Terraform provider (>= 6.0.0) required for EKS capabilities support.
 - A working knowledge of AWS VPC, EKS, Kubernetes, Helm, Karpenter and Terraform concepts.
 
 ## Getting Started
@@ -273,11 +273,11 @@ eks_capabilities_config = {
       role_arn        = aws_iam_role.argocd_role.arn
       argocd_config = {
         namespace = "argocd"
-        # Optional: Configure AWS IAM Identity Center
-        # aws_idc = {
-        #   idc_instance_arn = "arn:aws:sso:::instance/ssoins-xxxxxxxxx"
-        #   idc_region       = "us-east-1"
-        # }
+        # Requirerd: Configure AWS IAM Identity Center
+        aws_idc = {
+          idc_instance_arn = "arn:aws:sso:::instance/ssoins-xxxxxxxxx"
+          idc_region       = "us-east-1"
+        }
         # Optional: Configure network access with VPC endpoints
         # network_access = {
         #   vpce_ids = ["vpce-xxxxxxxx", "vpce-yyyyyyyy"]
