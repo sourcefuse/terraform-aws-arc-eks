@@ -230,6 +230,7 @@ and use the copied token to login
 - Configure pre-commit hooks
 ```sh
 pre-commit install
+
 ```
 
 - Configure golang deps for tests
@@ -256,42 +257,6 @@ By specifying this , it will bump the version and if you dont specify this in yo
 ```sh
 go test
 ```
-
-## Authors
-
-This project is authored by below people
-
-- SourceFuse ARC Team
-
-## Contributors ✨
-
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tbody>
-    <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/vijay-stephen"><img src="https://avatars.githubusercontent.com/u/91307015?v=4?s=100" width="100px;" alt="vijay-stephen"/><br /><sub><b>vijay-stephen</b></sub></a><br /><a href="https://github.com/sourcefuse/terraform-aws-arc-eks/commits?author=vijay-stephen" title="Code">💻</a> <a href="#infra-vijay-stephen" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/sourcefuse/terraform-aws-arc-eks/commits?author=vijay-stephen" title="Documentation">📖</a> <a href="#maintenance-vijay-stephen" title="Maintenance">🚧</a> <a href="#mentoring-vijay-stephen" title="Mentoring">🧑‍🏫</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://www.sourcefuse.com/"><img src="https://avatars.githubusercontent.com/u/73998079?v=4?s=100" width="100px;" alt="Shubham Sinha"/><br /><sub><b>Shubham Sinha</b></sub></a><br /><a href="https://github.com/sourcefuse/terraform-aws-arc-eks/commits?author=shubhamsinha-sf" title="Code">💻</a> <a href="#infra-shubhamsinha-sf" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/sourcefuse/terraform-aws-arc-eks/commits?author=shubhamsinha-sf" title="Documentation">📖</a> <a href="#maintenance-shubhamsinha-sf" title="Maintenance">🚧</a> <a href="#mentoring-shubhamsinha-sf" title="Mentoring">🧑‍🏫</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://sourcefuse.com"><img src="https://avatars.githubusercontent.com/u/89415058?v=4?s=100" width="100px;" alt="Travis Saucier"/><br /><sub><b>Travis Saucier</b></sub></a><br /><a href="https://github.com/sourcefuse/terraform-aws-arc-eks/commits?author=tsaucier-sf" title="Code">💻</a> <a href="#infra-tsaucier-sf" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/sourcefuse/terraform-aws-arc-eks/commits?author=tsaucier-sf" title="Documentation">📖</a> <a href="#maintenance-tsaucier-sf" title="Maintenance">🚧</a> <a href="#mentoring-tsaucier-sf" title="Mentoring">🧑‍🏫</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/mayank0202"><img src="https://avatars.githubusercontent.com/u/83959396?v=4?s=100" width="100px;" alt="Mayank Sharma"/><br /><sub><b>Mayank Sharma</b></sub></a><br /><a href="https://github.com/sourcefuse/terraform-aws-arc-eks/commits?author=mayank0202" title="Code">💻</a> <a href="#infra-mayank0202" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/sourcefuse/terraform-aws-arc-eks/commits?author=mayank0202" title="Documentation">📖</a> <a href="#maintenance-mayank0202" title="Maintenance">🚧</a> <a href="#mentoring-mayank0202" title="Mentoring">🧑‍🏫</a></td>
-    </tr>
-  </tbody>
-</table>
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
-
-
-<!-- BEGIN_TF_DOCS -->
-
-<!-- END_TF_DOCS -->
 
 
 
