@@ -18,6 +18,9 @@
 
 [![Quality Gate](https://sonarcloud.io/api/project_badges/quality_gate?project=sourcefuse_terraform-aws-arc-eks)](https://sonarcloud.io/summary/new_code?id=sourcefuse_terraform-aws-arc-eks)
 
+> [!TIP]
+> 🤖 **New:** Use this module with AI assistants via the [ARC IaC MCP Server](https://github.com/sourcefuse/arc-iac-mcp) — search, scaffold, and security-scan ARC modules from natural language. [Quick setup ↓](#ai-assistant-integration-arc-iac-mcp)
+
 ## Overview
 
 SourceFuse AWS Reference Architecture (ARC) Terraform module provisions a EKS (Elastic Kubernetes Service) cluster with support for multiple operational modes and integrations:
