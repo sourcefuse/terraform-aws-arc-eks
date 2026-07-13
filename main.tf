@@ -124,6 +124,7 @@ data "aws_iam_policy_document" "ec2_fleet" {
     ]
   }
 
+
   statement {
     sid    = "AllowSupportingEC2Actions"
     effect = "Allow"
