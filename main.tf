@@ -116,11 +116,11 @@ data "aws_iam_policy_document" "ec2_fleet" {
     ]
 
     resources = [
-      "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.id}:fleet/*",
-      "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.id}:volume/*",
-      "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.id}:instance/*",
-      "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.id}:network-interface/*",
-      "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.id}:spot-instances-request/*"
+      "arn:aws:ec2:${data.aws_region.current.region}:${data.aws_caller_identity.current.id}:fleet/*",
+      "arn:aws:ec2:${data.aws_region.current.region}:${data.aws_caller_identity.current.id}:volume/*",
+      "arn:aws:ec2:${data.aws_region.current.region}:${data.aws_caller_identity.current.id}:instance/*",
+      "arn:aws:ec2:${data.aws_region.current.region}:${data.aws_caller_identity.current.id}:network-interface/*",
+      "arn:aws:ec2:${data.aws_region.current.region}:${data.aws_caller_identity.current.id}:spot-instances-request/*"
     ]
   }
 
