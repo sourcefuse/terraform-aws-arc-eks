@@ -26,7 +26,7 @@ module "eks_cluster" {
   enable_oidc_provider                  = false
   envelope_encryption                   = local.envelope_encryption
   kubernetes_network_config             = local.kubernetes_network_config
-  eks_addons = {}
+  eks_addons                            = {}
 }
 
 
